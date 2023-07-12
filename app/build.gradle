@@ -11,12 +11,12 @@ plugins {
 licenseReport {
     generateCsvReport = false
     generateHtmlReport = false
-    generateJsonReport = false
+    generateJsonReport = true
     generateTextReport = false
 
     copyCsvReportToAssets = false
     copyHtmlReportToAssets = false
-    copyJsonReportToAssets = false
+    copyJsonReportToAssets = true
     copyTextReportToAssets = false
 }
 
@@ -28,7 +28,7 @@ android {
         applicationId "com.justcircleprod.btsquiz"
         minSdkVersion 21
         targetSdkVersion 33
-        versionCode 8
+        versionCode 9
         versionName "1.1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
