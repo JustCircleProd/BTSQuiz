@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/main_background"
+    android:fillViewport="true"
+    tools:context=".ui.settings.SettingsActivity">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/brand_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/brand_margin_bottom"
+            android:gravity="center"
+            android:text="@string/app_name"
+            android:textColor="@color/brand_color"
+            android:textSize="@dimen/brand_text_size"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@id/root_cardview"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/root_cardview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/main_margin"
+            android:backgroundTint="@color/white"
+            android:elevation="@dimen/card_elevation"
+            app:cardCornerRadius="@dimen/card_corner_radius"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.55">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/inner_layout_margin">
+
+                <TextView
+                    android:id="@+id/hint"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/hint_bottom_margin"
+                    android:gravity="top|center_horizontal"
+                    android:text="@string/difficulty"
+                    android:textColor="@color/text_color"
+                    android:textSize="@dimen/hint_text_size"
+                    app:layout_constraintBottom_toTopOf="@id/scroll_for_difficulty_chips"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <HorizontalScrollView
+                    android:id="@+id/scroll_for_difficulty_chips"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toTopOf="@id/line2"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent">
+
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/difficulty_chips"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:selectionRequired="true"
+                        app:singleSelection="true">
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chip_random"
+                            style="@style/Widget.MaterialComponents.Chip.Choice"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/random_difficulty"
+                            android:textAppearance="@style/ChipUncheckedText" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chip_usual"
+                            style="@style/Widget.MaterialComponents.Chip.Choice"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/usual_difficulty"
+                            android:textAppearance="@style/ChipUncheckedText" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chip_difficult"
+                            style="@style/Widget.MaterialComponents.Chip.Choice"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/difficult_difficulty"
+                            android:textAppearance="@style/ChipUncheckedText" />
+
+
+                    </com.google.android.material.chip.ChipGroup>
+
+                </HorizontalScrollView>
+
+                <View
+                    android:id="@+id/line2"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/line_height"
+                    android:layout_marginBottom="@dimen/settings_item_bottom_margin"
+                    android:background="@color/line_color"
+                    app:layout_constraintBottom_toTopOf="@id/questions_repetition_hint"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <TextView
+                    android:id="@+id/questions_repetition_hint"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/settings_item_bottom_margin"
+                    android:text="@string/no_questions_repetition"
+                    android:textColor="@color/text_color"
+                    android:textSize="@dimen/hint_text_size"
+                    app:layout_constraintBottom_toTopOf="@id/reset_passed_questions_hint"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/questions_repetition_chip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBaseline_toBaselineOf="@id/questions_repetition_hint"
+                    app:layout_constraintEnd_toEndOf="parent" />
+
+                <TextView
+                    android:id="@+id/reset_passed_questions_hint"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/hint_bottom_margin"
+                    android:gravity="top|center_horizontal"
+                    android:text="@string/reset_passed_question"
+                    android:textSize="@dimen/reset_passed_questions_hint_text_size"
+                    app:layout_constraintBottom_toTopOf="@id/line3"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <View
+                    android:id="@+id/line3"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/line_height"
+                    android:layout_marginBottom="@dimen/line_bottom_margin"
+                    android:background="@color/line_color"
+                    app:layout_constraintBottom_toTopOf="@id/back_btn"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/back_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/white"
+                    android:elevation="@dimen/button_elevation"
+                    android:padding="@dimen/button_pudding"
+                    android:stateListAnimator="@null"
+                    android:text="@string/back"
+                    android:textAlignment="center"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/button_text_size"
+                    app:cornerRadius="@dimen/button_corner_radius"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:rippleColor="@color/btn_ripple_color"
+                    app:strokeColor="@color/btn_stroke_color"
+                    app:strokeWidth="@dimen/button_stroke_width" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <TextView
+            android:id="@+id/creators_and_licenses"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/hint_bottom_margin"
+            android:gravity="top|center_horizontal"
+            android:text="@string/developers_and_licenses"
+            android:textSize="@dimen/creators_and_licenses_text_size"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/root_cardview"
+            app:layout_constraintVertical_bias="1" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

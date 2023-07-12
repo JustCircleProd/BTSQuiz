@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="inner_layout_margin">20dp</dimen>
+
+    <dimen name="brand_margin_bottom">18dp</dimen>
+
+    <dimen name="button_pudding">11dp</dimen>
+
+    <dimen name="developers_licenses_content_height">510dp</dimen>
+
+    <dimen name="content_loading_progress_size">70dp</dimen>
+
+    <dimen name="question_height">270dp</dimen>
+
+    <dimen name="tv_question_margin_top">15dp</dimen>
+    <dimen name="tv_question_margin_bottom">24dp</dimen>
+
+    <dimen name="question_image_top_margin">15dp</dimen>
+    <dimen name="question_image_bottom_margin">24dp</dimen>
+
+    <dimen name="video_question_width">310dp</dimen>
+    <dimen name="video_question_height">174dp</dimen>
+    <dimen name="video_question_margin_top">61dp</dimen>
+    <dimen name="video_question_margin_bottom">74dp</dimen>
+
+    <dimen name="audio_question_size">110dp</dimen>
+    <dimen name="audio_question_margin_top">88dp</dimen>
+    <dimen name="audio_question_margin_bottom">111dp</dimen>
+
+    <dimen name="ad_margin_top">18dp</dimen>
+</resources>

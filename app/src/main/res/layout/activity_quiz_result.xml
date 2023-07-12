@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/main_background"
+    android:fillViewport="true"
+    tools:context=".ui.quizResult.QuizResultActivity">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:animateLayoutChanges="true">
+
+        <TextView
+            android:id="@+id/brand_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/brand_margin_bottom"
+            android:gravity="center"
+            android:text="@string/app_name"
+            android:textColor="@color/brand_color"
+            android:textSize="@dimen/brand_text_size"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@id/root_cardview"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/root_cardview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/main_margin"
+            android:animateLayoutChanges="true"
+            android:backgroundTint="@color/white"
+            android:elevation="@dimen/card_elevation"
+            app:cardCornerRadius="@dimen/card_corner_radius"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.55">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/load_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/inner_layout_margin">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/tv_question_margin_bottom"
+                    android:gravity="center"
+                    android:paddingHorizontal="@dimen/load_text_pudding"
+                    android:text="@string/tv_loading_result_text"
+                    android:textColor="@color/text_color"
+                    android:textSize="@dimen/hint_text_size"
+                    app:layout_constraintBottom_toTopOf="@id/load_progress"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <com.google.android.material.progressindicator.LinearProgressIndicator
+                    android:id="@+id/load_progress"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:indeterminate="true"
+                    android:progressTint="@color/progress_color"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/content_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/inner_layout_margin"
+                android:animateLayoutChanges="true"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/score_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:text="@string/tv_text_your_result"
+                    android:textColor="@color/text_color"
+                    android:textSize="@dimen/score_label_text_size"
+                    app:layout_constraintBottom_toTopOf="@id/score"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <TextView
+                    android:id="@+id/score"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/result_bottom_margin"
+                    android:gravity="center_horizontal"
+                    android:textColor="@color/result_color"
+                    android:textSize="@dimen/score_text_size"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toTopOf="@id/best_score_label"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <TextView
+                    android:id="@+id/best_score_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:text="@string/tv_text_best_result"
+                    android:textColor="@color/text_color"
+                    android:textSize="@dimen/best_score_label_size"
+                    app:layout_constraintBottom_toTopOf="@id/best_score"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <TextView
+                    android:id="@+id/best_score"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:textColor="@color/result_color"
+                    android:textSize="@dimen/best_score_size"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toTopOf="@id/line"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <View
+                    android:id="@+id/line"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/line_height"
+                    android:layout_marginBottom="@dimen/best_score_margin_bottom"
+                    android:background="@color/line_color"
+                    app:layout_constraintBottom_toTopOf="@id/result_text"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <TextView
+                    android:id="@+id/result_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/result_bottom_margin"
+                    android:gravity="center"
+                    android:textColor="@color/btn_stroke_color"
+                    android:textSize="@dimen/congratulation_text_size"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toTopOf="@id/result_image"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <ImageView
+                    android:id="@+id/result_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/result_image_content_description"
+                    android:paddingHorizontal="@dimen/congratulation_image_padding_horizontal"
+                    android:scaleType="fitXY"
+                    app:layout_constraintBottom_toTopOf="@id/share_result_btn"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/share_result_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/white"
+                    android:elevation="@dimen/button_elevation"
+                    android:insetTop="0dp"
+                    android:padding="@dimen/button_pudding"
+                    android:stateListAnimator="@null"
+                    android:text="@string/share_result"
+                    android:textAlignment="center"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/button_text_size"
+                    app:cornerRadius="@dimen/button_corner_radius"
+                    app:layout_constraintBottom_toTopOf="@id/line2"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:rippleColor="@color/btn_ripple_color"
+                    app:strokeColor="@color/btn_stroke_color"
+                    app:strokeWidth="@dimen/button_stroke_width" />
+
+                <View
+                    android:id="@+id/line2"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/line_height"
+                    android:background="@color/line_color"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/share_result_btn"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/repeat_quiz_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/white"
+                    android:elevation="@dimen/button_elevation"
+                    android:padding="@dimen/button_pudding"
+                    android:layout_marginTop="@dimen/line_bottom_margin"
+                    android:stateListAnimator="@null"
+                    android:text="@string/repeat_quiz"
+                    android:textAlignment="center"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/button_text_size"
+                    app:cornerRadius="@dimen/button_corner_radius"
+                    app:layout_constraintTop_toBottomOf="@id/line2"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintBottom_toTopOf="@id/to_categories_btn"
+                    app:rippleColor="@color/btn_ripple_color"
+                    app:strokeColor="@color/btn_stroke_color"
+                    app:strokeWidth="@dimen/button_stroke_width" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/to_categories_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/white"
+                    android:elevation="@dimen/button_elevation"
+                    android:padding="@dimen/button_pudding"
+                    android:stateListAnimator="@null"
+                    android:text="@string/to_categories_text"
+                    android:textAlignment="center"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/button_text_size"
+                    app:cornerRadius="@dimen/button_corner_radius"
+                    app:layout_constraintTop_toBottomOf="@id/repeat_quiz_btn"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:rippleColor="@color/btn_ripple_color"
+                    app:strokeColor="@color/btn_stroke_color"
+                    app:strokeWidth="@dimen/button_stroke_width" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

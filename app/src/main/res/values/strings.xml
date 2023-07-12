@@ -1,0 +1,98 @@
+<resources>
+    <string name="app_name">BTS Тест</string>
+
+    <string name="start_quiz">Начать тест</string>
+    <string name="settings">Настройки</string>
+    <string name="button_text_results">Результаты</string>
+
+    <string name="difficulty">Сложность вопросов</string>
+    <string name="random_difficulty">Случайная</string>
+    <string name="usual_difficulty">Обычная</string>
+    <string name="difficult_difficulty">Повышенная</string>
+    <string name="set_difficulty">Сложность установлена</string>
+    <string name="no_questions_repetition">Без повторения</string>
+    <string name="set_no_questions_repetition">Опция \"Без повторения вопросов\" включена</string>
+    <string name="unset_no_questions_repetition">Опция \"Без повторения вопросов\" выключена</string>
+    <string name="reset_passed_question">Сбросить пройденные вопросы?</string>
+
+    <string name="developers_and_licenses">Разработчики и лицензии</string>
+    <string name="copyright_disclaimer">Copyright Disclaimer</string>
+    <string name="copyright_disclaimer_text">
+        This is NOT an official app of BTS or their labels.\n
+        This app is for entertainment purposes only.\n
+        The contents are not produced by, nor associated with or affiliated with the music artist(s) or any associated entities of the artist(s).\n
+        All trademarks, public domain images in this app are the property of their respective owners.\n
+        Any infringement is unintended and you may notify me if ever you find one.
+    </string>
+    <string name="developers">Разработчики</string>
+    <string name="developers_content_description">JustCircle Prod.</string>
+    <string name="licenses">Лицензии</string>
+
+    <string name="confirmation">Подтверждение</string>
+    <string name="close_dialog_content_description">Закрытие диалога</string>
+    <string name="reset_confirmation_question">Вы действительно хотите сбросить пройденные вопросы?</string>
+    <string name="confirm">Подтвердить</string>
+    <string name="reset_n_passed_question">Сброшено пройденных вопросов: %1$d</string>
+
+    <string name="tv_choose_category">Выберите категорию</string>
+    <string name="random_questions">Случайные вопросы</string>
+    <string name="text_questions">Текстовые вопросы</string>
+    <string name="video_questions">Угадай клип</string>
+    <string name="image_questions">Угадай по фото</string>
+    <string name="audio_questions">Угадай песню</string>
+
+    <string name="difficulty_warning">Необходимо переключить сложность на \"Случайную\" или \"Повышенную\"</string>
+
+    <string name="tv_loading_quiz_text">Подготавливаем самые интересные вопросы</string>
+
+    <string name="tv_out_of_questions_hint_text">Похоже, что вы ответили на все вопросы в данной категории!\nВы можете выключить опцию \"Без повторения\" или сбросить пройденные вопросы и вернуться снова :)</string>
+
+    <string name="tv_points_label">За вопрос: %1$d</string>
+    <string name="tv_score_label">Всего очков: %1$d</string>
+
+    <string name="tv_loading_result_text">Подсчитываем баллы</string>
+
+    <string name="tv_text_your_result">Ваш результат</string>
+    <string name="tv_text_best_result">Лучший результат</string>
+
+    <string-array name="texts_for_bad_result">
+        <item>Мы в тебя верим!</item>
+        <item>Ты сможешь!</item>
+        <item>Верь в себя!</item>
+        <item>В следующий раз получится!</item>
+        <item>Не сдавайся!</item>
+    </string-array>
+
+    <string-array name="texts_for_good_result">
+        <item>Отлично получается!</item>
+        <item>Ты молодец!</item>
+        <item>Ещё немного!</item>
+        <item>Почти рекорд!</item>
+        <item>Не сдавайся!</item>
+    </string-array>
+
+    <string name="new_record_with_celebration_text">Новый рекорд!\n%1$s</string>
+
+    <string-array name="texts_for_best_result">
+        <item>Ура!</item>
+        <item>Поздравляем!</item>
+        <item>Ты молодец!</item>
+        <item>Мы не сомневались!</item>
+    </string-array>
+
+    <string name="share_result">Поделиться результатом</string>
+    <string name="for_sharing_result">Смотри! Мой результат в категории \"%1$s\" равен %2$d. Сможешь набрать больше?</string>
+    <string name="play_store_link">https://play.google.com/store/apps/details?id=com.justcircleprod.btsquiz</string>
+    <string name="sharing_result_not_available">На данный момент функция недоступна</string>
+
+    <string name="repeat_quiz">Пройти снова</string>
+    <string name="to_categories_text">К выбору категории</string>
+
+    <string name="back">Назад</string>
+
+    <string name="brand_image_content_description">Изображение бренда</string>
+    <string name="image_for_question_description">Изображение для вопроса</string>
+    <string name="video_for_question_description">Видео для вопроса</string>
+    <string name="audio_question_content_description">Иконка аудио изображения</string>
+    <string name="result_image_content_description">Изображение для результата</string>
+</resources>

@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/main_background"
+    android:fillViewport="true"
+    tools:context=".ui.quiz.QuizActivity">
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/brand_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/brand_margin_bottom"
+            android:gravity="center"
+            android:text="@string/app_name"
+            android:textColor="@color/brand_color"
+            android:textSize="@dimen/brand_text_size"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@id/root_cardview"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/root_cardview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/main_margin"
+            android:animateLayoutChanges="true"
+            android:backgroundTint="@color/white"
+            android:elevation="@dimen/card_elevation"
+            app:cardCornerRadius="@dimen/card_corner_radius"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.5">
+
+            <LinearLayout
+                android:id="@+id/load_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="@dimen/inner_layout_margin"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/load_hint"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/tv_question_margin_bottom"
+                    android:gravity="center"
+                    android:paddingHorizontal="@dimen/load_text_pudding"
+                    android:text="@string/tv_loading_quiz_text"
+                    android:textColor="@color/text_color"
+                    android:textSize="@dimen/hint_text_size" />
+
+                <com.google.android.material.progressindicator.LinearProgressIndicator
+                    android:id="@+id/load_progress"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:indeterminate="true"
+                    android:progressTint="@color/progress_color" />
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/out_of_questions_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="@dimen/inner_layout_margin"
+                android:animateLayoutChanges="true"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/hint_bottom_margin"
+                    android:gravity="center"
+                    android:paddingHorizontal="@dimen/load_text_pudding"
+                    android:text="@string/tv_out_of_questions_hint_text"
+                    android:textColor="@color/text_color"
+                    android:textSize="@dimen/hint_text_size" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/line_height"
+                    android:layout_marginBottom="@dimen/line_bottom_margin"
+                    android:background="@color/line_color"
+                    app:layout_constraintBottom_toTopOf="@id/result_text"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/back_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/white"
+                    android:elevation="@dimen/button_elevation"
+                    android:padding="@dimen/button_pudding"
+                    android:stateListAnimator="@null"
+                    android:text="@string/back"
+                    android:textAlignment="center"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/button_text_size"
+                    app:cornerRadius="@dimen/button_corner_radius"
+                    app:rippleColor="@color/btn_ripple_color"
+                    app:strokeColor="@color/btn_stroke_color"
+                    app:strokeWidth="@dimen/button_stroke_width" />
+
+            </LinearLayout>
+
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/content_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/inner_layout_margin"
+                android:animateLayoutChanges="true"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/points"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tv_points_label"
+                    android:textColor="@color/text_color"
+                    android:textSize="@dimen/points_text_size"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/score"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tv_score_label"
+                    android:textColor="@color/text_color"
+                    android:textSize="@dimen/points_text_size"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/text_question"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/question_height"
+                    android:layout_marginTop="@dimen/tv_question_margin_top"
+                    android:layout_marginBottom="@dimen/tv_question_margin_bottom"
+                    android:gravity="center"
+                    android:paddingHorizontal="@dimen/tv_question_pudding"
+                    android:textColor="@color/text_color"
+                    android:textSize="@dimen/text_question_text_size"
+                    android:visibility="invisible"
+                    app:layout_constraintBottom_toTopOf="@id/progress"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/score" />
+
+                <com.google.android.material.progressindicator.CircularProgressIndicator
+                    android:id="@+id/content_loading_progress"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:indeterminate="true"
+                    android:progressTint="@color/progress_color"
+                    android:visibility="gone"
+                    app:indicatorSize="@dimen/content_loading_progress_size"
+                    app:layout_constraintBottom_toTopOf="@id/progress"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/score" />
+
+                <ImageView
+                    android:id="@+id/image_question"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/question_height"
+                    android:layout_marginTop="@dimen/question_image_top_margin"
+                    android:layout_marginBottom="@dimen/question_image_bottom_margin"
+                    android:contentDescription="@string/image_for_question_description"
+                    android:visibility="invisible"
+                    app:layout_constraintBottom_toTopOf="@id/progress"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/score"
+                    tools:src="@tools:sample/avatars" />
+
+                <FrameLayout
+                    android:id="@+id/video_question_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/video_question_margin_horizontal"
+                    android:layout_marginTop="@dimen/video_question_margin_top"
+                    android:layout_marginBottom="@dimen/video_question_margin_bottom"
+                    android:visibility="invisible"
+                    app:layout_constraintBottom_toTopOf="@id/progress"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/score">
+
+                    <VideoView
+                        android:id="@+id/video_question"
+                        android:layout_width="@dimen/video_question_width"
+                        android:layout_height="@dimen/video_question_height"
+                        android:contentDescription="@string/video_for_question_description" />
+
+                </FrameLayout>
+
+                <ImageView
+                    android:id="@+id/audio_question"
+                    android:layout_width="@dimen/audio_question_size"
+                    android:layout_height="@dimen/audio_question_size"
+                    android:layout_marginTop="@dimen/audio_question_margin_top"
+                    android:layout_marginBottom="@dimen/audio_question_margin_bottom"
+                    android:contentDescription="@string/audio_question_content_description"
+                    android:src="@drawable/icon_audio_question"
+                    android:visibility="invisible"
+                    app:layout_constraintBottom_toTopOf="@id/progress"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/score" />
+
+                <ProgressBar
+                    android:id="@+id/progress"
+                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:indeterminate="false"
+                    android:max="6"
+                    android:progress="0"
+                    android:progressTint="@color/progress_color"
+                    app:layout_constraintBottom_toTopOf="@id/first_option"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/first_option"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/white"
+                    android:elevation="@dimen/button_elevation"
+                    android:enabled="false"
+                    android:padding="@dimen/button_pudding"
+                    android:stateListAnimator="@null"
+                    android:textAlignment="center"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/button_text_size"
+                    app:cornerRadius="@dimen/button_corner_radius"
+                    app:layout_constraintBottom_toTopOf="@id/second_option"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:rippleColor="@color/btn_ripple_color"
+                    app:strokeColor="@color/btn_stroke_color"
+                    app:strokeWidth="@dimen/button_stroke_width" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/second_option"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/white"
+                    android:elevation="@dimen/button_elevation"
+                    android:enabled="false"
+                    android:padding="@dimen/button_pudding"
+                    android:stateListAnimator="@null"
+                    android:textAlignment="center"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/button_text_size"
+                    app:cornerRadius="@dimen/button_corner_radius"
+                    app:layout_constraintBottom_toTopOf="@id/third_option"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:rippleColor="@color/btn_ripple_color"
+                    app:strokeColor="@color/btn_stroke_color"
+                    app:strokeWidth="@dimen/button_stroke_width" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/third_option"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/white"
+                    android:elevation="@dimen/button_elevation"
+                    android:enabled="false"
+                    android:padding="@dimen/button_pudding"
+                    android:stateListAnimator="@null"
+                    android:textAlignment="center"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/button_text_size"
+                    app:cornerRadius="@dimen/button_corner_radius"
+                    app:layout_constraintBottom_toTopOf="@id/fourth_option"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:rippleColor="@color/btn_ripple_color"
+                    app:strokeColor="@color/btn_stroke_color"
+                    app:strokeWidth="@dimen/button_stroke_width" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/fourth_option"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/white"
+                    android:elevation="@dimen/button_elevation"
+                    android:enabled="false"
+                    android:padding="@dimen/button_pudding"
+                    android:stateListAnimator="@null"
+                    android:textAlignment="center"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/button_text_size"
+                    app:cornerRadius="@dimen/button_corner_radius"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:rippleColor="@color/btn_ripple_color"
+                    app:strokeColor="@color/btn_stroke_color"
+                    app:strokeWidth="@dimen/button_stroke_width" />
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <com.yandex.mobile.ads.banner.BannerAdView
+            android:id="@+id/banner_ad_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/ad_margin_top"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/root_cardview"
+            app:layout_constraintVertical_bias="1" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</ScrollView>
