@@ -11,10 +11,11 @@ import com.justcircleprod.btsquiz.data.room.dao.*
 import com.justcircleprod.btsquiz.data.room.migrations.MIGRATION_1_2
 import com.justcircleprod.btsquiz.data.room.migrations.MIGRATION_2_3
 import com.justcircleprod.btsquiz.data.room.migrations.MIGRATION_3_4
+import com.justcircleprod.btsquiz.data.room.migrations.MIGRATION_4_5
 
 
 @Database(
-    version = 4,
+    version = 5,
     entities = [TextQuestion::class, ImageQuestion::class, AudioQuestion::class,
         VideoQuestion::class, PassedQuestion::class, Score::class, Setting::class]
 )
@@ -32,7 +33,7 @@ abstract class AppDatabase : RoomDatabase() {
         fun getInstance(context: Context) =
             Room.databaseBuilder(context, AppDatabase::class.java, "db.db")
                 .createFromAsset("database/db.db")
-                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
+                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
                 .build()
     }
 }

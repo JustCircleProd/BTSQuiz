@@ -18,7 +18,7 @@
     <color name="progress_color">#b480cb</color>
 
     <color name="btn_stroke_color">#b681ce</color>
-    <color name="btn_ripple_color">#be9dcd</color>
+    <color name="ripple_color">#be9dcd</color>
 
     <color name="correct_answer_color">#a6f0b8</color>
     <color name="incorrect_answer_color">#f3a7b2</color>
@@ -26,5 +26,5 @@
     <color name="result_color">#5e5e5e</color>
     <color name="setting_label_color">#4E4E4E</color>
 
-    <color name="license_card_color">#EAEAEA</color>
+    <color name="license_title_color">#bb86fc</color>
 </resources>

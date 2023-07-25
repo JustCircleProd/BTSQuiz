@@ -79,7 +79,7 @@
                     android:textColor="@color/black"
                     android:textSize="@dimen/button_text_size"
                     app:cornerRadius="@dimen/button_corner_radius"
-                    app:rippleColor="@color/btn_ripple_color"
+                    app:rippleColor="@color/ripple_color"
                     app:strokeColor="@color/btn_stroke_color"
                     app:strokeWidth="@dimen/button_stroke_width" />
 
@@ -97,7 +97,7 @@
                     android:textColor="@color/black"
                     android:textSize="@dimen/button_text_size"
                     app:cornerRadius="@dimen/button_corner_radius"
-                    app:rippleColor="@color/btn_ripple_color"
+                    app:rippleColor="@color/ripple_color"
                     app:strokeColor="@color/btn_stroke_color"
                     app:strokeWidth="@dimen/button_stroke_width" />
 
@@ -115,7 +115,7 @@
                     android:textColor="@color/black"
                     android:textSize="@dimen/button_text_size"
                     app:cornerRadius="@dimen/button_corner_radius"
-                    app:rippleColor="@color/btn_ripple_color"
+                    app:rippleColor="@color/ripple_color"
                     app:strokeColor="@color/btn_stroke_color"
                     app:strokeWidth="@dimen/button_stroke_width" />
 
@@ -133,7 +133,7 @@
                     android:textColor="@color/black"
                     android:textSize="@dimen/button_text_size"
                     app:cornerRadius="@dimen/button_corner_radius"
-                    app:rippleColor="@color/btn_ripple_color"
+                    app:rippleColor="@color/ripple_color"
                     app:strokeColor="@color/btn_stroke_color"
                     app:strokeWidth="@dimen/button_stroke_width" />
 
@@ -151,7 +151,7 @@
                     android:textColor="@color/black"
                     android:textSize="@dimen/button_text_size"
                     app:cornerRadius="@dimen/button_corner_radius"
-                    app:rippleColor="@color/btn_ripple_color"
+                    app:rippleColor="@color/ripple_color"
                     app:strokeColor="@color/btn_stroke_color"
                     app:strokeWidth="@dimen/button_stroke_width" />
 
@@ -176,7 +176,7 @@
                     android:textColor="@color/black"
                     android:textSize="@dimen/button_text_size"
                     app:cornerRadius="@dimen/button_corner_radius"
-                    app:rippleColor="@color/btn_ripple_color"
+                    app:rippleColor="@color/ripple_color"
                     app:strokeColor="@color/btn_stroke_color"
                     app:strokeWidth="@dimen/button_stroke_width" />
 

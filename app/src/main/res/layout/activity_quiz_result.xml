@@ -184,7 +184,7 @@
                     app:layout_constraintBottom_toTopOf="@id/line2"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:rippleColor="@color/btn_ripple_color"
+                    app:rippleColor="@color/ripple_color"
                     app:strokeColor="@color/btn_stroke_color"
                     app:strokeWidth="@dimen/button_stroke_width" />
 
@@ -216,7 +216,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintBottom_toTopOf="@id/to_categories_btn"
-                    app:rippleColor="@color/btn_ripple_color"
+                    app:rippleColor="@color/ripple_color"
                     app:strokeColor="@color/btn_stroke_color"
                     app:strokeWidth="@dimen/button_stroke_width" />
 
@@ -238,7 +238,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:rippleColor="@color/btn_ripple_color"
+                    app:rippleColor="@color/ripple_color"
                     app:strokeColor="@color/btn_stroke_color"
                     app:strokeWidth="@dimen/button_stroke_width" />
 
