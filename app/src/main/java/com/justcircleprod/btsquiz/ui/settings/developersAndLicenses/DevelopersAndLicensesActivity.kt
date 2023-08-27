@@ -1,6 +1,8 @@
 package com.justcircleprod.btsquiz.ui.settings.developersAndLicenses
 
+import android.content.Intent
 import android.os.Bundle
+import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -26,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.justcircleprod.btsquiz.R
 import com.justcircleprod.btsquiz.databinding.ActivityDevelopersAndLicensesBinding
+import com.justcircleprod.btsquiz.ui.settings.SettingsActivity
 
 class DevelopersAndLicensesActivity : AppCompatActivity() {
     private lateinit var binding: ActivityDevelopersAndLicensesBinding
@@ -36,6 +39,7 @@ class DevelopersAndLicensesActivity : AppCompatActivity() {
 
         binding = ActivityDevelopersAndLicensesBinding.inflate(layoutInflater)
 
+        onBackPressedDispatcher.addCallback { startSettingsActivity() }
         binding.backBtn.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
 
         binding.composeView.apply {
@@ -52,7 +56,7 @@ class DevelopersAndLicensesActivity : AppCompatActivity() {
                     item {
                         Text(
                             text = stringResource(id = R.string.copyright_disclaimer_text),
-                            color = colorResource(id = R.color.text_color),
+                            color = colorResource(id = R.color.gray_text_color),
                             fontSize = 14.sp,
                             textAlign = TextAlign.Center
                         )
@@ -103,11 +107,17 @@ class DevelopersAndLicensesActivity : AppCompatActivity() {
         setContentView(binding.root)
     }
 
+    private fun startSettingsActivity() {
+        val intent = Intent(this, SettingsActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
+
     @Composable
     private fun SectionTitle(text: String) {
         Text(
             text = text,
-            color = colorResource(id = R.color.text_color),
+            color = colorResource(id = R.color.gray_text_color),
             fontSize = 19.sp,
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(bottom = 5.dp)
@@ -145,7 +155,7 @@ class DevelopersAndLicensesActivity : AppCompatActivity() {
 
         Text(
             text = licenseName,
-            fontSize = 18.sp,
+            fontSize = 17.sp,
             color = colorResource(id = R.color.license_title_color),
             fontWeight = FontWeight.Bold,
             modifier = Modifier
@@ -178,8 +188,8 @@ class DevelopersAndLicensesActivity : AppCompatActivity() {
             )
             Text(
                 text = licenseInfo,
-                color = colorResource(id = R.color.text_color),
-                fontSize = 14.sp,
+                color = colorResource(id = R.color.gray_text_color),
+                fontSize = 15.sp,
                 modifier = Modifier.fillMaxWidth()
             )
         }

@@ -8,38 +8,45 @@ import android.os.Bundle
 import android.os.CountDownTimer
 import android.util.Base64
 import android.view.View
-import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.justcircleprod.btsquiz.App
-import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import com.justcircleprod.btsquiz.R
 import com.justcircleprod.btsquiz.databinding.ActivityQuizResultBinding
+import com.justcircleprod.btsquiz.ui.levels.LevelsActivity
 import com.justcircleprod.btsquiz.ui.quiz.QuizActivity
+import com.justcircleprod.btsquiz.ui.quizResult.doubleCoinsConfirmationDialog.DoubleCoinsConfirmationDialog
+import com.justcircleprod.btsquiz.ui.quizResult.doubleCoinsConfirmationDialog.DoubleCoinsConfirmationDialogCallback
 import com.yandex.mobile.ads.common.AdRequest
 import com.yandex.mobile.ads.common.AdRequestError
 import com.yandex.mobile.ads.common.ImpressionData
 import com.yandex.mobile.ads.interstitial.InterstitialAd
 import com.yandex.mobile.ads.interstitial.InterstitialAdEventListener
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 
 @AndroidEntryPoint
-class QuizResultActivity : AppCompatActivity() {
+class QuizResultActivity : AppCompatActivity(), DoubleCoinsConfirmationDialogCallback {
     private lateinit var binding: ActivityQuizResultBinding
     private val viewModel: QuizResultViewModel by viewModels()
 
     private lateinit var interstitialAd: InterstitialAd
-    private var isAdShown = false
+    private var isAdLoaded = false
 
     private lateinit var resultPlayer: MediaPlayer
 
     companion object {
-        const val CATEGORY_ID_ARGUMENT_NAME = "categoryId"
-        const val SCORE_ARGUMENT_NAME = "score"
+        const val LEVEL_ARGUMENT_NAME = "LEVEL"
+        const val EARNED_COINS_ARGUMENT_NAME = "EARNED_COINS"
+        const val CORRECTLY_ANSWERED_QUESTIONS_COUNT_ARGUMENT_NAME =
+            "CORRECTLY_ANSWERED_QUESTIONS_COUNT"
+        const val QUESTIONS_COUNT_ARGUMENT_NAME = "QUESTIONS_COUNT"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,12 +57,13 @@ class QuizResultActivity : AppCompatActivity() {
 
         setLoadingObserver()
         workWithInterstitialAd()
-        setScoresObservers()
+        setEarnedCoinsObserver()
 
-        setOnShareResultBtnClickListener()
+        setEarnedCoinsDoubledObserver()
+        setOnDoubleCoinsBtnClickListener()
 
         setOnRepeatQuizBtnClickListener()
-        binding.toCategoriesBtn.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
+        setOnToLevelsBtnClicked()
 
         setContentView(binding.root)
     }
@@ -67,6 +75,7 @@ class QuizResultActivity : AppCompatActivity() {
     private fun setLoadingObserver() {
         viewModel.isLoading.observe(this) { isLoading ->
             if (isLoading.all { !it }) {
+                onBackPressedDispatcher.addCallback { startLevelsActivity() }
                 showResult()
                 binding.loadLayout.visibility = View.GONE
                 binding.contentLayout.visibility = View.VISIBLE
@@ -100,6 +109,7 @@ class QuizResultActivity : AppCompatActivity() {
 
         interstitialAd.setInterstitialAdEventListener(object : InterstitialAdEventListener {
             override fun onAdLoaded() {
+                isAdLoaded = true
                 interstitialAd.show()
             }
 
@@ -108,9 +118,7 @@ class QuizResultActivity : AppCompatActivity() {
                 interstitialAd.destroy()
             }
 
-            override fun onAdShown() {
-                isAdShown = true
-            }
+            override fun onAdShown() {}
 
             override fun onAdDismissed() {
                 viewModel.isLoading.value = listOf(viewModel.isLoading.value!![0], false)
@@ -129,11 +137,11 @@ class QuizResultActivity : AppCompatActivity() {
         interstitialAd.loadAd(adRequest)
 
         // to limit the time to load an ad
-        object : CountDownTimer(3500, 1000) {
+        object : CountDownTimer(4000, 4000) {
             override fun onTick(mills: Long) {}
 
             override fun onFinish() {
-                if (!isAdShown) {
+                if (!isAdLoaded) {
                     viewModel.isLoading.value = listOf(viewModel.isLoading.value!![0], false)
                     interstitialAd.destroy()
                 }
@@ -141,77 +149,96 @@ class QuizResultActivity : AppCompatActivity() {
         }.start()
     }
 
-    private fun setScoresObservers() {
-        viewModel.currentScore.observe(this) {
-            binding.score.text = it.toString()
-        }
-        viewModel.lastScore.observe(this) {
-            binding.bestScore.text = it.toString()
+    private fun setEarnedCoinsObserver() {
+        viewModel.earnedCoins.observe(this) {
+            binding.earnedCoins.text = it.toString()
         }
     }
 
     private fun showResult() {
+        val correctlyAnsweredQuestionsCount =
+            intent.extras!!.getInt(CORRECTLY_ANSWERED_QUESTIONS_COUNT_ARGUMENT_NAME)
+
+        val questionsCount = intent.extras!!.getInt(QUESTIONS_COUNT_ARGUMENT_NAME)
+
         when {
-            viewModel.currentScore.value!! > viewModel.lastScore.value!! -> {
-                binding.bestScoreLabel.visibility = View.GONE
-                binding.bestScore.visibility = View.GONE
-
-                val celebrationText =
-                    resources.getStringArray(R.array.texts_for_best_result).toList().shuffled()[0]
-                binding.resultText.text =
-                    getString(R.string.new_record_with_celebration_text, celebrationText)
-
-                val imageResource = listOf(
-                    R.drawable.best_result,
-                    R.drawable.best_result_2,
-                    R.drawable.best_result_3
-                ).shuffled()[0]
-
-                Glide
-                    .with(this)
-                    .load(imageResource)
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
-                    .into(binding.resultImage)
-
-                playResultSound("best_result")
+            questionsCount == 1 -> {
+                if (correctlyAnsweredQuestionsCount == 0) {
+                    onBadResult()
+                } else {
+                    onBestResult()
+                }
             }
-            viewModel.currentScore.value!! < 1000 -> {
-                binding.resultText.text =
-                    resources.getStringArray(R.array.texts_for_bad_result).toList().shuffled()[0]
 
-                val imageResource = listOf(
-                    R.drawable.bad_result,
-                    R.drawable.bad_result_2,
-                    R.drawable.bad_result_3
-                ).shuffled()[0]
-
-                Glide
-                    .with(this)
-                    .load(imageResource)
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
-                    .into(binding.resultImage)
-
-                playResultSound("bad_result")
+            correctlyAnsweredQuestionsCount > (questionsCount * 0.66).roundToInt() -> {
+                onBestResult()
             }
+
+            correctlyAnsweredQuestionsCount in (questionsCount * 0.33).roundToInt()..(questionsCount * 0.66).roundToInt() -> {
+                onGoodResult()
+            }
+
             else -> {
-                binding.resultText.text =
-                    resources.getStringArray(R.array.texts_for_good_result).toList().shuffled()[0]
-
-                val imageResource = listOf(
-                    R.drawable.good_result,
-                    R.drawable.good_result_2,
-                    R.drawable.good_result_3
-                ).shuffled()[0]
-
-                Glide
-                    .with(this)
-                    .load(imageResource)
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
-                    .into(binding.resultImage)
-
-                playResultSound("good_result")
+                onBadResult()
             }
         }
+    }
+
+    private fun onBestResult() {
+        binding.congratulationText.text =
+            resources.getStringArray(R.array.texts_for_best_result).toList().shuffled()[0]
+
+        val imageResource = listOf(
+            R.drawable.best_result,
+            R.drawable.best_result_2,
+            R.drawable.best_result_3
+        ).shuffled()[0]
+
+        Glide
+            .with(this)
+            .load(imageResource)
+            .diskCacheStrategy(DiskCacheStrategy.NONE)
+            .into(binding.congratulationImage)
+
+        playResultSound("best_result")
+    }
+
+    private fun onGoodResult() {
+        binding.congratulationText.text =
+            resources.getStringArray(R.array.texts_for_good_result).toList().shuffled()[0]
+
+        val imageResource = listOf(
+            R.drawable.good_result,
+            R.drawable.good_result_2,
+            R.drawable.good_result_3
+        ).shuffled()[0]
+
+        Glide
+            .with(this)
+            .load(imageResource)
+            .diskCacheStrategy(DiskCacheStrategy.NONE)
+            .into(binding.congratulationImage)
+
+        playResultSound("good_result")
+    }
+
+    private fun onBadResult() {
+        binding.congratulationText.text =
+            resources.getStringArray(R.array.texts_for_bad_result).toList().shuffled()[0]
+
+        val imageResource = listOf(
+            R.drawable.bad_result,
+            R.drawable.bad_result_2,
+            R.drawable.bad_result_3
+        ).shuffled()[0]
+
+        Glide
+            .with(this)
+            .load(imageResource)
+            .diskCacheStrategy(DiskCacheStrategy.NONE)
+            .into(binding.congratulationImage)
+
+        playResultSound("bad_result")
     }
 
     private fun playResultSound(audioName: String) {
@@ -230,73 +257,67 @@ class QuizResultActivity : AppCompatActivity() {
         }
     }
 
-    private fun setOnShareResultBtnClickListener() {
-        binding.shareResultBtn.setOnClickListener {
-            if (viewModel.currentScore.value == null) {
-                Toast.makeText(
-                    this,
-                    getString(R.string.sharing_result_not_available),
-                    Toast.LENGTH_SHORT
-                ).show()
-
-                return@setOnClickListener
-            }
-
-            val resultStr =
-                getString(
-                    R.string.for_sharing_result,
-                    getCategoryName(),
-                    viewModel.currentScore.value!!
-                )
-
-            val playStoreLink = getString(R.string.play_store_link)
-
-            val shareContentBuilder = StringBuilder()
-            shareContentBuilder.append(resultStr, '\n', playStoreLink)
-
-            val sendIntent = Intent().apply {
-                action = Intent.ACTION_SEND
-                putExtra(
-                    Intent.EXTRA_TEXT,
-                    shareContentBuilder.toString()
-                )
-                type = "text/plain"
-            }
-
-            val shareIntent = Intent.createChooser(sendIntent, null)
-            startActivity(shareIntent)
+    private fun setEarnedCoinsDoubledObserver() {
+        viewModel.earnedCoinsDoubled.observe(this) {
+            binding.doubleCoinsBtn.visibility =
+                if (it || viewModel.earnedCoins.value == 0) {
+                    View.GONE
+                } else {
+                    View.VISIBLE
+                }
         }
     }
 
-    private fun getCategoryName(): String {
-        return when (viewModel.categoryId) {
-            1 -> {
-                getString(R.string.random_questions)
+    private fun setOnDoubleCoinsBtnClickListener() {
+        binding.doubleCoinsBtn.setOnClickListener {
+            val earnedCoins = intent.extras?.getInt(EARNED_COINS_ARGUMENT_NAME)
+
+            if (earnedCoins != null) {
+                DoubleCoinsConfirmationDialog.newInstance(earnedCoins)
+                    .show(supportFragmentManager, null)
             }
-            2 -> {
-                getString(R.string.text_questions)
-            }
-            3 -> {
-                getString(R.string.image_questions)
-            }
-            4 -> {
-                getString(R.string.video_questions)
-            }
-            5 -> {
-                getString(R.string.audio_questions)
-            }
-            else -> {
-                getString(R.string.random_questions)
-            }
+        }
+    }
+
+    override fun onSubmitReward() {
+        viewModel.earnedCoinsDoubled.value = true
+        val earnedCoins = viewModel.earnedCoins.value
+
+        if (earnedCoins != null) {
+            viewModel.earnedCoins.value = earnedCoins * 2
         }
     }
 
     private fun setOnRepeatQuizBtnClickListener() {
-        binding.repeatQuizBtn.setOnClickListener {
+        binding.continueQuizBtn.setOnClickListener {
             val intent = Intent(this, QuizActivity::class.java)
-            intent.putExtra(CATEGORY_ID_ARGUMENT_NAME, this.intent.extras!!.getInt(CATEGORY_ID_ARGUMENT_NAME))
+            intent.putExtra(
+                QuizActivity.LEVEL_ARGUMENT_NAME, this.intent.extras!!.getInt(
+                    LEVEL_ARGUMENT_NAME
+                )
+            )
             startActivity(intent)
             finish()
+        }
+    }
+
+    private fun setOnToLevelsBtnClicked() {
+        binding.toLevelsBtn.setOnClickListener {
+            startLevelsActivity()
+        }
+    }
+
+    private fun startLevelsActivity() {
+        val intent = Intent(this, LevelsActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        if (::resultPlayer.isInitialized) {
+            resultPlayer.release()
         }
     }
 }

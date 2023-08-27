@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/main_background"
     android:fillViewport="true"
     tools:context=".ui.settings.SettingsActivity">
 
@@ -14,168 +13,184 @@
 
         <TextView
             android:id="@+id/brand_label"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/brand_margin_bottom"
             android:gravity="center"
+            android:layout_marginTop="@dimen/screen_content_space_size"
+            android:layout_marginHorizontal="@dimen/screen_content_space_size"
             android:text="@string/app_name"
             android:textColor="@color/brand_color"
             android:textSize="@dimen/brand_text_size"
             android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@id/root_cardview"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed"
+            app:layout_constraintVertical_bias="0.42" />
 
-        <androidx.cardview.widget.CardView
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/back_btn"
+            android:layout_width="@dimen/back_button_size"
+            android:layout_height="@dimen/back_button_size"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:contentDescription="@string/back"
+            android:focusable="true"
+            android:src="@drawable/icon_back"
+            app:layout_constraintBottom_toBottomOf="@id/brand_label"
+            app:layout_constraintEnd_toStartOf="@id/brand_label"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toStartOf="@id/root_cardview"
+            app:layout_constraintTop_toTopOf="@id/brand_label" />
+
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/root_cardview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/main_margin"
-            android:backgroundTint="@color/white"
+            app:cardBackgroundColor="@color/card_background"
+            android:layout_marginBottom="@dimen/screen_content_space_size"
+            android:layout_marginHorizontal="@dimen/screen_content_space_size"
             android:elevation="@dimen/card_elevation"
             app:cardCornerRadius="@dimen/card_corner_radius"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/creators_and_licenses"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.55">
+            app:layout_constraintTop_toBottomOf="@id/brand_label">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/inner_layout_margin">
+                android:layout_margin="@dimen/inner_padding">
 
-                <TextView
-                    android:id="@+id/hint"
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/without_quiz_hints_card"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/hint_bottom_margin"
-                    android:gravity="top|center_horizontal"
-                    android:text="@string/difficulty"
-                    android:textColor="@color/text_color"
-                    android:textSize="@dimen/hint_text_size"
-                    app:layout_constraintBottom_toTopOf="@id/scroll_for_difficulty_chips"
+                    android:backgroundTint="@color/btn_background"
+                    app:cardCornerRadius="@dimen/button_corner_radius"
+                    app:cardElevation="@dimen/button_elevation"
+                    app:strokeColor="@color/btn_stroke_color"
+                    app:strokeWidth="@dimen/button_stroke_width"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent" />
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
 
-                <HorizontalScrollView
-                    android:id="@+id/scroll_for_difficulty_chips"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintBottom_toTopOf="@id/line2"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent">
-
-                    <com.google.android.material.chip.ChipGroup
-                        android:id="@+id/difficulty_chips"
-                        android:layout_width="wrap_content"
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:selectionRequired="true"
-                        app:singleSelection="true">
+                        android:paddingHorizontal="@dimen/button_padding"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
 
-                        <com.google.android.material.chip.Chip
-                            android:id="@+id/chip_random"
-                            style="@style/Widget.MaterialComponents.Chip.Choice"
+                        <TextView
+                            android:id="@+id/without_quiz_hints_tv"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/random_difficulty"
-                            android:textAppearance="@style/ChipUncheckedText" />
+                            android:text="@string/without_quiz_hints"
+                            android:textColor="@color/black_text_color"
+                            android:textSize="@dimen/button_text_size"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@+id/without_quiz_hints_switch"
+                            app:layout_constraintHorizontal_chainStyle="spread_inside"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
 
-                        <com.google.android.material.chip.Chip
-                            android:id="@+id/chip_usual"
-                            style="@style/Widget.MaterialComponents.Chip.Choice"
+                        <com.google.android.material.switchmaterial.SwitchMaterial
+                            android:id="@+id/without_quiz_hints_switch"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/usual_difficulty"
-                            android:textAppearance="@style/ChipUncheckedText" />
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/without_quiz_hints_tv"
+                            app:layout_constraintTop_toTopOf="parent" />
 
-                        <com.google.android.material.chip.Chip
-                            android:id="@+id/chip_difficult"
-                            style="@style/Widget.MaterialComponents.Chip.Choice"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/difficult_difficulty"
-                            android:textAppearance="@style/ChipUncheckedText" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
 
+                </com.google.android.material.card.MaterialCardView>
 
-                    </com.google.android.material.chip.ChipGroup>
-
-                </HorizontalScrollView>
-
-                <View
-                    android:id="@+id/line2"
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/reset_progress_btn"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/line_height"
-                    android:layout_marginBottom="@dimen/settings_item_bottom_margin"
-                    android:background="@color/line_color"
-                    app:layout_constraintBottom_toTopOf="@id/questions_repetition_hint"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/btn_background"
+                    android:elevation="@dimen/button_elevation"
+                    android:padding="@dimen/button_padding"
+                    android:stateListAnimator="@null"
+                    android:text="@string/reset_progress"
+                    android:textAlignment="center"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    android:textColor="@color/black_text_color"
+                    android:textSize="@dimen/button_text_size"
+                    app:cornerRadius="@dimen/button_corner_radius"
+                    app:rippleColor="@color/ripple_color"
+                    app:strokeColor="@color/btn_stroke_color"
+                    app:strokeWidth="@dimen/button_stroke_width"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent" />
-
-                <TextView
-                    android:id="@+id/questions_repetition_hint"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/settings_item_bottom_margin"
-                    android:text="@string/no_questions_repetition"
-                    android:textColor="@color/text_color"
-                    android:textSize="@dimen/hint_text_size"
-                    app:layout_constraintBottom_toTopOf="@id/reset_passed_questions_hint"
-                    app:layout_constraintStart_toStartOf="parent" />
-
-                <com.google.android.material.switchmaterial.SwitchMaterial
-                    android:id="@+id/questions_repetition_chip"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintBaseline_toBaselineOf="@id/questions_repetition_hint"
-                    app:layout_constraintEnd_toEndOf="parent" />
-
-                <TextView
-                    android:id="@+id/reset_passed_questions_hint"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/hint_bottom_margin"
-                    android:gravity="top|center_horizontal"
-                    android:text="@string/reset_passed_question"
-                    android:textSize="@dimen/reset_passed_questions_hint_text_size"
-                    app:layout_constraintBottom_toTopOf="@id/line3"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent" />
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/without_quiz_hints_card" />
 
                 <View
-                    android:id="@+id/line3"
+                    android:id="@+id/line"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/line_height"
                     android:layout_marginBottom="@dimen/line_bottom_margin"
                     android:background="@color/line_color"
-                    app:layout_constraintBottom_toTopOf="@id/back_btn"
+                    app:layout_constraintTop_toBottomOf="@id/reset_progress_btn"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
 
+
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/back_btn"
+                    android:id="@+id/share_app_btn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:backgroundTint="@color/white"
+                    android:backgroundTint="@color/btn_background"
                     android:elevation="@dimen/button_elevation"
-                    android:padding="@dimen/button_pudding"
+                    android:padding="@dimen/button_padding"
+                    android:insetTop="0dp"
                     android:stateListAnimator="@null"
-                    android:text="@string/back"
+                    android:text="@string/share_app"
                     android:textAlignment="center"
                     android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                    android:textColor="@color/black"
+                    android:textColor="@color/black_text_color"
                     android:textSize="@dimen/button_text_size"
                     app:cornerRadius="@dimen/button_corner_radius"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
                     app:rippleColor="@color/ripple_color"
                     app:strokeColor="@color/btn_stroke_color"
-                    app:strokeWidth="@dimen/button_stroke_width" />
+                    app:strokeWidth="@dimen/button_stroke_width"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/rate_app_btn" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/rate_app_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/btn_background"
+                    android:elevation="@dimen/button_elevation"
+                    android:padding="@dimen/button_padding"
+                    android:insetTop="0dp"
+                    android:layout_marginTop="@dimen/line_bottom_margin"
+                    android:stateListAnimator="@null"
+                    android:text="@string/rate_app"
+                    android:textAlignment="center"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    android:textColor="@color/black_text_color"
+                    android:textSize="@dimen/button_text_size"
+                    app:cornerRadius="@dimen/button_corner_radius"
+                    app:rippleColor="@color/ripple_color"
+                    app:strokeColor="@color/btn_stroke_color"
+                    app:strokeWidth="@dimen/button_stroke_width"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/line" />
+
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
 
         <TextView
             android:id="@+id/creators_and_licenses"
@@ -185,12 +200,11 @@
             android:gravity="top|center_horizontal"
             android:text="@string/developers_and_licenses"
             android:textSize="@dimen/creators_and_licenses_text_size"
-            android:textColor="@color/white"
+            android:layout_marginHorizontal="@dimen/screen_content_space_size"
+            android:textColor="@color/white_text_color"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/root_cardview"
-            app:layout_constraintVertical_bias="1" />
+            app:layout_constraintStart_toStartOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

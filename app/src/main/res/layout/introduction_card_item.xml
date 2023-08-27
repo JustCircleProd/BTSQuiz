@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:cardBackgroundColor="@color/card_background"
+    app:cardCornerRadius="@dimen/card_corner_radius"
+    app:cardElevation="@dimen/card_elevation"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@id/brand_image">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="@dimen/inner_padding">
+
+        <ImageView
+            android:id="@+id/gif"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/introduction_gif_size"
+            android:layout_marginTop="@dimen/introduction_gif_margin_top"
+            android:layout_marginBottom="@dimen/introduction_gif_margin_bottom"
+            android:contentDescription="@string/introduction_gif_content_description" />
+
+        <LinearLayout
+            android:id="@+id/user_coins_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:animateLayoutChanges="true"
+            android:gravity="center"
+            android:layout_marginBottom="@dimen/introduction_card_title_margin_bottom"
+            android:orientation="horizontal"
+            tools:ignore="UseCompoundDrawables">
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textAlignment="center"
+                android:textColor="@color/gray_text_color"
+                android:textSize="@dimen/introduction_card_text_size"
+                android:textStyle="bold"
+                tools:text="@tools:sample/lorem" />
+
+            <ImageView
+                android:id="@+id/title_icon_coins"
+                android:layout_width="@dimen/introduction_card_title_icon_coins_size"
+                android:layout_height="@dimen/introduction_card_title_icon_coins_size"
+                android:visibility="gone"
+                android:layout_marginStart="@dimen/icon_coins_margin_start"
+                android:contentDescription="@string/icon_coins_content_description"
+                android:src="@drawable/icon_coins" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textAlignment="center"
+            android:textColor="@color/gray_text_color"
+            android:textSize="@dimen/introduction_card_text_text_size"
+            tools:text="@string/introduction_card_3_text" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/next_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/btn_background"
+            android:elevation="@dimen/button_elevation"
+            android:padding="@dimen/button_padding"
+            android:layout_marginTop="@dimen/introduction_button_margin_top"
+            android:stateListAnimator="@null"
+            android:text="@string/next"
+            android:visibility="gone"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textColor="@color/black_text_color"
+            android:textSize="@dimen/button_text_size"
+            app:cornerRadius="@dimen/button_corner_radius"
+            app:rippleColor="@color/ripple_color"
+            app:strokeColor="@color/btn_stroke_color"
+            app:strokeWidth="@dimen/button_stroke_width" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/play_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/second_btn_color"
+            android:elevation="@dimen/button_elevation"
+            android:visibility="gone"
+            android:padding="@dimen/button_padding"
+            android:layout_marginTop="@dimen/introduction_button_margin_top"
+            android:stateListAnimator="@null"
+            android:text="@string/play"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textColor="@color/white_text_color"
+            android:textSize="@dimen/button_text_size"
+            app:cornerRadius="@dimen/button_corner_radius"
+            app:rippleColor="@color/ripple_color" />
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

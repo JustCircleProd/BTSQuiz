@@ -1,347 +1,583 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/main_background"
-    android:fillViewport="true"
     tools:context=".ui.quiz.QuizActivity">
 
-
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/brand_label"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/brand_margin_bottom"
-            android:gravity="center"
-            android:text="@string/app_name"
-            android:textColor="@color/brand_color"
-            android:textSize="@dimen/brand_text_size"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@id/root_cardview"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:paddingBottom="@dimen/quiz_root_layout_bottom_margin">
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/root_cardview"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/main_margin"
-            android:animateLayoutChanges="true"
-            android:backgroundTint="@color/white"
-            android:elevation="@dimen/card_elevation"
-            app:cardCornerRadius="@dimen/card_corner_radius"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.5">
+            <TextView
+                android:id="@+id/brand_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/screen_content_space_size"
+                android:layout_marginTop="@dimen/screen_content_space_size"
+                android:layout_marginBottom="@dimen/brand_margin_bottom"
+                android:gravity="center"
+                android:text="@string/app_name"
+                android:textColor="@color/brand_color"
+                android:textSize="@dimen/brand_text_size"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@id/root_cardview"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_chainStyle="packed" />
 
-            <LinearLayout
-                android:id="@+id/load_layout"
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/root_cardview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_margin="@dimen/inner_layout_margin"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/load_hint"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/tv_question_margin_bottom"
-                    android:gravity="center"
-                    android:paddingHorizontal="@dimen/load_text_pudding"
-                    android:text="@string/tv_loading_quiz_text"
-                    android:textColor="@color/text_color"
-                    android:textSize="@dimen/hint_text_size" />
-
-                <com.google.android.material.progressindicator.LinearProgressIndicator
-                    android:id="@+id/load_progress"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:indeterminate="true"
-                    android:progressTint="@color/progress_color" />
-
-            </LinearLayout>
-
-
-            <LinearLayout
-                android:id="@+id/out_of_questions_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_margin="@dimen/inner_layout_margin"
+                android:layout_marginHorizontal="@dimen/screen_content_space_size"
                 android:animateLayoutChanges="true"
-                android:orientation="vertical"
-                android:visibility="gone">
+                app:cardBackgroundColor="@color/card_background"
+                app:cardCornerRadius="@dimen/card_corner_radius"
+                app:cardElevation="@dimen/card_elevation"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/brand_label">
 
-                <TextView
+                <LinearLayout
+                    android:id="@+id/load_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/hint_bottom_margin"
-                    android:gravity="center"
-                    android:paddingHorizontal="@dimen/load_text_pudding"
-                    android:text="@string/tv_out_of_questions_hint_text"
-                    android:textColor="@color/text_color"
-                    android:textSize="@dimen/hint_text_size" />
+                    android:layout_gravity="center"
+                    android:orientation="vertical"
+                    android:padding="@dimen/inner_padding"
+                    android:visibility="visible">
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/line_height"
-                    android:layout_marginBottom="@dimen/line_bottom_margin"
-                    android:background="@color/line_color"
-                    app:layout_constraintBottom_toTopOf="@id/result_text"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent" />
+                    <TextView
+                        android:id="@+id/load_hint"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:paddingHorizontal="@dimen/load_text_pudding"
+                        android:text="@string/tv_loading_quiz_text"
+                        android:textColor="@color/gray_text_color"
+                        android:textSize="@dimen/hint_text_size" />
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/back_btn"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="@color/white"
-                    android:elevation="@dimen/button_elevation"
-                    android:padding="@dimen/button_pudding"
-                    android:stateListAnimator="@null"
-                    android:text="@string/back"
-                    android:textAlignment="center"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/button_text_size"
-                    app:cornerRadius="@dimen/button_corner_radius"
-                    app:rippleColor="@color/ripple_color"
-                    app:strokeColor="@color/btn_stroke_color"
-                    app:strokeWidth="@dimen/button_stroke_width" />
+                    <com.google.android.material.progressindicator.LinearProgressIndicator
+                        android:id="@+id/load_progress"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/load_layout_progress_margin_top"
+                        android:indeterminate="true"
+                        app:trackColor="@color/progress_track_color"
+                        app:indicatorColor="@color/progress_indicator_color" />
 
-            </LinearLayout>
+                </LinearLayout>
 
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/content_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/inner_layout_margin"
-                android:animateLayoutChanges="true"
-                android:visibility="gone">
-
-                <TextView
-                    android:id="@+id/points"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/tv_points_label"
-                    android:textColor="@color/text_color"
-                    android:textSize="@dimen/points_text_size"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/score"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/tv_score_label"
-                    android:textColor="@color/text_color"
-                    android:textSize="@dimen/points_text_size"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/text_question"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/question_height"
-                    android:layout_marginTop="@dimen/tv_question_margin_top"
-                    android:layout_marginBottom="@dimen/tv_question_margin_bottom"
-                    android:gravity="center"
-                    android:paddingHorizontal="@dimen/tv_question_pudding"
-                    android:textColor="@color/text_color"
-                    android:textSize="@dimen/text_question_text_size"
-                    android:visibility="invisible"
-                    app:layout_constraintBottom_toTopOf="@id/progress"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/score" />
-
-                <com.google.android.material.progressindicator.CircularProgressIndicator
-                    android:id="@+id/content_loading_progress"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:indeterminate="true"
-                    android:progressTint="@color/progress_color"
-                    android:visibility="gone"
-                    app:indicatorSize="@dimen/content_loading_progress_size"
-                    app:layout_constraintBottom_toTopOf="@id/progress"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/score" />
-
-                <ImageView
-                    android:id="@+id/image_question"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/question_height"
-                    android:layout_marginTop="@dimen/question_image_top_margin"
-                    android:layout_marginBottom="@dimen/question_image_bottom_margin"
-                    android:contentDescription="@string/image_for_question_description"
-                    android:visibility="invisible"
-                    app:layout_constraintBottom_toTopOf="@id/progress"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/score"
-                    tools:src="@tools:sample/avatars" />
-
-                <FrameLayout
-                    android:id="@+id/video_question_layout"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/video_question_margin_horizontal"
-                    android:layout_marginTop="@dimen/video_question_margin_top"
-                    android:layout_marginBottom="@dimen/video_question_margin_bottom"
-                    android:visibility="invisible"
-                    app:layout_constraintBottom_toTopOf="@id/progress"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/score">
-
-                    <VideoView
-                        android:id="@+id/video_question"
-                        android:layout_width="@dimen/video_question_width"
-                        android:layout_height="@dimen/video_question_height"
-                        android:contentDescription="@string/video_for_question_description" />
-
-                </FrameLayout>
-
-                <ImageView
-                    android:id="@+id/audio_question"
-                    android:layout_width="@dimen/audio_question_size"
-                    android:layout_height="@dimen/audio_question_size"
-                    android:layout_marginTop="@dimen/audio_question_margin_top"
-                    android:layout_marginBottom="@dimen/audio_question_margin_bottom"
-                    android:contentDescription="@string/audio_question_content_description"
-                    android:src="@drawable/icon_audio_question"
-                    android:visibility="invisible"
-                    app:layout_constraintBottom_toTopOf="@id/progress"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/score" />
-
-                <ProgressBar
-                    android:id="@+id/progress"
-                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                <LinearLayout
+                    android:id="@+id/out_of_questions_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:indeterminate="false"
-                    android:max="6"
-                    android:progress="0"
-                    android:progressTint="@color/progress_color"
-                    app:layout_constraintBottom_toTopOf="@id/first_option"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent" />
+                    android:layout_gravity="center"
+                    android:animateLayoutChanges="true"
+                    android:orientation="vertical"
+                    android:padding="@dimen/inner_padding"
+                    android:visibility="gone">
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/first_option"
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/hint_bottom_margin"
+                        android:gravity="center"
+                        android:paddingHorizontal="@dimen/load_text_pudding"
+                        android:text="@string/tv_out_of_questions_hint_text"
+                        android:textColor="@color/gray_text_color"
+                        android:textSize="@dimen/hint_text_size" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/to_levels_btn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@color/white"
+                        android:elevation="@dimen/button_elevation"
+                        android:padding="@dimen/button_padding"
+                        android:stateListAnimator="@null"
+                        android:text="@string/to_levels"
+                        android:textAlignment="center"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/button_text_size"
+                        app:cornerRadius="@dimen/button_corner_radius"
+                        app:rippleColor="@color/ripple_color"
+                        app:strokeColor="@color/btn_stroke_color"
+                        app:strokeWidth="@dimen/button_stroke_width" />
+
+                </LinearLayout>
+
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/content_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:backgroundTint="@color/white"
-                    android:elevation="@dimen/button_elevation"
-                    android:enabled="false"
-                    android:padding="@dimen/button_pudding"
-                    android:stateListAnimator="@null"
-                    android:textAlignment="center"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/button_text_size"
-                    app:cornerRadius="@dimen/button_corner_radius"
-                    app:layout_constraintBottom_toTopOf="@id/second_option"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:rippleColor="@color/ripple_color"
-                    app:strokeColor="@color/btn_stroke_color"
-                    app:strokeWidth="@dimen/button_stroke_width" />
+                    android:animateLayoutChanges="true"
+                    android:clipToPadding="false"
+                    android:padding="@dimen/inner_padding"
+                    android:visibility="gone">
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/second_option"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="@color/white"
-                    android:elevation="@dimen/button_elevation"
-                    android:enabled="false"
-                    android:padding="@dimen/button_pudding"
-                    android:stateListAnimator="@null"
-                    android:textAlignment="center"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/button_text_size"
-                    app:cornerRadius="@dimen/button_corner_radius"
-                    app:layout_constraintBottom_toTopOf="@id/third_option"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:rippleColor="@color/ripple_color"
-                    app:strokeColor="@color/btn_stroke_color"
-                    app:strokeWidth="@dimen/button_stroke_width" />
+                    <LinearLayout
+                        android:id="@+id/question_coins_layout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="horizontal"
+                        app:layout_constraintEnd_toStartOf="@id/user_coins_layout"
+                        app:layout_constraintHorizontal_chainStyle="spread_inside"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:ignore="UseCompoundDrawables">
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/third_option"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="@color/white"
-                    android:elevation="@dimen/button_elevation"
-                    android:enabled="false"
-                    android:padding="@dimen/button_pudding"
-                    android:stateListAnimator="@null"
-                    android:textAlignment="center"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/button_text_size"
-                    app:cornerRadius="@dimen/button_corner_radius"
-                    app:layout_constraintBottom_toTopOf="@id/fourth_option"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:rippleColor="@color/ripple_color"
-                    app:strokeColor="@color/btn_stroke_color"
-                    app:strokeWidth="@dimen/button_stroke_width" />
+                        <TextView
+                            android:id="@+id/question_worth"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/quiz_question_worth_label"
+                            android:textColor="@color/gray_text_color"
+                            android:textSize="@dimen/quiz_coins_tv_text_size" />
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/fourth_option"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="@color/white"
-                    android:elevation="@dimen/button_elevation"
-                    android:enabled="false"
-                    android:padding="@dimen/button_pudding"
-                    android:stateListAnimator="@null"
-                    android:textAlignment="center"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/button_text_size"
-                    app:cornerRadius="@dimen/button_corner_radius"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:rippleColor="@color/ripple_color"
-                    app:strokeColor="@color/btn_stroke_color"
-                    app:strokeWidth="@dimen/button_stroke_width" />
+                        <ImageView
+                            android:layout_width="@dimen/quiz_coins_icon_size"
+                            android:layout_height="@dimen/quiz_coins_icon_size"
+                            android:layout_marginStart="@dimen/icon_coins_margin_start"
+                            android:contentDescription="@string/icon_coins_content_description"
+                            android:src="@drawable/icon_coins" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/user_coins_layout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="horizontal"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/question_coins_layout"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:ignore="UseCompoundDrawables">
+
+                        <TextView
+                            android:id="@+id/user_coins_tv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/quiz_users_coins_quantity"
+                            android:textColor="@color/gray_text_color"
+                            android:textSize="@dimen/quiz_coins_tv_text_size" />
+
+                        <ImageView
+                            android:layout_width="@dimen/quiz_coins_icon_size"
+                            android:layout_height="@dimen/quiz_coins_icon_size"
+                            android:layout_marginStart="@dimen/icon_coins_margin_start"
+                            android:contentDescription="@string/icon_coins_content_description"
+                            android:src="@drawable/icon_coins" />
+
+                    </LinearLayout>
+
+                    <androidx.constraintlayout.widget.Barrier
+                        android:id="@+id/coins_barrier"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:barrierDirection="bottom"
+                        app:constraint_referenced_ids="question_coins_layout,user_coins_layout" />
+
+                    <TextView
+                        android:id="@+id/text_question"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/question_height"
+                        android:layout_marginTop="@dimen/tv_question_margin_top"
+                        android:layout_marginBottom="@dimen/tv_question_margin_bottom"
+                        android:gravity="center"
+                        android:paddingHorizontal="@dimen/tv_question_pudding"
+                        android:textColor="@color/gray_text_color"
+                        android:textSize="@dimen/text_question_text_size"
+                        android:visibility="invisible"
+                        app:layout_constraintBottom_toTopOf="@id/progress"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/coins_barrier" />
+
+                    <com.google.android.material.progressindicator.CircularProgressIndicator
+                        android:id="@+id/content_loading_progress"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:indeterminate="true"
+                        android:visibility="gone"
+                        app:indicatorColor="@color/progress_indicator_color"
+                        app:trackColor="@color/progress_track_color"
+                        app:indicatorSize="@dimen/content_loading_progress_size"
+                        app:layout_constraintBottom_toTopOf="@id/progress"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/coins_barrier" />
+
+                    <ImageView
+                        android:id="@+id/image_question"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/question_height"
+                        android:layout_marginTop="@dimen/question_image_top_margin"
+                        android:layout_marginBottom="@dimen/question_image_bottom_margin"
+                        android:contentDescription="@string/image_for_question_description"
+                        android:visibility="invisible"
+                        app:layout_constraintBottom_toTopOf="@id/progress"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/coins_barrier"
+                        tools:src="@tools:sample/avatars" />
+
+                    <FrameLayout
+                        android:id="@+id/video_question_layout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/video_question_margin_horizontal"
+                        android:layout_marginTop="@dimen/video_question_margin_top"
+                        android:layout_marginBottom="@dimen/video_question_margin_bottom"
+                        android:visibility="invisible"
+                        app:layout_constraintBottom_toTopOf="@id/progress"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/coins_barrier">
+
+                        <VideoView
+                            android:id="@+id/video_question"
+                            android:layout_width="@dimen/video_question_width"
+                            android:layout_height="@dimen/video_question_height"
+                            android:contentDescription="@string/video_for_question_description" />
+
+                    </FrameLayout>
+
+                    <ImageView
+                        android:id="@+id/audio_question"
+                        android:layout_width="@dimen/audio_question_size"
+                        android:layout_height="@dimen/audio_question_size"
+                        android:layout_marginTop="@dimen/audio_question_margin_top"
+                        android:layout_marginBottom="@dimen/audio_question_margin_bottom"
+                        android:contentDescription="@string/audio_question_content_description"
+                        android:src="@drawable/icon_audio_question"
+                        android:visibility="invisible"
+                        app:layout_constraintBottom_toTopOf="@id/progress"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/coins_barrier" />
+
+                    <com.google.android.material.progressindicator.LinearProgressIndicator
+                        android:id="@+id/progress"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:indeterminate="false"
+                        android:paddingVertical="@dimen/quiz_progress_indicator_padding_vertical"
+                        android:progress="0"
+                        app:trackColor="@color/progress_track_color"
+                        app:indicatorColor="@color/progress_indicator_color"
+                        app:layout_constraintBottom_toTopOf="@id/first_option"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/first_option"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@color/btn_background"
+                        android:elevation="@dimen/button_elevation"
+                        android:enabled="false"
+                        android:padding="@dimen/button_padding"
+                        android:stateListAnimator="@null"
+                        android:textAlignment="center"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                        android:textColor="@color/black_text_color"
+                        android:textSize="@dimen/button_text_size"
+                        app:cornerRadius="@dimen/button_corner_radius"
+                        app:layout_constraintBottom_toTopOf="@id/second_option"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:rippleColor="@color/ripple_color"
+                        app:strokeColor="@color/btn_stroke_color"
+                        app:strokeWidth="@dimen/button_stroke_width" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/second_option"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@color/btn_background"
+                        android:elevation="@dimen/button_elevation"
+                        android:enabled="false"
+                        android:padding="@dimen/button_padding"
+                        android:stateListAnimator="@null"
+                        android:textAlignment="center"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                        android:textColor="@color/black_text_color"
+                        android:textSize="@dimen/button_text_size"
+                        app:cornerRadius="@dimen/button_corner_radius"
+                        app:layout_constraintBottom_toTopOf="@id/third_option"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:rippleColor="@color/ripple_color"
+                        app:strokeColor="@color/btn_stroke_color"
+                        app:strokeWidth="@dimen/button_stroke_width" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/third_option"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@color/btn_background"
+                        android:elevation="@dimen/button_elevation"
+                        android:enabled="false"
+                        android:padding="@dimen/button_padding"
+                        android:stateListAnimator="@null"
+                        android:textAlignment="center"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                        android:textColor="@color/black_text_color"
+                        android:textSize="@dimen/button_text_size"
+                        app:cornerRadius="@dimen/button_corner_radius"
+                        app:layout_constraintBottom_toTopOf="@id/fourth_option"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:rippleColor="@color/ripple_color"
+                        app:strokeColor="@color/btn_stroke_color"
+                        app:strokeWidth="@dimen/button_stroke_width" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/fourth_option"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@color/btn_background"
+                        android:elevation="@dimen/button_elevation"
+                        android:enabled="false"
+                        android:padding="@dimen/button_padding"
+                        android:stateListAnimator="@null"
+                        android:textAlignment="center"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                        android:textColor="@color/black_text_color"
+                        android:textSize="@dimen/button_text_size"
+                        app:cornerRadius="@dimen/button_corner_radius"
+                        app:layout_constraintBottom_toTopOf="@id/hint_divider"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:rippleColor="@color/ripple_color"
+                        app:strokeColor="@color/btn_stroke_color"
+                        app:strokeWidth="@dimen/button_stroke_width" />
+
+                    <LinearLayout
+                        android:id="@+id/hint_divider"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/quiz_hint_divider_margin_bottom"
+                        android:gravity="center"
+                        android:visibility="gone"
+                        android:orientation="horizontal"
+                        app:layout_constraintBottom_toTopOf="@id/hint_50_50"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent">
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="@dimen/line_height"
+                            android:layout_weight="1"
+                            android:background="@color/line_color" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="@dimen/quiz_divider_tv_horizontal_margin"
+                            android:text="@string/hints"
+                            android:textColor="@color/gray_text_color"
+                            android:textSize="@dimen/quiz_hint_divider_title_text_size" />
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="@dimen/line_height"
+                            android:layout_weight="1"
+                            android:background="@color/line_color" />
+
+                    </LinearLayout>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/hint_50_50"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/raw_buttons_horizontal_margin"
+                        android:backgroundTint="@color/second_btn_color"
+                        android:clickable="true"
+                        android:elevation="@dimen/button_elevation"
+                        android:focusable="true"
+                        android:visibility="gone"
+                        app:cardCornerRadius="@dimen/button_corner_radius"
+                        app:cardElevation="@dimen/button_elevation"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/hint_correct_answer"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:rippleColor="@color/ripple_color">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:orientation="horizontal"
+                            android:padding="@dimen/quiz_hint_card_padding"
+                            tools:ignore="UseCompoundDrawables">
+
+                            <TextView
+                                android:id="@+id/hint_50_50_title"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:ellipsize="end"
+                                android:gravity="center"
+                                android:maxLines="1"
+                                android:text="@string/remove_2_options"
+                                android:textAlignment="center"
+                                android:textColor="@color/white_text_color"
+                                app:autoSizeMaxTextSize="@dimen/quiz_hint_title_max_text_size"
+                                app:autoSizeMinTextSize="@dimen/quiz_hint_title_min_text_size"
+                                app:autoSizeStepGranularity="1sp"
+                                app:autoSizeTextType="uniform"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <TextView
+                                android:id="@+id/hint_50_50_price"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textAlignment="center"
+                                android:textColor="@color/white_text_color"
+                                app:autoSizeMaxTextSize="@dimen/quiz_hint_price_max_text_size"
+                                app:autoSizeMinTextSize="@dimen/quiz_hint_price_min_text_size"
+                                app:autoSizeStepGranularity="1sp"
+                                app:autoSizeTextType="uniform"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toStartOf="@id/hint_50_50_price_icon"
+                                app:layout_constraintHorizontal_chainStyle="packed"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@id/hint_50_50_title"
+                                tools:text="50" />
+
+                            <ImageView
+                                android:id="@+id/hint_50_50_price_icon"
+                                android:layout_width="@dimen/quiz_hint_icon_coins_size"
+                                android:layout_height="@dimen/quiz_hint_icon_coins_size"
+                                android:contentDescription="@string/icon_coins_content_description"
+                                android:src="@drawable/icon_coins"
+                                android:layout_marginStart="@dimen/icon_coins_margin_start"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toEndOf="@id/hint_50_50_price"
+                                app:layout_constraintTop_toBottomOf="@id/hint_50_50_title" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/hint_correct_answer"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/raw_buttons_horizontal_margin"
+                        android:backgroundTint="@color/second_btn_color"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:visibility="gone"
+                        app:cardCornerRadius="@dimen/button_corner_radius"
+                        app:cardElevation="@dimen/button_elevation"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/hint_50_50"
+                        app:rippleColor="@color/ripple_color">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:orientation="horizontal"
+                            android:padding="@dimen/quiz_hint_card_padding"
+                            tools:ignore="UseCompoundDrawables">
+
+                            <TextView
+                                android:id="@+id/hint_correct_answer_title"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:ellipsize="end"
+                                android:gravity="center"
+                                android:maxLines="1"
+                                android:text="@string/right_answer"
+                                android:textAlignment="center"
+                                android:textColor="@color/white_text_color"
+                                app:autoSizeMaxTextSize="@dimen/quiz_hint_title_max_text_size"
+                                app:autoSizeMinTextSize="@dimen/quiz_hint_title_min_text_size"
+                                app:autoSizeStepGranularity="1sp"
+                                app:autoSizeTextType="uniform"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <TextView
+                                android:id="@+id/hint_correct_answer_price"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textAlignment="center"
+                                android:textColor="@color/white_text_color"
+                                app:autoSizeMaxTextSize="@dimen/quiz_hint_price_max_text_size"
+                                app:autoSizeMinTextSize="@dimen/quiz_hint_price_min_text_size"
+                                app:autoSizeStepGranularity="1sp"
+                                app:autoSizeTextType="uniform"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toStartOf="@id/hint_correct_answer_price_icon"
+                                app:layout_constraintHorizontal_chainStyle="packed"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@id/hint_correct_answer_title"
+                                tools:text="100" />
+
+                            <ImageView
+                                android:id="@+id/hint_correct_answer_price_icon"
+                                android:layout_width="@dimen/quiz_hint_icon_coins_size"
+                                android:layout_height="@dimen/quiz_hint_icon_coins_size"
+                                android:contentDescription="@string/icon_coins_content_description"
+                                android:src="@drawable/icon_coins"
+                                android:layout_marginStart="@dimen/icon_coins_margin_start"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toEndOf="@id/hint_correct_answer_price"
+                                app:layout_constraintTop_toBottomOf="@id/hint_correct_answer_title" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    </com.google.android.material.card.MaterialCardView>
 
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
-        </androidx.cardview.widget.CardView>
+            </com.google.android.material.card.MaterialCardView>
 
-        <com.yandex.mobile.ads.banner.BannerAdView
-            android:id="@+id/banner_ad_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/ad_margin_top"
-            android:visibility="invisible"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/root_cardview"
-            app:layout_constraintVertical_bias="1" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+
+    <com.yandex.mobile.ads.banner.BannerAdView
+        android:id="@+id/banner_ad_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/black_text_color"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 
-</ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

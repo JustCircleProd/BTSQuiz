@@ -2,9 +2,9 @@ package com.justcircleprod.btsquiz.data.room.migrations
 
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.justcircleprod.btsquiz.data.models.AudioQuestion
-import com.justcircleprod.btsquiz.data.models.TextQuestion
-import com.justcircleprod.btsquiz.data.models.VideoQuestion
+import com.justcircleprod.btsquiz.data.models.questions.AudioQuestion
+import com.justcircleprod.btsquiz.data.models.questions.TextQuestion
+import com.justcircleprod.btsquiz.data.models.questions.VideoQuestion
 
 
 val MIGRATION_4_5: Migration = object : Migration(4, 5) {

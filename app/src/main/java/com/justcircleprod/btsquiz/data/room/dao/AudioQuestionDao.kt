@@ -2,7 +2,7 @@ package com.justcircleprod.btsquiz.data.room.dao
 
 import androidx.room.Dao
 import androidx.room.Query
-import com.justcircleprod.btsquiz.data.models.AudioQuestion
+import com.justcircleprod.btsquiz.data.models.questions.AudioQuestion
 
 @Dao
 interface AudioQuestionDao {
@@ -12,6 +12,6 @@ interface AudioQuestionDao {
     @Query("SELECT COUNT(id) FROM audio_questions")
     suspend fun getCount(): Int
 
-    @Query("SELECT id FROM audio_questions WHERE points >= :lowerPoints AND points <= :upperPoints")
-    suspend fun getIds(lowerPoints: Int, upperPoints: Int): List<Int>
+    @Query("SELECT id FROM audio_questions WHERE points = :points")
+    suspend fun getIds(points: Int): List<Int>
 }

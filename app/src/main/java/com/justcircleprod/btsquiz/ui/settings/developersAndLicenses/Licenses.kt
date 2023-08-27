@@ -61,12 +61,24 @@ val licenses: List<Map<String, Any>> =
                     "projectInfo" to "Copyright © 2017 The Android Open Source Project"
                 ),
                 mapOf(
+                    "projectNameVersion" to "Activity Compose 1.7.2",
+                    "projectInfo" to "Copyright © 2020 The Android Open Source Project"
+                ),
+                mapOf(
                     "projectNameVersion" to "Android ConstraintLayout 2.1.4",
                     "projectInfo" to "Copyright © 2007 The Android Open Source Project"
                 ),
                 mapOf(
                     "projectNameVersion" to "Android ConstraintLayout Core 1.0.4",
                     "projectInfo" to "Copyright © 2007 The Android Open Source Project"
+                ),
+                mapOf(
+                    "projectNameVersion" to "Android DataStore 1.0.0",
+                    "projectInfo" to "Copyright © 2020 The Android Open Source Project"
+                ),
+                mapOf(
+                    "projectNameVersion" to "Android DataStore Core 1.0.0",
+                    "projectInfo" to "Copyright © 2020 The Android Open Source Project"
                 ),
                 mapOf(
                     "projectNameVersion" to "Android DB 2.3.1",
@@ -147,6 +159,14 @@ val licenses: List<Map<String, Any>> =
                 mapOf(
                     "projectNameVersion" to "Android Navigation Runtime Kotlin Extensions 2.5.3",
                     "projectInfo" to "Copyright © 2018 The Android Open Source Project"
+                ),
+                mapOf(
+                    "projectNameVersion" to "Android Preferences DataStore 1.0.0",
+                    "projectInfo" to "Copyright © 2020 The Android Open Source Project"
+                ),
+                mapOf(
+                    "projectNameVersion" to "Android Preferences DataStore Core 1.0.0",
+                    "projectInfo" to "Copyright © 2020 The Android Open Source Project"
                 ),
                 mapOf(
                     "projectNameVersion" to "Android Resource Inspection - Annotations 1.0.1",
@@ -457,6 +477,10 @@ val licenses: List<Map<String, Any>> =
                     "projectInfo" to "Copyright © 2018 The Android Open Source Project"
                 ),
                 mapOf(
+                    "projectNameVersion" to "Lottie 3.4.0",
+                    "projectInfo" to "Copyright © 20xx Airbnb"
+                ),
+                mapOf(
                     "projectNameVersion" to "Material Components for Android 1.9.0",
                     "projectInfo" to "Copyright © 2015 The Android Open Source Project"
                 ),
@@ -484,7 +508,29 @@ val licenses: List<Map<String, Any>> =
                     "projectNameVersion" to "viewbinding 7.3.1",
                     "projectInfo" to "Copyright © 20xx "
                 ),
+                mapOf(
+                    "projectNameVersion" to "Pager Dots Indicator 5.0",
+                    "projectInfo" to "Copyright © 2016 Tommy Buonomo"
+                )
             )
+        ),
+        mapOf(
+            "licenseName" to "Play Core Software Development Kit Terms of Service",
+            "licenseLink" to "https://developer.android.com/guide/playcore/license",
+            "packages" to listOf(
+                mapOf(
+                    "projectNameVersion" to "core-common 2.0.0",
+                    "projectInfo" to "Copyright © 20xx "
+                ),
+                mapOf(
+                    "projectNameVersion" to "review 2.0.0",
+                    "projectInfo" to "Copyright © 20xx "
+                ),
+                mapOf(
+                    "projectNameVersion" to "review-ktx 2.0.0",
+                    "projectInfo" to "Copyright © 20xx "
+                ),
+            ),
         ),
         mapOf(
             "licenseName" to "Simplified BSD License",

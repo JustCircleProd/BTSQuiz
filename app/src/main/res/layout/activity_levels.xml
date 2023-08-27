@@ -1,0 +1,995 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipToPadding="false"
+    android:fillViewport="true"
+    tools:context=".ui.levels.LevelsActivity">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipToPadding="false"
+        android:padding="@dimen/screen_content_space_size">
+
+        <TextView
+            android:id="@+id/brand_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/brand_margin_bottom"
+            android:gravity="center"
+            android:text="@string/app_name"
+            android:textColor="@color/brand_color"
+            android:textSize="@dimen/brand_text_size"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@id/root_cardview"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed" />
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/back_btn"
+            android:layout_width="@dimen/back_button_size"
+            android:layout_height="@dimen/back_button_size"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            android:contentDescription="@string/back"
+            android:src="@drawable/icon_back"
+            app:layout_constraintBottom_toBottomOf="@id/brand_label"
+            app:layout_constraintEnd_toStartOf="@id/brand_label"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toStartOf="@id/root_cardview"
+            app:layout_constraintTop_toTopOf="@id/brand_label" />
+
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/root_cardview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardBackgroundColor="@color/card_background"
+            android:clipToPadding="false"
+            app:cardCornerRadius="@dimen/card_corner_radius"
+            app:cardElevation="@dimen/card_elevation"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/brand_label">
+
+            <LinearLayout
+                android:id="@+id/content_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:animateLayoutChanges="true"
+                android:clipToPadding="false"
+                android:orientation="vertical"
+                android:padding="@dimen/inner_padding">
+
+                <LinearLayout
+                    android:id="@+id/user_coins_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/hint_bottom_margin"
+                    android:animateLayoutChanges="true"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    tools:ignore="UseCompoundDrawables">
+
+                    <TextView
+                        android:id="@+id/coins_quantity"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="@string/levels_users_coins_quantity"
+                        android:textAlignment="center"
+                        android:textColor="@color/gray_text_color"
+                        android:textSize="@dimen/levels_user_coins_text_size" />
+
+                    <ImageView
+                        android:layout_width="@dimen/levels_user_coins_icon_size"
+                        android:layout_height="@dimen/levels_user_coins_icon_size"
+                        android:contentDescription="@string/icon_coins_content_description"
+                        android:src="@drawable/icon_coins"
+                        android:layout_marginStart="@dimen/icon_coins_margin_start" />
+
+                </LinearLayout>
+
+                <View
+                    android:id="@+id/line"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/line_height"
+                    android:layout_marginBottom="@dimen/line_bottom_margin"
+                    android:background="@color/line_color" />
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/level_passed_questions_card"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/level_card_margin_between"
+                    android:backgroundTint="@color/btn_background"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:visibility="gone"
+                    app:cardCornerRadius="@dimen/button_corner_radius"
+                    app:cardElevation="@dimen/button_elevation"
+                    app:rippleColor="@color/ripple_color"
+                    app:strokeColor="@color/btn_stroke_color"
+                    app:strokeWidth="@dimen/button_stroke_width">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/level_passed_questions_card_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:animateLayoutChanges="true"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/level_passed_questions_name"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="@dimen/level_card_inner_margin"
+                            android:layout_marginTop="@dimen/level_card_inner_margin"
+                            android:gravity="center_horizontal"
+                            android:text="@string/passed_questions_level_name"
+                            android:textAlignment="center"
+                            android:textColor="@color/gray_text_color"
+                            android:textSize="@dimen/level_name_text_size"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <com.google.android.material.progressindicator.LinearProgressIndicator
+                            android:id="@+id/passed_questions_level_progress_indicator"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="@dimen/level_card_inner_margin"
+                            android:layout_marginTop="@dimen/level_progress_margin_top"
+                            android:layout_marginBottom="@dimen/level_card_inner_margin"
+                            android:indeterminate="false"
+                            android:progress="1"
+                            android:max="1"
+                            app:trackColor="@color/progress_track_color"
+                            app:indicatorColor="@color/progress_indicator_color"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/level_passed_questions_name"
+                            app:trackCornerRadius="@dimen/level_progress_track_corner_radius"
+                            app:trackThickness="@dimen/level_progress_track_thickness" />
+
+                        <TextView
+                            android:id="@+id/level_passed_questions_progress_tv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:maxLines="1"
+                            android:textAlignment="center"
+                            android:textColor="@color/black_text_color"
+                            android:textSize="@dimen/level_progress_label_text_size"
+                            app:layout_constraintBottom_toBottomOf="@id/passed_questions_level_progress_indicator"
+                            app:layout_constraintEnd_toEndOf="@id/passed_questions_level_progress_indicator"
+                            app:layout_constraintStart_toStartOf="@id/passed_questions_level_progress_indicator"
+                            app:layout_constraintTop_toTopOf="@id/passed_questions_level_progress_indicator"
+                            tools:text="30" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/level_1_card"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/level_card_margin_between"
+                    android:backgroundTint="@color/btn_background"
+                    android:clickable="true"
+                    android:focusable="true"
+                    app:cardCornerRadius="@dimen/button_corner_radius"
+                    app:cardElevation="@dimen/button_elevation"
+                    app:rippleColor="@color/ripple_color"
+                    app:strokeColor="@color/btn_stroke_color"
+                    app:strokeWidth="@dimen/button_stroke_width">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/level_1_card_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:animateLayoutChanges="true"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/level_1_name"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="@dimen/level_card_inner_margin"
+                            android:layout_marginTop="@dimen/level_card_inner_margin"
+                            android:gravity="center_horizontal"
+                            android:text="@string/level_1_name"
+                            android:textAlignment="center"
+                            android:textColor="@color/gray_text_color"
+                            android:textSize="@dimen/level_name_text_size"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <com.google.android.material.progressindicator.LinearProgressIndicator
+                            android:id="@+id/level_1_progress_indicator"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="@dimen/level_card_inner_margin"
+                            android:layout_marginTop="@dimen/level_progress_margin_top"
+                            android:layout_marginBottom="@dimen/level_card_inner_margin"
+                            android:indeterminate="false"
+                            app:indicatorColor="@color/progress_indicator_color"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/level_1_name"
+                            app:trackColor="@color/progress_track_color"
+                            app:trackCornerRadius="@dimen/level_progress_track_corner_radius"
+                            app:trackThickness="@dimen/level_progress_track_thickness" />
+
+                        <TextView
+                            android:id="@+id/level_1_progress_tv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:maxLines="1"
+                            android:textAlignment="center"
+                            android:textColor="@color/black_text_color"
+                            android:textSize="@dimen/level_progress_label_text_size"
+                            app:layout_constraintBottom_toBottomOf="@id/level_1_progress_indicator"
+                            app:layout_constraintEnd_toEndOf="@id/level_1_progress_indicator"
+                            app:layout_constraintStart_toStartOf="@id/level_1_progress_indicator"
+                            app:layout_constraintTop_toTopOf="@id/level_1_progress_indicator"
+                            tools:text="10/30" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/level_2_card"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/level_card_margin_between"
+                    android:backgroundTint="@color/btn_background"
+                    android:clickable="true"
+                    android:focusable="true"
+                    app:cardCornerRadius="@dimen/button_corner_radius"
+                    app:cardElevation="@dimen/button_elevation"
+                    app:rippleColor="@color/ripple_color"
+                    app:strokeColor="@color/btn_stroke_color"
+                    app:strokeWidth="@dimen/button_stroke_width">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:id="@+id/level_2_name_layout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="@dimen/level_card_inner_margin"
+                            android:layout_marginTop="@dimen/level_card_inner_margin"
+                            android:animateLayoutChanges="true"
+                            android:gravity="center"
+                            android:orientation="horizontal"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:ignore="UseCompoundDrawables">
+
+                            <ImageView
+                                android:id="@+id/level_2_icon_lock"
+                                android:layout_width="@dimen/level_icon_lock_size"
+                                android:layout_height="@dimen/level_icon_lock_size"
+                                android:layout_marginEnd="@dimen/level_icon_lock_margin_end"
+                                android:contentDescription="@string/locked_level_icon_content_description"
+                                android:src="@drawable/icon_lock"
+                                android:visibility="gone" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/level_2_name"
+                                android:textAlignment="center"
+                                android:textColor="@color/gray_text_color"
+                                android:textSize="@dimen/level_name_text_size" />
+
+                        </LinearLayout>
+
+                        <com.google.android.material.progressindicator.LinearProgressIndicator
+                            android:id="@+id/level_2_progress_indicator"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="@dimen/level_card_inner_margin"
+                            android:layout_marginTop="@dimen/level_progress_margin_top"
+                            android:layout_marginBottom="@dimen/level_card_inner_margin"
+                            android:indeterminate="false"
+                            app:indicatorColor="@color/progress_indicator_color"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/level_2_name_layout"
+                            app:trackColor="@color/progress_track_color"
+                            app:trackCornerRadius="@dimen/level_progress_track_corner_radius"
+                            app:trackThickness="@dimen/level_progress_track_thickness" />
+
+                        <LinearLayout
+                            android:id="@+id/level_2_progress_text_layout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:animateLayoutChanges="true"
+                            android:gravity="center"
+                            android:orientation="horizontal"
+                            app:layout_constraintBottom_toBottomOf="@id/level_2_progress_indicator"
+                            app:layout_constraintEnd_toEndOf="@id/level_2_progress_indicator"
+                            app:layout_constraintStart_toStartOf="@id/level_2_progress_indicator"
+                            app:layout_constraintTop_toTopOf="@id/level_2_progress_indicator"
+                            tools:ignore="UseCompoundDrawables">
+
+                            <TextView
+                                android:id="@+id/level_2_progress_tv"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:ellipsize="end"
+                                android:maxLines="1"
+                                android:textAlignment="center"
+                                android:textColor="@color/black_text_color"
+                                android:textSize="@dimen/level_progress_label_text_size"
+                                tools:text="@string/open_for_n_coins" />
+
+                            <ImageView
+                                android:id="@+id/level_2_progress_coins_icon"
+                                android:layout_width="@dimen/level_price_icon_coins_size"
+                                android:layout_marginStart="@dimen/icon_coins_margin_start"
+                                android:layout_height="@dimen/level_price_icon_coins_size"
+                                android:contentDescription="@string/icon_coins_content_description"
+                                android:src="@drawable/icon_coins"
+                                android:visibility="gone" />
+
+                        </LinearLayout>
+
+                        <com.airbnb.lottie.LottieAnimationView
+                            android:id="@+id/level_2_confetti_animation"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:scaleType="fitXY"
+                            android:visibility="gone"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:lottie_loop="true"
+                            app:lottie_rawRes="@raw/confetti_level_unlocked_animation"
+                            app:lottie_repeatCount="2"
+                            app:lottie_speed="0.45" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/level_3_card"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/level_card_margin_between"
+                    android:backgroundTint="@color/btn_background"
+                    app:cardCornerRadius="@dimen/button_corner_radius"
+                    app:cardElevation="@dimen/button_elevation"
+                    app:strokeColor="@color/btn_stroke_color"
+                    app:strokeWidth="@dimen/button_stroke_width">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:id="@+id/level_3_name_layout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="@dimen/level_card_inner_margin"
+                            android:layout_marginTop="@dimen/level_card_inner_margin"
+                            android:animateLayoutChanges="true"
+                            android:gravity="center"
+                            android:orientation="horizontal"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:ignore="UseCompoundDrawables">
+
+                            <ImageView
+                                android:id="@+id/level_3_icon_lock"
+                                android:layout_width="@dimen/level_icon_lock_size"
+                                android:layout_height="@dimen/level_icon_lock_size"
+                                android:layout_marginEnd="@dimen/level_icon_lock_margin_end"
+                                android:contentDescription="@string/locked_level_icon_content_description"
+                                android:src="@drawable/icon_lock"
+                                android:visibility="gone" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/level_3_name"
+                                android:textAlignment="center"
+                                android:textColor="@color/gray_text_color"
+                                android:textSize="@dimen/level_name_text_size" />
+
+                        </LinearLayout>
+
+                        <com.google.android.material.progressindicator.LinearProgressIndicator
+                            android:id="@+id/level_3_progress_indicator"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="@dimen/level_card_inner_margin"
+                            android:layout_marginTop="@dimen/level_progress_margin_top"
+                            android:layout_marginBottom="@dimen/level_card_inner_margin"
+                            android:indeterminate="false"
+                            app:indicatorColor="@color/progress_indicator_color"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/level_3_name_layout"
+                            app:trackColor="@color/progress_track_color"
+                            app:trackCornerRadius="@dimen/level_progress_track_corner_radius"
+                            app:trackThickness="@dimen/level_progress_track_thickness" />
+
+                        <LinearLayout
+                            android:id="@+id/level_3_progress_text_layout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:animateLayoutChanges="true"
+                            android:gravity="center"
+                            android:orientation="horizontal"
+                            app:layout_constraintBottom_toBottomOf="@id/level_3_progress_indicator"
+                            app:layout_constraintEnd_toEndOf="@id/level_3_progress_indicator"
+                            app:layout_constraintStart_toStartOf="@id/level_3_progress_indicator"
+                            app:layout_constraintTop_toTopOf="@id/level_3_progress_indicator"
+                            tools:ignore="UseCompoundDrawables">
+
+                            <TextView
+                                android:id="@+id/level_3_progress_tv"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:ellipsize="end"
+                                android:maxLines="1"
+                                android:textAlignment="center"
+                                android:textColor="@color/black_text_color"
+                                android:textSize="@dimen/level_progress_label_text_size"
+                                tools:text="@string/open_for_n_coins" />
+
+                            <ImageView
+                                android:id="@+id/level_3_progress_coins_icon"
+                                android:layout_width="@dimen/level_price_icon_coins_size"
+                                android:layout_height="@dimen/level_price_icon_coins_size"
+                                android:layout_marginStart="@dimen/icon_coins_margin_start"
+                                android:contentDescription="@string/icon_coins_content_description"
+                                android:src="@drawable/icon_coins"
+                                android:visibility="gone" />
+
+                        </LinearLayout>
+
+                        <com.airbnb.lottie.LottieAnimationView
+                            android:id="@+id/level_3_confetti_animation"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:scaleType="fitXY"
+                            android:visibility="gone"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:lottie_loop="true"
+                            app:lottie_rawRes="@raw/confetti_level_unlocked_animation"
+                            app:lottie_repeatCount="2"
+                            app:lottie_speed="0.45" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/level_4_card"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/level_card_margin_between"
+                    android:backgroundTint="@color/btn_background"
+                    android:clickable="true"
+                    android:focusable="true"
+                    app:cardCornerRadius="@dimen/button_corner_radius"
+                    app:cardElevation="@dimen/button_elevation"
+                    app:rippleColor="@color/ripple_color"
+                    app:strokeColor="@color/btn_stroke_color"
+                    app:strokeWidth="@dimen/button_stroke_width">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:id="@+id/level_4_name_layout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="@dimen/level_card_inner_margin"
+                            android:layout_marginTop="@dimen/level_card_inner_margin"
+                            android:animateLayoutChanges="true"
+                            android:gravity="center"
+                            android:orientation="horizontal"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:ignore="UseCompoundDrawables">
+
+                            <ImageView
+                                android:id="@+id/level_4_icon_lock"
+                                android:layout_width="@dimen/level_icon_lock_size"
+                                android:layout_height="@dimen/level_icon_lock_size"
+                                android:layout_marginEnd="@dimen/level_icon_lock_margin_end"
+                                android:contentDescription="@string/locked_level_icon_content_description"
+                                android:src="@drawable/icon_lock"
+                                android:visibility="gone" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/level_4_name"
+                                android:textAlignment="center"
+                                android:textColor="@color/gray_text_color"
+                                android:textSize="@dimen/level_name_text_size" />
+
+                        </LinearLayout>
+
+                        <com.google.android.material.progressindicator.LinearProgressIndicator
+                            android:id="@+id/level_4_progress_indicator"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="@dimen/level_card_inner_margin"
+                            android:layout_marginTop="@dimen/level_progress_margin_top"
+                            android:layout_marginBottom="@dimen/level_card_inner_margin"
+                            android:indeterminate="false"
+                            app:indicatorColor="@color/progress_indicator_color"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/level_4_name_layout"
+                            app:trackColor="@color/progress_track_color"
+                            app:trackCornerRadius="@dimen/level_progress_track_corner_radius"
+                            app:trackThickness="@dimen/level_progress_track_thickness" />
+
+                        <LinearLayout
+                            android:id="@+id/level_4_progress_text_layout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:animateLayoutChanges="true"
+                            android:gravity="center"
+                            android:orientation="horizontal"
+                            app:layout_constraintBottom_toBottomOf="@id/level_4_progress_indicator"
+                            app:layout_constraintEnd_toEndOf="@id/level_4_progress_indicator"
+                            app:layout_constraintStart_toStartOf="@id/level_4_progress_indicator"
+                            app:layout_constraintTop_toTopOf="@id/level_4_progress_indicator"
+                            tools:ignore="UseCompoundDrawables">
+
+                            <TextView
+                                android:id="@+id/level_4_progress_tv"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:ellipsize="end"
+                                android:maxLines="1"
+                                android:textAlignment="center"
+                                android:textColor="@color/black_text_color"
+                                android:textSize="@dimen/level_progress_label_text_size"
+                                tools:text="@string/open_for_n_coins" />
+
+                            <ImageView
+                                android:id="@+id/level_4_progress_coins_icon"
+                                android:layout_width="@dimen/level_price_icon_coins_size"
+                                android:layout_height="@dimen/level_price_icon_coins_size"
+                                android:contentDescription="@string/icon_coins_content_description"
+                                android:src="@drawable/icon_coins"
+                                android:layout_marginStart="@dimen/icon_coins_margin_start"
+                                android:visibility="gone" />
+
+                        </LinearLayout>
+
+                        <com.airbnb.lottie.LottieAnimationView
+                            android:id="@+id/level_4_confetti_animation"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:scaleType="fitXY"
+                            android:visibility="gone"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:lottie_loop="true"
+                            app:lottie_rawRes="@raw/confetti_level_unlocked_animation"
+                            app:lottie_repeatCount="2"
+                            app:lottie_speed="0.45" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/level_5_card"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/level_card_margin_between"
+                    android:backgroundTint="@color/btn_background"
+                    android:clickable="true"
+                    android:focusable="true"
+                    app:cardCornerRadius="@dimen/button_corner_radius"
+                    app:cardElevation="@dimen/button_elevation"
+                    app:rippleColor="@color/ripple_color"
+                    app:strokeColor="@color/btn_stroke_color"
+                    app:strokeWidth="@dimen/button_stroke_width">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:id="@+id/level_5_name_layout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="@dimen/level_card_inner_margin"
+                            android:layout_marginTop="@dimen/level_card_inner_margin"
+                            android:animateLayoutChanges="true"
+                            android:gravity="center"
+                            android:orientation="horizontal"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:ignore="UseCompoundDrawables">
+
+                            <ImageView
+                                android:id="@+id/level_5_icon_lock"
+                                android:layout_width="@dimen/level_icon_lock_size"
+                                android:layout_height="@dimen/level_icon_lock_size"
+                                android:layout_marginEnd="@dimen/level_icon_lock_margin_end"
+                                android:contentDescription="@string/locked_level_icon_content_description"
+                                android:src="@drawable/icon_lock"
+                                android:visibility="gone" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/level_5_name"
+                                android:textAlignment="center"
+                                android:textColor="@color/gray_text_color"
+                                android:textSize="@dimen/level_name_text_size" />
+
+                        </LinearLayout>
+
+                        <com.google.android.material.progressindicator.LinearProgressIndicator
+                            android:id="@+id/level_5_progress_indicator"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="@dimen/level_card_inner_margin"
+                            android:layout_marginTop="@dimen/level_progress_margin_top"
+                            android:layout_marginBottom="@dimen/level_card_inner_margin"
+                            android:indeterminate="false"
+                            app:indicatorColor="@color/progress_indicator_color"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/level_5_name_layout"
+                            app:trackColor="@color/progress_track_color"
+                            app:trackCornerRadius="@dimen/level_progress_track_corner_radius"
+                            app:trackThickness="@dimen/level_progress_track_thickness" />
+
+                        <LinearLayout
+                            android:id="@+id/level_5_progress_text_layout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:animateLayoutChanges="true"
+                            android:gravity="center"
+                            android:orientation="horizontal"
+                            app:layout_constraintBottom_toBottomOf="@id/level_5_progress_indicator"
+                            app:layout_constraintEnd_toEndOf="@id/level_5_progress_indicator"
+                            app:layout_constraintStart_toStartOf="@id/level_5_progress_indicator"
+                            app:layout_constraintTop_toTopOf="@id/level_5_progress_indicator"
+                            tools:ignore="UseCompoundDrawables">
+
+                            <TextView
+                                android:id="@+id/level_5_progress_tv"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:ellipsize="end"
+                                android:maxLines="1"
+                                android:textAlignment="center"
+                                android:textColor="@color/black_text_color"
+                                android:textSize="@dimen/level_progress_label_text_size"
+                                tools:text="@string/open_for_n_coins" />
+
+                            <ImageView
+                                android:id="@+id/level_5_progress_coins_icon"
+                                android:layout_width="@dimen/level_price_icon_coins_size"
+                                android:layout_height="@dimen/level_price_icon_coins_size"
+                                android:contentDescription="@string/icon_coins_content_description"
+                                android:src="@drawable/icon_coins"
+                                android:layout_marginStart="@dimen/icon_coins_margin_start"
+                                android:visibility="gone" />
+
+                        </LinearLayout>
+
+                        <com.airbnb.lottie.LottieAnimationView
+                            android:id="@+id/level_5_confetti_animation"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:scaleType="fitXY"
+                            android:visibility="gone"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:lottie_loop="true"
+                            app:lottie_rawRes="@raw/confetti_level_unlocked_animation"
+                            app:lottie_repeatCount="2"
+                            app:lottie_speed="0.45" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/level_6_card"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/level_card_margin_between"
+                    android:backgroundTint="@color/btn_background"
+                    android:clickable="true"
+                    android:focusable="true"
+                    app:cardCornerRadius="@dimen/button_corner_radius"
+                    app:cardElevation="@dimen/button_elevation"
+                    app:rippleColor="@color/ripple_color"
+                    app:strokeColor="@color/btn_stroke_color"
+                    app:strokeWidth="@dimen/button_stroke_width">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:id="@+id/level_6_name_layout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="@dimen/level_card_inner_margin"
+                            android:layout_marginTop="@dimen/level_card_inner_margin"
+                            android:animateLayoutChanges="true"
+                            android:gravity="center"
+                            android:orientation="horizontal"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:ignore="UseCompoundDrawables">
+
+                            <ImageView
+                                android:id="@+id/level_6_icon_lock"
+                                android:layout_width="@dimen/level_icon_lock_size"
+                                android:layout_height="@dimen/level_icon_lock_size"
+                                android:layout_marginEnd="@dimen/level_icon_lock_margin_end"
+                                android:contentDescription="@string/locked_level_icon_content_description"
+                                android:src="@drawable/icon_lock"
+                                android:visibility="gone" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/level_6_name"
+                                android:textAlignment="center"
+                                android:textColor="@color/gray_text_color"
+                                android:textSize="@dimen/level_name_text_size" />
+
+                        </LinearLayout>
+
+                        <com.google.android.material.progressindicator.LinearProgressIndicator
+                            android:id="@+id/level_6_progress_indicator"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="@dimen/level_card_inner_margin"
+                            android:layout_marginTop="@dimen/level_progress_margin_top"
+                            android:layout_marginBottom="@dimen/level_card_inner_margin"
+                            android:indeterminate="false"
+                            app:indicatorColor="@color/progress_indicator_color"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/level_6_name_layout"
+                            app:trackColor="@color/progress_track_color"
+                            app:trackCornerRadius="@dimen/level_progress_track_corner_radius"
+                            app:trackThickness="@dimen/level_progress_track_thickness" />
+
+                        <LinearLayout
+                            android:id="@+id/level_6_progress_text_layout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:animateLayoutChanges="true"
+                            android:gravity="center"
+                            android:orientation="horizontal"
+                            app:layout_constraintBottom_toBottomOf="@id/level_6_progress_indicator"
+                            app:layout_constraintEnd_toEndOf="@id/level_6_progress_indicator"
+                            app:layout_constraintStart_toStartOf="@id/level_6_progress_indicator"
+                            app:layout_constraintTop_toTopOf="@id/level_6_progress_indicator"
+                            tools:ignore="UseCompoundDrawables">
+
+                            <TextView
+                                android:id="@+id/level_6_progress_tv"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:ellipsize="end"
+                                android:maxLines="1"
+                                android:textAlignment="center"
+                                android:textColor="@color/black_text_color"
+                                android:textSize="@dimen/level_progress_label_text_size"
+                                tools:text="@string/open_for_n_coins" />
+
+                            <ImageView
+                                android:id="@+id/level_6_progress_coins_icon"
+                                android:layout_width="@dimen/level_price_icon_coins_size"
+                                android:layout_height="@dimen/level_price_icon_coins_size"
+                                android:contentDescription="@string/icon_coins_content_description"
+                                android:src="@drawable/icon_coins"
+                                android:layout_marginStart="@dimen/icon_coins_margin_start"
+                                android:visibility="gone" />
+
+                        </LinearLayout>
+
+                        <com.airbnb.lottie.LottieAnimationView
+                            android:id="@+id/level_6_confetti_animation"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:scaleType="fitXY"
+                            android:visibility="gone"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:lottie_loop="true"
+                            app:lottie_rawRes="@raw/confetti_level_unlocked_animation"
+                            app:lottie_repeatCount="2"
+                            app:lottie_speed="0.45" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/level_7_card"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/btn_background"
+                    android:clickable="true"
+                    android:focusable="true"
+                    app:cardCornerRadius="@dimen/button_corner_radius"
+                    app:cardElevation="@dimen/button_elevation"
+                    app:rippleColor="@color/ripple_color"
+                    app:strokeColor="@color/btn_stroke_color"
+                    app:strokeWidth="@dimen/button_stroke_width">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:id="@+id/level_7_name_layout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="@dimen/level_card_inner_margin"
+                            android:layout_marginTop="@dimen/level_card_inner_margin"
+                            android:animateLayoutChanges="true"
+                            android:gravity="center"
+                            android:orientation="horizontal"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:ignore="UseCompoundDrawables">
+
+                            <ImageView
+                                android:id="@+id/level_7_icon_lock"
+                                android:layout_width="@dimen/level_icon_lock_size"
+                                android:layout_height="@dimen/level_icon_lock_size"
+                                android:layout_marginEnd="@dimen/level_icon_lock_margin_end"
+                                android:contentDescription="@string/locked_level_icon_content_description"
+                                android:src="@drawable/icon_lock"
+                                android:visibility="gone" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/level_7_name"
+                                android:textAlignment="center"
+                                android:textColor="@color/gray_text_color"
+                                android:textSize="@dimen/level_name_text_size" />
+
+                        </LinearLayout>
+
+                        <com.google.android.material.progressindicator.LinearProgressIndicator
+                            android:id="@+id/level_7_progress_indicator"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="@dimen/level_card_inner_margin"
+                            android:layout_marginTop="@dimen/level_progress_margin_top"
+                            android:layout_marginBottom="@dimen/level_card_inner_margin"
+                            android:indeterminate="false"
+                            app:indicatorColor="@color/progress_indicator_color"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/level_7_name_layout"
+                            app:trackColor="@color/progress_track_color"
+                            app:trackCornerRadius="@dimen/level_progress_track_corner_radius"
+                            app:trackThickness="@dimen/level_progress_track_thickness" />
+
+                        <LinearLayout
+                            android:id="@+id/level_7_progress_text_layout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:animateLayoutChanges="true"
+                            android:gravity="center"
+                            android:orientation="horizontal"
+                            app:layout_constraintBottom_toBottomOf="@id/level_7_progress_indicator"
+                            app:layout_constraintEnd_toEndOf="@id/level_7_progress_indicator"
+                            app:layout_constraintStart_toStartOf="@id/level_7_progress_indicator"
+                            app:layout_constraintTop_toTopOf="@id/level_7_progress_indicator"
+                            tools:ignore="UseCompoundDrawables">
+
+                            <TextView
+                                android:id="@+id/level_7_progress_tv"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:ellipsize="end"
+                                android:maxLines="1"
+                                android:textAlignment="center"
+                                android:textColor="@color/black_text_color"
+                                android:textSize="@dimen/level_progress_label_text_size"
+                                tools:text="@string/open_for_n_coins" />
+
+                            <ImageView
+                                android:id="@+id/level_7_progress_coins_icon"
+                                android:layout_width="@dimen/level_price_icon_coins_size"
+                                android:layout_height="@dimen/level_price_icon_coins_size"
+                                android:contentDescription="@string/icon_coins_content_description"
+                                android:src="@drawable/icon_coins"
+                                android:layout_marginStart="@dimen/icon_coins_margin_start"
+                                android:visibility="gone" />
+
+                        </LinearLayout>
+
+                        <com.airbnb.lottie.LottieAnimationView
+                            android:id="@+id/level_7_confetti_animation"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:scaleType="fitXY"
+                            android:visibility="gone"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:lottie_loop="true"
+                            app:lottie_rawRes="@raw/confetti_level_unlocked_animation"
+                            app:lottie_repeatCount="2"
+                            app:lottie_speed="0.45" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>

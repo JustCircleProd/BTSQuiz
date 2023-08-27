@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="inner_layout_margin">18dp</dimen>
-
     <dimen name="brand_margin_bottom">12dp</dimen>
-
-    <dimen name="button_pudding">10dp</dimen>
 
     <dimen name="developers_licenses_content_height">450dp</dimen>
 
@@ -26,6 +22,4 @@
     <dimen name="audio_question_size">100dp</dimen>
     <dimen name="audio_question_margin_top">69dp</dimen>
     <dimen name="audio_question_margin_bottom">87dp</dimen>
-
-    <dimen name="ad_margin_top">12dp</dimen>
 </resources>

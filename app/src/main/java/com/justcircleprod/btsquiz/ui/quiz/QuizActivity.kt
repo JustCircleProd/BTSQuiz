@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.os.CountDownTimer
 import android.util.Base64
 import android.view.View
+import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -16,12 +17,18 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.android.material.button.MaterialButton
 import com.justcircleprod.btsquiz.R
-import com.justcircleprod.btsquiz.data.models.AudioQuestion
-import com.justcircleprod.btsquiz.data.models.ImageQuestion
-import com.justcircleprod.btsquiz.data.models.TextQuestion
-import com.justcircleprod.btsquiz.data.models.VideoQuestion
+import com.justcircleprod.btsquiz.common.CoinConstants
+import com.justcircleprod.btsquiz.data.dataStore.DataStoreConstants
+import com.justcircleprod.btsquiz.data.models.questions.AudioQuestion
+import com.justcircleprod.btsquiz.data.models.questions.ImageQuestion
+import com.justcircleprod.btsquiz.data.models.questions.TextQuestion
+import com.justcircleprod.btsquiz.data.models.questions.VideoQuestion
 import com.justcircleprod.btsquiz.databinding.ActivityQuizBinding
+import com.justcircleprod.btsquiz.ui.common.disableWithTransparency
+import com.justcircleprod.btsquiz.ui.common.enable
+import com.justcircleprod.btsquiz.ui.levels.LevelsActivity
 import com.justcircleprod.btsquiz.ui.quizResult.QuizResultActivity
+import com.justcircleprod.btsquiz.ui.watchRewardedAdConfirmationDialog.WatchRewardedAdConfirmationDialog
 import com.yandex.mobile.ads.banner.AdSize
 import com.yandex.mobile.ads.banner.BannerAdEventListener
 import com.yandex.mobile.ads.common.AdRequest
@@ -29,11 +36,12 @@ import com.yandex.mobile.ads.common.AdRequestError
 import com.yandex.mobile.ads.common.ImpressionData
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 
 @AndroidEntryPoint
-class QuizActivity : AppCompatActivity(), View.OnClickListener {
+class QuizActivity : AppCompatActivity() {
     private lateinit var binding: ActivityQuizBinding
     private val viewModel: QuizViewModel by viewModels()
 
@@ -45,21 +53,28 @@ class QuizActivity : AppCompatActivity(), View.OnClickListener {
 
     private var musicPlayer: MediaPlayer? = null
 
+    private lateinit var hint5050Player: MediaPlayer
+    private var hint5050PlayerPrepared = false
+
     private var positionOfVideoPlayer = 0
 
     companion object {
-        const val CATEGORY_ID_ARGUMENT_NAME = "categoryId"
+        const val LEVEL_ARGUMENT_NAME = "LEVEL"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityQuizBinding.inflate(layoutInflater)
 
+        onBackPressedDispatcher.addCallback { startLevelsActivity() }
+
         enableAnimation()
         initAd()
         initAnswerPlayers()
-        setOnOptionsClickListeners()
+
         setLoadingObserver()
+
+        setOnOptionsClickListeners()
 
         setContentView(binding.root)
     }
@@ -85,6 +100,7 @@ class QuizActivity : AppCompatActivity(), View.OnClickListener {
                     binding.videoQuestionLayout.visibility == View.INVISIBLE -> {
                 setVideoQuestionData(viewModel.question.value!! as VideoQuestion)
             }
+
             musicPlayer != null && binding.audioQuestion.visibility == View.VISIBLE -> {
                 musicPlayer?.start()
             }
@@ -107,20 +123,9 @@ class QuizActivity : AppCompatActivity(), View.OnClickListener {
                     binding.audioQuestion.visibility == View.INVISIBLE -> {
                 musicPlayer = null
             }
+
             musicPlayer != null && binding.audioQuestion.visibility == View.VISIBLE -> {
                 musicPlayer?.pause()
-            }
-        }
-    }
-
-    override fun onClick(view: View?) {
-        if (view is MaterialButton) {
-            disableButtons()
-            stopAndResetPlayers()
-            if (viewModel.checkAnswer(view.text.toString())) {
-                onRightAnswer(view)
-            } else {
-                onWrongAnswer(view)
             }
         }
     }
@@ -134,12 +139,25 @@ class QuizActivity : AppCompatActivity(), View.OnClickListener {
             String(Base64.decode("Ui1NLTI0NjM5MTktMQ==", Base64.DEFAULT), Charsets.UTF_8)
 
         binding.bannerAdView.setAdUnitId(adUnitId)
-        binding.bannerAdView.setAdSize(AdSize.stickySize(this@QuizActivity, 320))
+        binding.bannerAdView.setAdSize(AdSize.stickySize(this@QuizActivity, 300))
 
+        loadAd()
+    }
+
+    private fun loadAd() {
         val adRequest = AdRequest.Builder().build()
         binding.bannerAdView.setBannerAdEventListener(object : BannerAdEventListener {
             override fun onAdLoaded() {
                 binding.bannerAdView.visibility = View.VISIBLE
+
+                // to update ad every n seconds
+                object : CountDownTimer(36000, 36000) {
+                    override fun onTick(mills: Long) {}
+
+                    override fun onFinish() {
+                        loadAd()
+                    }
+                }.start()
             }
 
             override fun onAdFailedToLoad(p0: AdRequestError) {}
@@ -186,13 +204,6 @@ class QuizActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    private fun setOnOptionsClickListeners() {
-        binding.firstOption.setOnClickListener(this)
-        binding.secondOption.setOnClickListener(this)
-        binding.thirdOption.setOnClickListener(this)
-        binding.fourthOption.setOnClickListener(this)
-    }
-
     private fun setLoadingObserver() {
         viewModel.isLoading.observe(this) { isLoading ->
             if (viewModel.isFirstStart) {
@@ -201,37 +212,97 @@ class QuizActivity : AppCompatActivity(), View.OnClickListener {
             }
 
             if (!isLoading) {
-                if (viewModel.questions.size == viewModel.countOfQuestions) {
+                if (viewModel.startQuestionsCount != 0) {
                     viewModel.setQuestionOnCurrentPosition()
 
-                    setScoreObserver()
+                    setCoinsObservers()
+                    setWithoutQuizHintsCollector()
                     setQuestionsObserver()
+
+                    binding.progress.max = viewModel.startQuestionsCount
 
                     binding.loadLayout.visibility = View.GONE
                     binding.contentLayout.visibility = View.VISIBLE
                 } else {
-                    // if the download was successful, but because of the "no repeat" option,
-                    // there are no questions left for the user
-                    binding.loadLayout.visibility = View.GONE
+                    // if the download was successful, but there are no questions left for the user
                     setOutOfQuestionsLayout()
                 }
             }
-
         }
     }
 
     private fun setOutOfQuestionsLayout() {
-        binding.backBtn.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
+        binding.loadLayout.visibility = View.GONE
+
+        binding.toLevelsBtn.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
+
         binding.outOfQuestionsLayout.visibility = View.VISIBLE
     }
 
-    private fun setScoreObserver() {
-        viewModel.score.observe(this) {
-            binding.score.text = getString(R.string.tv_score_label, it)
+    private fun startLevelsActivity() {
+        val intent = Intent(this@QuizActivity, LevelsActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
+
+    private fun setOnOptionsClickListeners() {
+        binding.firstOption.setOnClickListener { onOptionClicked(it as MaterialButton) }
+        binding.secondOption.setOnClickListener { onOptionClicked(it as MaterialButton) }
+        binding.thirdOption.setOnClickListener { onOptionClicked(it as MaterialButton) }
+        binding.fourthOption.setOnClickListener { onOptionClicked(it as MaterialButton) }
+    }
+
+    private fun onOptionClicked(btn: MaterialButton) {
+        disableButtons()
+        stopAndResetPlayers()
+
+        if (viewModel.checkAnswer(btn.text.toString())) {
+            onRightAnswer(btn)
+        } else {
+            onWrongAnswer(btn)
+        }
+    }
+
+    private fun setCoinsObservers() {
+        viewModel.questionWorth.observe(this) {
+            binding.questionWorth.text = getString(R.string.quiz_question_worth_label, it)
+        }
+
+        lifecycleScope.launch {
+            viewModel.userCoinsQuantity.collect {
+                val userCoinsQuantity = it?.toInt() ?: 0
+
+                binding.userCoinsTv.text =
+                    getString(R.string.quiz_users_coins_quantity, userCoinsQuantity)
+            }
+        }
+    }
+
+    private fun setWithoutQuizHintsCollector() {
+        lifecycleScope.launch {
+            viewModel.withoutQuizHintsState.collect {
+                if (it == DataStoreConstants.WITHOUT_QUIZ_HINTS) {
+                    binding.hintDivider.visibility = View.GONE
+                    binding.hint5050.visibility = View.GONE
+                    binding.hintCorrectAnswer.visibility = View.GONE
+                } else {
+                    prepareHint5050Player()
+                    setHintPrices()
+                    setOnHintsClickListeners()
+                    setHint5050Observer()
+                    setHintCorrectAnswerObserver()
+
+                    binding.hintDivider.visibility = View.VISIBLE
+                    binding.hint5050.visibility = View.VISIBLE
+                    binding.hintCorrectAnswer.visibility = View.VISIBLE
+                }
+            }
         }
     }
 
     private fun setQuestionsObserver() {
+        if (viewModel.question.hasActiveObservers()) return
+
         viewModel.question.observe(this) { question ->
             if (question == null) {
                 startResultActivity()
@@ -240,8 +311,6 @@ class QuizActivity : AppCompatActivity(), View.OnClickListener {
 
             hidePreviousQuestion()
             updateViews()
-
-            binding.points.text = getString(R.string.tv_points_label, question.points)
 
             if (question is TextQuestion) {
                 setTextQuestionData(question)
@@ -253,9 +322,11 @@ class QuizActivity : AppCompatActivity(), View.OnClickListener {
                     is ImageQuestion -> {
                         setImageQuestionData(question)
                     }
+
                     is VideoQuestion -> {
                         setVideoQuestionData(question)
                     }
+
                     is AudioQuestion -> {
                         setAudioQuestionData(question)
                     }
@@ -269,6 +340,128 @@ class QuizActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
+    private fun prepareHint5050Player() {
+        if (hint5050PlayerPrepared) return
+
+        hint5050Player = MediaPlayer()
+
+        hint5050Player.setOnPreparedListener {
+            hint5050PlayerPrepared = true
+        }
+
+        lifecycleScope.launch(Dispatchers.IO) {
+            hint5050Player.setDataSource(
+                this@QuizActivity,
+                Uri.parse("android.resource://$packageName/raw/hint_50_50")
+            )
+            hint5050Player.prepareAsync()
+        }
+    }
+
+    private fun setHintPrices() {
+        binding.hint5050Price.text = CoinConstants.HINT_50_50_PRICE.toString()
+        binding.hintCorrectAnswerPrice.text = CoinConstants.HINT_CORRECT_ANSWER_PRICE.toString()
+    }
+
+    private fun setOnHintsClickListeners() {
+        binding.hint5050.setOnClickListener {
+            lifecycleScope.launch {
+                val userCoinsQuantity =
+                    viewModel.userCoinsQuantity.first()?.toInt() ?: return@launch
+
+                if (userCoinsQuantity >= CoinConstants.HINT_50_50_PRICE) {
+                    viewModel.useHint5050()
+                    if (hint5050PlayerPrepared) {
+                        hint5050Player.start()
+                    }
+                } else {
+                    WatchRewardedAdConfirmationDialog.newInstance(CoinConstants.HINT_50_50_PRICE - userCoinsQuantity)
+                        .show(supportFragmentManager, null)
+                }
+            }
+        }
+
+        binding.hintCorrectAnswer.setOnClickListener {
+            lifecycleScope.launch {
+                val userCoinsQuantity =
+                    viewModel.userCoinsQuantity.first()?.toInt() ?: return@launch
+
+                if (userCoinsQuantity >= CoinConstants.HINT_CORRECT_ANSWER_PRICE) {
+                    viewModel.useHintCorrectAnswer()
+                } else {
+                    WatchRewardedAdConfirmationDialog.newInstance(CoinConstants.HINT_CORRECT_ANSWER_PRICE - userCoinsQuantity)
+                        .show(supportFragmentManager, null)
+                }
+            }
+        }
+    }
+
+    private fun setHint5050Observer() {
+        if (viewModel.hint5050Used.hasActiveObservers()) return
+
+        viewModel.hint5050Used.observe(this) { hint5050Used ->
+            if (hint5050Used) {
+                binding.hint5050.disableWithTransparency()
+                binding.hintCorrectAnswer.disableWithTransparency()
+
+                var options = mutableListOf(
+                    binding.firstOption.text,
+                    binding.secondOption.text,
+                    binding.thirdOption.text,
+                    binding.fourthOption.text,
+                )
+                options.remove(viewModel.rightAnswer)
+                options = options.shuffled().toMutableList().take(2).toMutableList()
+
+                options.forEach { option ->
+                    when (option) {
+                        binding.firstOption.text -> {
+                            binding.firstOption.disableWithTransparency()
+                        }
+
+                        binding.secondOption.text -> {
+                            binding.secondOption.disableWithTransparency()
+                        }
+
+                        binding.thirdOption.text -> {
+                            binding.thirdOption.disableWithTransparency()
+                        }
+
+                        binding.fourthOption.text -> {
+                            binding.fourthOption.disableWithTransparency()
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun setHintCorrectAnswerObserver() {
+        if (viewModel.hintCorrectAnswerUsed.hasActiveObservers()) return
+
+        viewModel.hintCorrectAnswerUsed.observe(this) { hintCorrectAnswerUsed ->
+            if (hintCorrectAnswerUsed) {
+                viewModel.onRightAnswer()
+
+                binding.hint5050.disableWithTransparency()
+                binding.hintCorrectAnswer.disableWithTransparency()
+
+                disableButtons()
+                stopAndResetPlayers()
+
+                onRightAnswer(
+                    when (viewModel.rightAnswer) {
+                        binding.firstOption.text -> binding.firstOption
+                        binding.secondOption.text -> binding.secondOption
+                        binding.thirdOption.text -> binding.thirdOption
+                        binding.fourthOption.text -> binding.fourthOption
+                        else -> return@observe
+                    }
+                )
+            }
+        }
+    }
+
     private fun hidePreviousQuestion() {
         binding.textQuestion.visibility = View.INVISIBLE
         binding.imageQuestion.visibility = View.INVISIBLE
@@ -279,10 +472,20 @@ class QuizActivity : AppCompatActivity(), View.OnClickListener {
     private fun updateViews() {
         binding.progress.progress++
 
-        binding.firstOption.setBackgroundColor(ContextCompat.getColor(this, R.color.white))
-        binding.secondOption.setBackgroundColor(ContextCompat.getColor(this, R.color.white))
-        binding.thirdOption.setBackgroundColor(ContextCompat.getColor(this, R.color.white))
-        binding.fourthOption.setBackgroundColor(ContextCompat.getColor(this, R.color.white))
+        binding.firstOption.setBackgroundColor(ContextCompat.getColor(this, R.color.btn_background))
+        binding.secondOption.setBackgroundColor(
+            ContextCompat.getColor(
+                this,
+                R.color.btn_background
+            )
+        )
+        binding.thirdOption.setBackgroundColor(ContextCompat.getColor(this, R.color.btn_background))
+        binding.fourthOption.setBackgroundColor(
+            ContextCompat.getColor(
+                this,
+                R.color.btn_background
+            )
+        )
     }
 
     private fun setTextQuestionData(question: TextQuestion) {
@@ -351,10 +554,13 @@ class QuizActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun enableButtons() {
-        binding.firstOption.isEnabled = true
-        binding.secondOption.isEnabled = true
-        binding.thirdOption.isEnabled = true
-        binding.fourthOption.isEnabled = true
+        binding.firstOption.enable()
+        binding.secondOption.enable()
+        binding.thirdOption.enable()
+        binding.fourthOption.enable()
+
+        binding.hint5050.enable()
+        binding.hintCorrectAnswer.enable()
     }
 
     private fun disableButtons() {
@@ -362,6 +568,9 @@ class QuizActivity : AppCompatActivity(), View.OnClickListener {
         binding.secondOption.isEnabled = false
         binding.thirdOption.isEnabled = false
         binding.fourthOption.isEnabled = false
+
+        binding.hint5050.disableWithTransparency()
+        binding.hintCorrectAnswer.disableWithTransparency()
     }
 
     private fun stopAndResetPlayers() {
@@ -371,6 +580,7 @@ class QuizActivity : AppCompatActivity(), View.OnClickListener {
                 positionOfVideoPlayer = 0
                 binding.videoQuestion.setOnPreparedListener(null)
             }
+
             binding.audioQuestion.visibility == View.VISIBLE -> {
                 musicPlayer?.stop()
                 musicPlayer?.release()
@@ -403,10 +613,13 @@ class QuizActivity : AppCompatActivity(), View.OnClickListener {
 
         btn.setBackgroundColor(ContextCompat.getColor(this, R.color.incorrect_answer_color))
 
+        var isRightAnswerShown = false
+
         val timer = object : CountDownTimer(2000, 250) {
             override fun onTick(millisUntilFinished: Long) {
-                if (millisUntilFinished <= 1750) {
-                    showRightAnswer(viewModel.question.value!!.answerNum)
+                if (!isRightAnswerShown && millisUntilFinished <= 1750) {
+                    showRightAnswer(viewModel.rightAnswer)
+                    isRightAnswerShown = true
                 }
             }
 
@@ -417,30 +630,33 @@ class QuizActivity : AppCompatActivity(), View.OnClickListener {
         timer.start()
     }
 
-    private fun showRightAnswer(answerNum: Int) {
-        when (answerNum) {
-            1 ->
+    private fun showRightAnswer(rightAnswer: String) {
+        when (rightAnswer) {
+            binding.firstOption.text ->
                 binding.firstOption.setBackgroundColor(
                     ContextCompat.getColor(
                         this,
                         R.color.correct_answer_color
                     )
                 )
-            2 ->
+
+            binding.secondOption.text ->
                 binding.secondOption.setBackgroundColor(
                     ContextCompat.getColor(
                         this,
                         R.color.correct_answer_color
                     )
                 )
-            3 ->
+
+            binding.thirdOption.text ->
                 binding.thirdOption.setBackgroundColor(
                     ContextCompat.getColor(
                         this,
                         R.color.correct_answer_color
                     )
                 )
-            4 ->
+
+            binding.fourthOption.text ->
                 binding.fourthOption.setBackgroundColor(
                     ContextCompat.getColor(
                         this,
@@ -452,14 +668,31 @@ class QuizActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun startResultActivity() {
         val intent = Intent(this, QuizResultActivity::class.java)
-        intent.putExtra(QuizResultActivity.CATEGORY_ID_ARGUMENT_NAME, viewModel.categoryId)
-        intent.putExtra(QuizResultActivity.SCORE_ARGUMENT_NAME, viewModel.score.value)
+        intent.putExtra(QuizResultActivity.LEVEL_ARGUMENT_NAME, viewModel.levelId)
+        intent.putExtra(QuizResultActivity.EARNED_COINS_ARGUMENT_NAME, viewModel.earnedCoins)
+        intent.putExtra(
+            QuizResultActivity.CORRECTLY_ANSWERED_QUESTIONS_COUNT_ARGUMENT_NAME,
+            viewModel.correctlyAnsweredQuestionsCount
+        )
+        intent.putExtra(
+            QuizResultActivity.QUESTIONS_COUNT_ARGUMENT_NAME,
+            viewModel.startQuestionsCount
+        )
         startActivity(intent)
         finish()
     }
 
-    /*override fun onDestroy() {
+    override fun onDestroy() {
         super.onDestroy()
         binding.bannerAdView.destroy()
-    }*/
+
+        rightAnswerPlayer.release()
+        wrongAnswerPlayer.release()
+
+        musicPlayer?.release()
+
+        if (hint5050PlayerPrepared) {
+            hint5050Player.release()
+        }
+    }
 }

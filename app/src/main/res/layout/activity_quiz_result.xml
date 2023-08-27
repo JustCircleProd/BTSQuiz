@@ -4,14 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/main_background"
     android:fillViewport="true"
     tools:context=".ui.quizResult.QuizResultActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:animateLayoutChanges="true">
+        android:animateLayoutChanges="true"
+        android:clipToPadding="false">
 
         <TextView
             android:id="@+id/brand_label"
@@ -19,232 +19,192 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/brand_margin_bottom"
             android:gravity="center"
+            android:layout_marginHorizontal="@dimen/screen_content_space_size"
+            android:layout_marginTop="@dimen/screen_content_space_size"
             android:text="@string/app_name"
             android:textColor="@color/brand_color"
             android:textSize="@dimen/brand_text_size"
             android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@id/root_cardview"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed" />
 
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/root_cardview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/main_margin"
             android:animateLayoutChanges="true"
-            android:backgroundTint="@color/white"
-            android:elevation="@dimen/card_elevation"
+            android:layout_marginHorizontal="@dimen/screen_content_space_size"
+            android:layout_marginBottom="@dimen/screen_content_space_size"
+            app:cardBackgroundColor="@color/card_background"
+            app:cardElevation="@dimen/card_elevation"
             app:cardCornerRadius="@dimen/card_corner_radius"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.55">
+            app:layout_constraintTop_toBottomOf="@id/brand_label">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <LinearLayout
                 android:id="@+id/load_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/inner_layout_margin">
+                android:orientation="vertical"
+                android:layout_margin="@dimen/inner_padding">
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/tv_question_margin_bottom"
                     android:gravity="center"
                     android:paddingHorizontal="@dimen/load_text_pudding"
                     android:text="@string/tv_loading_result_text"
-                    android:textColor="@color/text_color"
-                    android:textSize="@dimen/hint_text_size"
-                    app:layout_constraintBottom_toTopOf="@id/load_progress"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    android:textColor="@color/gray_text_color"
+                    android:textSize="@dimen/hint_text_size" />
 
                 <com.google.android.material.progressindicator.LinearProgressIndicator
                     android:id="@+id/load_progress"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:indeterminate="true"
-                    android:progressTint="@color/progress_color"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent" />
+                    android:layout_marginTop="@dimen/load_layout_progress_margin_top"
+                    app:trackColor="@color/progress_track_color"
+                    app:indicatorColor="@color/progress_indicator_color" />
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <LinearLayout
                 android:id="@+id/content_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/inner_layout_margin"
+                android:layout_margin="@dimen/inner_padding"
                 android:animateLayoutChanges="true"
+                android:gravity="center"
+                android:clipToPadding="false"
+                android:orientation="vertical"
                 android:visibility="gone">
 
                 <TextView
-                    android:id="@+id/score_label"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
-                    android:text="@string/tv_text_your_result"
-                    android:textColor="@color/text_color"
-                    android:textSize="@dimen/score_label_text_size"
-                    app:layout_constraintBottom_toTopOf="@id/score"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent" />
+                    android:text="@string/you_get"
+                    android:textColor="@color/gray_text_color"
+                    android:textSize="@dimen/quiz_result_earned_coins_label_text_size" />
 
-                <TextView
-                    android:id="@+id/score"
-                    android:layout_width="match_parent"
+                <LinearLayout
+                    android:id="@+id/earned_coins_layout"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/result_bottom_margin"
-                    android:gravity="center_horizontal"
-                    android:textColor="@color/result_color"
-                    android:textSize="@dimen/score_text_size"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toTopOf="@id/best_score_label"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent" />
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    tools:ignore="UseCompoundDrawables">
 
-                <TextView
-                    android:id="@+id/best_score_label"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_horizontal"
-                    android:text="@string/tv_text_best_result"
-                    android:textColor="@color/text_color"
-                    android:textSize="@dimen/best_score_label_size"
-                    app:layout_constraintBottom_toTopOf="@id/best_score"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent" />
+                    <TextView
+                        android:id="@+id/earned_coins"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:textColor="@color/result_color"
+                        android:textSize="@dimen/quiz_result_earned_coins_text_size"
+                        android:textStyle="bold"
+                        tools:text="1000" />
 
-                <TextView
-                    android:id="@+id/best_score"
+                    <ImageView
+                        android:layout_width="@dimen/quiz_result_coins_icon_size"
+                        android:layout_height="@dimen/quiz_result_coins_icon_size"
+                        android:layout_marginStart="@dimen/icon_coins_margin_start"
+                        android:contentDescription="@string/icon_coins_content_description"
+                        android:src="@drawable/icon_coins" />
+
+                </LinearLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/double_coins_btn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_horizontal"
-                    android:textColor="@color/result_color"
-                    android:textSize="@dimen/best_score_size"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toTopOf="@id/line"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent" />
+                    android:backgroundTint="@color/second_btn_color"
+                    android:elevation="@dimen/button_elevation"
+                    android:padding="@dimen/button_padding"
+                    android:stateListAnimator="@null"
+                    android:text="@string/double_coins"
+                    android:textAlignment="center"
+                    android:visibility="gone"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    android:textColor="@color/white_text_color"
+                    android:textSize="@dimen/button_text_size"
+                    app:cornerRadius="@dimen/button_corner_radius"
+                    app:rippleColor="@color/ripple_color" />
 
                 <View
                     android:id="@+id/line"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/line_height"
-                    android:layout_marginBottom="@dimen/best_score_margin_bottom"
+                    android:layout_marginBottom="@dimen/line_bottom_margin"
                     android:background="@color/line_color"
-                    app:layout_constraintBottom_toTopOf="@id/result_text"
+                    app:layout_constraintBottom_toTopOf="@id/congratulation_text"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
 
                 <TextView
-                    android:id="@+id/result_text"
+                    android:id="@+id/congratulation_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/result_bottom_margin"
+                    android:layout_marginBottom="@dimen/congratulation_tv_bottom_margin"
                     android:gravity="center"
                     android:textColor="@color/btn_stroke_color"
                     android:textSize="@dimen/congratulation_text_size"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toTopOf="@id/result_image"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent" />
+                    android:textStyle="bold" />
 
                 <ImageView
-                    android:id="@+id/result_image"
+                    android:id="@+id/congratulation_image"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/result_image_content_description"
                     android:paddingHorizontal="@dimen/congratulation_image_padding_horizontal"
-                    android:scaleType="fitXY"
-                    app:layout_constraintBottom_toTopOf="@id/share_result_btn"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent" />
+                    android:scaleType="fitXY" />
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/share_result_btn"
+                    android:id="@+id/continue_quiz_btn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:backgroundTint="@color/white"
+                    android:backgroundTint="@color/btn_background"
                     android:elevation="@dimen/button_elevation"
+                    android:padding="@dimen/button_padding"
                     android:insetTop="0dp"
-                    android:padding="@dimen/button_pudding"
                     android:stateListAnimator="@null"
-                    android:text="@string/share_result"
+                    android:text="@string/continue_quiz"
                     android:textAlignment="center"
                     android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                    android:textColor="@color/black"
+                    android:textColor="@color/black_text_color"
                     android:textSize="@dimen/button_text_size"
                     app:cornerRadius="@dimen/button_corner_radius"
-                    app:layout_constraintBottom_toTopOf="@id/line2"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:rippleColor="@color/ripple_color"
-                    app:strokeColor="@color/btn_stroke_color"
-                    app:strokeWidth="@dimen/button_stroke_width" />
-
-                <View
-                    android:id="@+id/line2"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/line_height"
-                    android:background="@color/line_color"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/share_result_btn"/>
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/repeat_quiz_btn"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="@color/white"
-                    android:elevation="@dimen/button_elevation"
-                    android:padding="@dimen/button_pudding"
-                    android:layout_marginTop="@dimen/line_bottom_margin"
-                    android:stateListAnimator="@null"
-                    android:text="@string/repeat_quiz"
-                    android:textAlignment="center"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/button_text_size"
-                    app:cornerRadius="@dimen/button_corner_radius"
-                    app:layout_constraintTop_toBottomOf="@id/line2"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintBottom_toTopOf="@id/to_categories_btn"
                     app:rippleColor="@color/ripple_color"
                     app:strokeColor="@color/btn_stroke_color"
                     app:strokeWidth="@dimen/button_stroke_width" />
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/to_categories_btn"
+                    android:id="@+id/to_levels_btn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:backgroundTint="@color/white"
+                    android:backgroundTint="@color/btn_background"
                     android:elevation="@dimen/button_elevation"
-                    android:padding="@dimen/button_pudding"
+                    android:padding="@dimen/button_padding"
                     android:stateListAnimator="@null"
-                    android:text="@string/to_categories_text"
+                    android:text="@string/to_levels"
                     android:textAlignment="center"
                     android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                    android:textColor="@color/black"
+                    android:textColor="@color/black_text_color"
                     android:textSize="@dimen/button_text_size"
                     app:cornerRadius="@dimen/button_corner_radius"
-                    app:layout_constraintTop_toBottomOf="@id/repeat_quiz_btn"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
                     app:rippleColor="@color/ripple_color"
                     app:strokeColor="@color/btn_stroke_color"
                     app:strokeWidth="@dimen/button_stroke_width" />
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
 
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

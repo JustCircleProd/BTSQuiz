@@ -1,19 +1,49 @@
 <resources>
+    <!-- Common -->
+
     <string name="app_name">BTS Тест</string>
 
-    <string name="start_quiz">Начать тест</string>
-    <string name="settings">Настройки</string>
-    <string name="button_text_results">Результаты</string>
+    <string name="cancel">Отмена</string>
 
-    <string name="difficulty">Сложность вопросов</string>
-    <string name="random_difficulty">Случайная</string>
-    <string name="usual_difficulty">Обычная</string>
-    <string name="difficult_difficulty">Повышенная</string>
-    <string name="set_difficulty">Сложность установлена</string>
-    <string name="no_questions_repetition">Без повторения</string>
-    <string name="set_no_questions_repetition">Опция \"Без повторения вопросов\" включена</string>
-    <string name="unset_no_questions_repetition">Опция \"Без повторения вопросов\" выключена</string>
-    <string name="reset_passed_question">Сбросить пройденные вопросы?</string>
+    <string name="confirm">Подтвердить</string>
+
+    <string name="back">Назад</string>
+
+    <string name="icon_coins_content_description">Иконка монет</string>
+
+    <string name="close_dialog_content_description">Закрытие диалога</string>
+
+    <string name="play">Играть</string>
+
+    <string name="to_levels">К выбору уровня</string>
+
+    <!-- MainActivity -->
+
+    <string name="brand_image_content_description">Изображение участников</string>
+
+    <string name="settings">Настройки</string>
+
+    <!-- Introduction -->
+
+    <string name="introduction_card_1_title">Уровни сложности</string>
+    <string name="introduction_card_1_text">Теперь вопросы разделены на 7 уровней сложности.\nПройденные вопросы будут сохранятся в отдельном уровне.</string>
+
+    <string name="introduction_card_2_title">Монеты</string>
+    <string name="introduction_card_2_text">За правильные ответы вы будете получать монеты, которые начисляются после окончания теста.\nС их помощью можно открывать уровни и использовать подсказки.</string>
+
+    <string name="introduction_card_3_title">Удобный формат</string>
+    <string name="introduction_card_3_text">Обычно тест состоит из 6 вопросов выбранного уровня сложности.\nИ не переживайте, если вы неправильно ответите на вопрос, то вы его обязательно встретите снова!</string>
+    <string name="introduction_gif_content_description">Gif с BT21</string>
+    <string name="next">Далее</string>
+
+    <!-- Settings -->
+
+    <string name="without_quiz_hints">Без подсказок</string>
+    <string name="reset_progress">Сбросить прогресс</string>
+
+    <string name="share_app">Поделиться приложением</string>
+    <string name="for_sharing_result">Смотри! Мной было пройдено %1$d вопросов! А сколько сможешь ты?</string>
+    <string name="play_store_link">https://play.google.com/store/apps/details?id=com.justcircleprod.btsquiz</string>
 
     <string name="developers_and_licenses">Разработчики и лицензии</string>
     <string name="copyright_disclaimer">Copyright Disclaimer</string>
@@ -24,36 +54,96 @@
         All trademarks, public domain images in this app are the property of their respective owners.\n
         Any infringement is unintended and you may notify me if ever you find one.
     </string>
+    <string name="rate_app">Оценить приложение</string>
+
     <string name="developers">Разработчики</string>
     <string name="developers_content_description">JustCircle Prod.</string>
     <string name="licenses">Лицензии</string>
 
-    <string name="confirmation">Подтверждение</string>
-    <string name="close_dialog_content_description">Закрытие диалога</string>
-    <string name="reset_confirmation_question">Вы действительно хотите сбросить пройденные вопросы?</string>
-    <string name="confirm">Подтвердить</string>
-    <string name="reset_n_passed_question">Сброшено пройденных вопросов: %1$d</string>
+    <!-- ResetProgressDialog -->
 
-    <string name="tv_choose_category">Выберите категорию</string>
-    <string name="random_questions">Случайные вопросы</string>
-    <string name="text_questions">Текстовые вопросы</string>
-    <string name="video_questions">Угадай клип</string>
-    <string name="image_questions">Угадай по фото</string>
-    <string name="audio_questions">Угадай песню</string>
+    <string name="reset_progress_dialog_title">Сброс прогресса</string>
+    <string name="reset_confirmation_question">Вы действительно хотите сбросить ваш прогресс?</string>
 
-    <string name="difficulty_warning">Необходимо переключить сложность на \"Случайную\" или \"Повышенную\"</string>
+    <string name="progress_was_reset_dialog_title">Прогресс сброшен</string>
+    <string name="progress_was_reset">Прогресс успешно сброшен</string>
+
+    <!-- Levels -->
+
+    <string name="levels_users_coins_quantity">У вас %1$d</string>
+
+    <string name="passed_questions_level_name">Пройденные вопросы</string>
+    <string name="level_1_name">Уровень 1</string>
+    <string name="level_2_name">Уровень 2</string>
+    <string name="level_3_name">Уровень 3</string>
+    <string name="level_4_name">Уровень 4</string>
+    <string name="level_5_name">Уровень 5</string>
+    <string name="level_6_name">Уровень 6</string>
+    <string name="level_7_name">Уровень 7</string>
+    <string name="level_progress">%1$d/%2$d</string>
+
+    <string name="locked_level_icon_content_description">Иконка закрытого уровня</string>
+
+    <!-- Unlock Level -->
+
+    <string name="unlock_level_dialog_title">Разблокировка уровня</string>
+
+    <string name="open_for_n_coins">Открыть за %1$d</string>
+    <string name="unlock_level_confirmation">Вы уверены, что хотите разблокировать этот уровень?</string>
+
+    <!-- Compensation received -->
+
+    <string name="receiving_coins">Начисление монет</string>
+    <string name="compensation_received_text">Мы выпустили крупное обновление, которое принесло с собой монеты и многое другое.\nСпасибо за то, что продолжаете проводить время в нашей игре!</string>
+    <string name="compensation_size_text">Вам было начислено</string>
+
+    <!-- WatchRewardedAd -->
+
+    <string name="not_enough_money_title">Недостаточно монет</string>
+
+    <string name="watch_ad">Посмотреть</string>
+
+    <string name="you_dont_have_enough_coins">Вам не хватает</string>
+    <string name="do_you_want_to_watch_an_ad_to_get_coins">Хотите посмотреть рекламу, чтобы получить</string>
+
+    <string name="loading_ad_title">Загрузка</string>
+    <string name="loading_ad">Загружаем рекламу…\nПожалуйста, не закрывайте диалог</string>
+
+    <string name="failed_to_load_rewarded_ad_title">Ошибка</string>
+    <string name="failed_to_load_rewarded_ad">Не удалось загрузить рекламу</string>
+
+    <string name="reward_received_title">Награда начислена</string>
+    <string name="reward_received">Вам начислено</string>
+
+    <!-- Quiz -->
 
     <string name="tv_loading_quiz_text">Подготавливаем самые интересные вопросы</string>
 
-    <string name="tv_out_of_questions_hint_text">Похоже, что вы ответили на все вопросы в данной категории!\nВы можете выключить опцию \"Без повторения\" или сбросить пройденные вопросы и вернуться снова :)</string>
+    <string name="tv_out_of_questions_hint_text">Похоже, что вы ответили на все вопросы этого уровня!\nВы можете снова ответить на них на уровне \"Пройденные вопросы\".</string>
 
-    <string name="tv_points_label">За вопрос: %1$d</string>
-    <string name="tv_score_label">Всего очков: %1$d</string>
+    <string name="quiz_question_worth_label">За вопрос: %1$d</string>
+    <string name="quiz_users_coins_quantity">У вас: %1$d</string>
 
-    <string name="tv_loading_result_text">Подсчитываем баллы</string>
+    <string name="image_for_question_description">Изображение для вопроса</string>
+    <string name="video_for_question_description">Видео для вопроса</string>
+    <string name="audio_question_content_description">Иконка для аудио вопроса</string>
 
-    <string name="tv_text_your_result">Ваш результат</string>
-    <string name="tv_text_best_result">Лучший результат</string>
+    <string name="hints">Подсказки</string>
+    <string name="remove_2_options">Убрать 2 варианта</string>
+    <string name="right_answer">Правильный ответ</string>
+
+    <!-- Quiz Result -->
+
+    <string name="tv_loading_result_text">Подсчитываем монеты</string>
+
+    <string name="you_get">Вы получили</string>
+
+    <string name="double_coins">Удвоить монеты</string>
+    <string name="do_you_want_to_watch_an_ad_to_double_coins">Хотите посмотреть рекламу, чтобы удовить полученные монеты?</string>
+    <string name="coins_doubled_title">Монеты удвоены</string>
+    <string name="coins_doubled">Полученные монеты были удвоены</string>
+
+    <string name="result_image_content_description">Изображение BTS для результата</string>
 
     <string-array name="texts_for_bad_result">
         <item>Мы в тебя верим!</item>
@@ -66,12 +156,8 @@
     <string-array name="texts_for_good_result">
         <item>Отлично получается!</item>
         <item>Ты молодец!</item>
-        <item>Ещё немного!</item>
-        <item>Почти рекорд!</item>
         <item>Не сдавайся!</item>
     </string-array>
-
-    <string name="new_record_with_celebration_text">Новый рекорд!\n%1$s</string>
 
     <string-array name="texts_for_best_result">
         <item>Ура!</item>
@@ -80,19 +166,6 @@
         <item>Мы не сомневались!</item>
     </string-array>
 
-    <string name="share_result">Поделиться результатом</string>
-    <string name="for_sharing_result">Смотри! Мой результат в категории \"%1$s\" равен %2$d. Сможешь набрать больше?</string>
-    <string name="play_store_link">https://play.google.com/store/apps/details?id=com.justcircleprod.btsquiz</string>
-    <string name="sharing_result_not_available">На данный момент функция недоступна</string>
-
+    <string name="continue_quiz">Продолжить прохождение</string>
     <string name="repeat_quiz">Пройти снова</string>
-    <string name="to_categories_text">К выбору категории</string>
-
-    <string name="back">Назад</string>
-
-    <string name="brand_image_content_description">Изображение бренда</string>
-    <string name="image_for_question_description">Изображение для вопроса</string>
-    <string name="video_for_question_description">Видео для вопроса</string>
-    <string name="audio_question_content_description">Иконка аудио изображения</string>
-    <string name="result_image_content_description">Изображение для результата</string>
 </resources>

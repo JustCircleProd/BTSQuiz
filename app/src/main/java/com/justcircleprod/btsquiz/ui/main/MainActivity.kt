@@ -2,45 +2,60 @@ package com.justcircleprod.btsquiz.ui.main
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.justcircleprod.btsquiz.R
+import com.justcircleprod.btsquiz.data.dataStore.DataStoreConstants
 import com.justcircleprod.btsquiz.databinding.ActivityMainBinding
-import com.justcircleprod.btsquiz.ui.categories.CategoriesActivity
-import com.justcircleprod.btsquiz.ui.results.ResultsActivity
+import com.justcircleprod.btsquiz.ui.introduction.IntroductionActivity
+import com.justcircleprod.btsquiz.ui.levels.LevelsActivity
 import com.justcircleprod.btsquiz.ui.settings.SettingsActivity
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
+    private val viewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.Theme_NoActionBar)
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
 
-        setOnClickListeners()
-
-        setContentView(binding.root)
+        lifecycleScope.launch {
+            if (viewModel.isIntroductionShown.first() == DataStoreConstants.INTRODUCTION_IS_SHOWN) {
+                setOnClickListeners()
+                setContentView(binding.root)
+            } else {
+                startIntroductionActivity()
+                finish()
+            }
+        }
     }
 
     private fun setOnClickListeners() {
-        binding.startQuiz.setOnClickListener { startCategoryActivity() }
-        binding.settings.setOnClickListener { startSettingActivity() }
-        binding.results.setOnClickListener { startResultsActivity() }
+        binding.playBtn.setOnClickListener { startLevelsActivity() }
+        binding.settingsBtn.setOnClickListener { startSettingActivity() }
     }
 
-    private fun startCategoryActivity() {
-        val intent = Intent(this, CategoriesActivity::class.java)
+    private fun startIntroductionActivity() {
+        val intent = Intent(this, IntroductionActivity::class.java)
         startActivity(intent)
+    }
+
+    private fun startLevelsActivity() {
+        val intent = Intent(this, LevelsActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 
     private fun startSettingActivity() {
         val intent = Intent(this, SettingsActivity::class.java)
         startActivity(intent)
-    }
-
-    private fun startResultsActivity() {
-        val intent = Intent(this, ResultsActivity::class.java)
-        startActivity(intent)
+        finish()
     }
 }

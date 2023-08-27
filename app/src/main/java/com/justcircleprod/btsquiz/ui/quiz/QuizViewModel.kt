@@ -4,17 +4,15 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.justcircleprod.btsquiz.common.CoinConstants
+import com.justcircleprod.btsquiz.common.LevelConstants
+import com.justcircleprod.btsquiz.data.AppRepository
+import com.justcircleprod.btsquiz.data.models.passedQuestion.PassedQuestion.Companion.toPassedQuestion
+import com.justcircleprod.btsquiz.data.models.questions.Question
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import com.justcircleprod.btsquiz.appConstants.QuizCategory
-import com.justcircleprod.btsquiz.data.AppRepository
-import com.justcircleprod.btsquiz.data.models.PassedQuestion.Companion.toPassedQuestion
-import com.justcircleprod.btsquiz.data.models.Question
-import com.justcircleprod.btsquiz.data.room.constants.AppDatabaseConstants
-import com.justcircleprod.btsquiz.data.room.constants.DifficultyState
-import com.justcircleprod.btsquiz.data.room.constants.QuestionsRepetitionState
 import javax.inject.Inject
 
 @HiltViewModel
@@ -27,214 +25,179 @@ class QuizViewModel @Inject constructor(
     // value to prevent the observer from triggering when setting the default value
     var isFirstStart = true
 
-    val countOfQuestions = 6
-    val categoryId = state.get<Int>(QuizActivity.CATEGORY_ID_ARGUMENT_NAME)!!
+    val userCoinsQuantity = repository.getUserCoinsQuantity()
 
-    // the list of questions (public, because its size is involved in some checks)
-    var questions = mutableListOf<Question>()
+    val levelId =
+        state.get<Int>(QuizActivity.LEVEL_ARGUMENT_NAME) ?: LevelConstants.LEVEL_PASSED_QUESTIONS_ID
+    val questionWorth = MutableLiveData(
+        when (levelId) {
+            LevelConstants.LEVEL_PASSED_QUESTIONS_ID -> LevelConstants.LEVEL_PASSED_QUESTIONS_QUESTION_WORTH
+            LevelConstants.LEVEL_1_ID -> LevelConstants.LEVEL_1_QUESTION_WORTH
+            LevelConstants.LEVEL_2_ID -> LevelConstants.LEVEL_2_QUESTION_WORTH
+            LevelConstants.LEVEL_3_ID -> LevelConstants.LEVEL_3_QUESTION_WORTH
+            LevelConstants.LEVEL_4_ID -> LevelConstants.LEVEL_4_QUESTION_WORTH
+            LevelConstants.LEVEL_5_ID -> LevelConstants.LEVEL_5_QUESTION_WORTH
+            LevelConstants.LEVEL_6_ID -> LevelConstants.LEVEL_6_QUESTION_WORTH
+            LevelConstants.LEVEL_7_ID -> LevelConstants.LEVEL_7_QUESTION_WORTH
+            else -> LevelConstants.LEVEL_PASSED_QUESTIONS_QUESTION_WORTH
+        }
+    )
+
+    var earnedCoins = 0
+    var correctlyAnsweredQuestionsCount = 0
+
+    private var questions = mutableListOf<Question>()
+    var startQuestionsCount = 0
 
     private var questionPosition = 0
 
     // the current question or a sign of the end of questions is placed here
     val question = MutableLiveData<Question?>()
+    var rightAnswer = ""
 
-    private var noQuestionRepetition = false
+    val withoutQuizHintsState = repository.getWithoutQuizHintsState()
 
-    val score = MutableLiveData(0)
+    // for current question
+    val hint5050Used = MutableLiveData(false)
+    val hintCorrectAnswerUsed = MutableLiveData(false)
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            noQuestionRepetition = getNoQuestionsRepetitionValue()
-            val (lowerPoints, upperPoints) = getPointBorders()
+            when (levelId) {
+                LevelConstants.LEVEL_PASSED_QUESTIONS_ID -> {
+                    questions.addAll(repository.getRandomPassedQuestions())
+                }
 
-            when (categoryId) {
-                QuizCategory.TEXT_CATEGORY.value -> {
-                    setTextQuestions(
-                        lowerPoints,
-                        upperPoints
-                    )
+                LevelConstants.LEVEL_1_ID -> {
+                    questions.addAll(repository.getRandomQuestions(300))
                 }
-                QuizCategory.IMAGE_CATEGORY.value -> {
-                    setImageQuestions(
-                        lowerPoints,
-                        upperPoints
-                    )
+
+                LevelConstants.LEVEL_2_ID -> {
+                    questions.addAll(repository.getRandomQuestions(350))
                 }
-                QuizCategory.VIDEO_CATEGORY.value -> {
-                    setVideoQuestions(
-                        lowerPoints,
-                        upperPoints
-                    )
+
+                LevelConstants.LEVEL_3_ID -> {
+                    questions.addAll(repository.getRandomQuestions(400))
                 }
-                QuizCategory.AUDIO_CATEGORY.value -> {
-                    setAudioQuestions(
-                        lowerPoints,
-                        upperPoints
-                    )
+
+                LevelConstants.LEVEL_4_ID -> {
+                    questions.addAll(repository.getRandomQuestions(450))
                 }
-                else -> {
-                    setRandomQuestions(
-                        lowerPoints,
-                        upperPoints
-                    )
+
+                LevelConstants.LEVEL_5_ID -> {
+                    questions.addAll(repository.getRandomQuestions(500))
+                }
+
+                LevelConstants.LEVEL_6_ID -> {
+                    questions.addAll(repository.getRandomQuestions(550))
+                }
+
+                LevelConstants.LEVEL_7_ID -> {
+                    questions.addAll(repository.getRandomQuestions(600))
                 }
             }
+
+            onLoadingEnd()
         }
     }
 
-    private suspend fun getNoQuestionsRepetitionValue(): Boolean {
-        return withContext(Dispatchers.IO) {
-            QuestionsRepetitionState.fromInt(
-                repository.getSetting(AppDatabaseConstants.QUESTIONS_REPETITION_SETTING_ID).state
-            ) == QuestionsRepetitionState.NO_REPETITION
-        }
-    }
-
-    private suspend fun getPointBorders(): List<Int> {
-        return withContext(Dispatchers.IO) {
-            val difficultySetting =
-                repository.getSetting(AppDatabaseConstants.DIFFICULTY_SETTING_ID)
-
-            when (DifficultyState.fromInt(difficultySetting.state)) {
-                DifficultyState.USUAL -> {
-                    listOf(300, 499)
-                }
-                DifficultyState.DIFFICULT -> {
-                    listOf(500, 600)
-                }
-                else -> {
-                    listOf(300, 600)
-                }
-            }
-        }
-    }
-
-    private suspend fun setRandomQuestions(
-        lowerPoints: Int,
-        upperPoints: Int
-    ) {
-        val randomQuestions = repository.getRandomQuestions(
-            countOfQuestions,
-            lowerPoints,
-            upperPoints,
-            noQuestionRepetition = noQuestionRepetition
-        )
-
-        questions.addAll(randomQuestions)
-        onLoadingEnd()
-    }
-
-    private suspend fun setTextQuestions(
-        lowerPoints: Int,
-        upperPoints: Int
-    ) {
-        val textQuestions = repository.getRandomTextQuestions(
-            countOfQuestions,
-            lowerPoints,
-            upperPoints,
-            noQuestionRepetition
-        )
-
-        questions.addAll(textQuestions)
-        onLoadingEnd()
-    }
-
-    private suspend fun setImageQuestions(
-        lowerPoints: Int,
-        upperPoints: Int
-    ) {
-        val imageQuestions = repository.getRandomImageQuestions(
-            countOfQuestions,
-            lowerPoints,
-            upperPoints,
-            noQuestionRepetition
-        )
-
-        questions.addAll(imageQuestions)
-        onLoadingEnd()
-    }
-
-    private suspend fun setVideoQuestions(
-        lowerPoints: Int,
-        upperPoints: Int
-    ) {
-        val videoQuestions =
-            repository.getRandomVideoQuestions(
-                countOfQuestions,
-                lowerPoints,
-                upperPoints,
-                noQuestionRepetition
-            )
-
-        questions.addAll(videoQuestions)
-        onLoadingEnd()
-    }
-
-    private suspend fun setAudioQuestions(
-        lowerPoints: Int,
-        upperPoints: Int
-    ) {
-        val audioQuestions =
-            repository.getRandomAudioQuestions(
-                countOfQuestions,
-                lowerPoints,
-                upperPoints,
-                noQuestionRepetition
-            )
-
-        questions.addAll(audioQuestions)
-        onLoadingEnd()
-    }
-
-    // a method that updates the download status
-    // and shuffles them when the desired number of questions is reached
+    // a method that updates the loading status
+    // and shuffles questions when the desired number of questions is reached
     private fun onLoadingEnd() {
         questions = questions.shuffled() as MutableList<Question>
+        startQuestionsCount = questions.size
         isLoading.postValue(false)
     }
 
+    private fun setRightAnswer(question: Question) {
+        rightAnswer = listOf(
+            question.firstOption,
+            question.secondOption,
+            question.thirdOption,
+            question.fourthOption,
+        )[question.answerNum - 1]
+    }
+
+    private fun getQuestionWithShuffledOptions(question: Question): Question {
+        val options = listOf(
+            question.firstOption,
+            question.secondOption,
+            question.thirdOption,
+            question.fourthOption,
+        ).shuffled()
+
+        question.firstOption = options[0]
+        question.secondOption = options[1]
+        question.thirdOption = options[2]
+        question.fourthOption = options[3]
+
+        return question
+    }
+
     fun setQuestionOnCurrentPosition() {
-        if (questionPosition < countOfQuestions) {
-            question.value = questions[questionPosition]
+        if (questionPosition < questions.size) {
+            setRightAnswer(questions[questionPosition])
+            question.value = getQuestionWithShuffledOptions(questions[questionPosition])
         } else {
             question.value = null
         }
     }
 
     fun setQuestionOnNextPosition() {
-        if (noQuestionRepetition && question.value != null) {
-            addToPassedQuestions()
-        }
-
         questionPosition++
-        if (questionPosition < countOfQuestions) {
-            question.value = questions[questionPosition]
+        hint5050Used.value = false
+        hintCorrectAnswerUsed.value = false
+
+        if (questionPosition < questions.size) {
+            setRightAnswer(questions[questionPosition])
+            question.value = getQuestionWithShuffledOptions(questions[questionPosition])
         } else {
             question.value = null
         }
     }
 
-    private fun addToPassedQuestions() {
-        val passedQuestion = question.value!!.toPassedQuestion()
-
-        viewModelScope.launch(Dispatchers.IO) {
-            repository.insertPassedQuestion(passedQuestion)
-        }
-    }
-
     fun checkAnswer(userAnswer: String): Boolean {
-        val rightAnswer = listOf(
-            question.value!!.firstOption,
-            question.value!!.secondOption,
-            question.value!!.thirdOption,
-            question.value!!.fourthOption,
-        )[question.value!!.answerNum - 1]
-
         return if (userAnswer == rightAnswer) {
-            score.value = score.value!! + question.value!!.points
+            onRightAnswer()
             true
         } else {
             false
+        }
+    }
+
+    fun onRightAnswer() {
+        viewModelScope.launch {
+            if (levelId != LevelConstants.LEVEL_PASSED_QUESTIONS_ID) {
+                val passedQuestion = question.value!!.toPassedQuestion()
+
+                withContext(Dispatchers.IO) {
+                    repository.insertPassedQuestion(passedQuestion)
+                }
+            }
+
+            earnedCoins += questionWorth.value!!
+            correctlyAnsweredQuestionsCount++
+
+            if (levelId != LevelConstants.LEVEL_PASSED_QUESTIONS_ID) {
+                withContext(Dispatchers.IO) {
+                    repository.addLevelProgress(levelId, 1)
+                }
+            }
+        }
+
+    }
+
+    fun useHint5050() {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.subtractUserCoins(CoinConstants.HINT_50_50_PRICE)
+            hint5050Used.postValue(true)
+        }
+    }
+
+    fun useHintCorrectAnswer() {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.subtractUserCoins(CoinConstants.HINT_CORRECT_ANSWER_PRICE)
+            hintCorrectAnswerUsed.postValue(true)
         }
     }
 }
