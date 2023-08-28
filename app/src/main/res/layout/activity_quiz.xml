@@ -21,7 +21,7 @@
             android:layout_height="wrap_content"
             android:clipChildren="false"
             android:clipToPadding="false"
-            android:paddingBottom="@dimen/quiz_root_layout_bottom_margin">
+            android:paddingBottom="@dimen/screen_with_banner_ad_root_layout_bottom_margin">
 
             <TextView
                 android:id="@+id/brand_label"
@@ -574,7 +574,7 @@
         android:id="@+id/banner_ad_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/black_text_color"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

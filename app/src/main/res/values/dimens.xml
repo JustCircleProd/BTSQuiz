@@ -30,6 +30,8 @@
 
     <dimen name="icon_coins_margin_start">1dp</dimen>
 
+    <dimen name="screen_with_banner_ad_root_layout_bottom_margin">70dp</dimen>
+
     <!--  Dialog common  -->
 
     <dimen name="dialog_padding">14dp</dimen>
@@ -118,7 +120,6 @@
     <dimen name="icon_audio_question_size">200dp</dimen>
 
     <dimen name="quiz_progress_indicator_padding_vertical">6dp</dimen>
-    <dimen name="quiz_root_layout_bottom_margin">70dp</dimen>
     <dimen name="quiz_hint_divider_margin_bottom">8dp</dimen>
     <dimen name="quiz_hint_divider_title_text_size">15sp</dimen>
     <dimen name="quiz_hint_card_padding">6dp</dimen>

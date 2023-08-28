@@ -26,8 +26,8 @@
             android:textSize="@dimen/brand_text_size"
             android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@id/root_cardview"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/root_cardview"
+            app:layout_constraintStart_toStartOf="@id/root_cardview"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_chainStyle="packed" />
 

@@ -5,6 +5,8 @@ import android.content.Intent
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
+import android.os.CountDownTimer
+import android.util.Base64
 import android.view.View
 import androidx.activity.addCallback
 import androidx.activity.viewModels
@@ -19,6 +21,11 @@ import com.justcircleprod.btsquiz.ui.levels.unlockLevelDialog.UnlockLevelConfirm
 import com.justcircleprod.btsquiz.ui.main.MainActivity
 import com.justcircleprod.btsquiz.ui.quiz.QuizActivity
 import com.justcircleprod.btsquiz.ui.watchRewardedAdConfirmationDialog.WatchRewardedAdConfirmationDialog
+import com.yandex.mobile.ads.banner.AdSize
+import com.yandex.mobile.ads.banner.BannerAdEventListener
+import com.yandex.mobile.ads.common.AdRequest
+import com.yandex.mobile.ads.common.AdRequestError
+import com.yandex.mobile.ads.common.ImpressionData
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -38,6 +45,8 @@ class LevelsActivity : AppCompatActivity(), UnlockLevelConfirmationDialogCallbac
         binding = ActivityLevelsBinding.inflate(layoutInflater)
 
         enableAnimations()
+
+        initAd()
 
         onBackPressedDispatcher.addCallback { startMainActivity() }
         binding.backBtn.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
@@ -90,6 +99,46 @@ class LevelsActivity : AppCompatActivity(), UnlockLevelConfirmationDialogCallbac
 
         binding.level7NameLayout.layoutTransition.enableTransitionType(LayoutTransition.CHANGING)
         binding.level7ProgressTextLayout.layoutTransition.enableTransitionType(LayoutTransition.CHANGING)
+    }
+
+    private fun initAd() {
+        val adUnitId =
+            String(Base64.decode("Ui1NLTI0NjM5MTktNQ==", Base64.DEFAULT), Charsets.UTF_8)
+
+        binding.bannerAdView.setAdUnitId(adUnitId)
+        binding.bannerAdView.setAdSize(AdSize.stickySize(this, 300))
+
+        loadAd()
+    }
+
+    private fun loadAd() {
+        val adRequest = AdRequest.Builder().build()
+        binding.bannerAdView.setBannerAdEventListener(object : BannerAdEventListener {
+            override fun onAdLoaded() {
+                binding.bannerAdView.visibility = View.VISIBLE
+
+                // to update ad every n seconds
+                object : CountDownTimer(36000, 36000) {
+                    override fun onTick(mills: Long) {}
+
+                    override fun onFinish() {
+                        loadAd()
+                    }
+                }.start()
+            }
+
+            override fun onAdFailedToLoad(p0: AdRequestError) {}
+
+            override fun onAdClicked() {}
+
+            override fun onLeftApplication() {}
+
+            override fun onReturnedToApplication() {}
+
+            override fun onImpression(p0: ImpressionData?) {}
+        })
+
+        binding.bannerAdView.loadAd(adRequest)
     }
 
     private fun setCompensationReceivedObserver() {
