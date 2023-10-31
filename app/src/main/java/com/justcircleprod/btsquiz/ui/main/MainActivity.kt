@@ -32,6 +32,7 @@ class MainActivity : AppCompatActivity() {
                 setContentView(binding.root)
             } else {
                 startIntroductionActivity()
+                viewModel.setIntroductionShown()
                 finish()
             }
         }

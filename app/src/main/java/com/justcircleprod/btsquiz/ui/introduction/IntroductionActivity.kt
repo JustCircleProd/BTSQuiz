@@ -20,7 +20,6 @@ import kotlin.math.abs
 @AndroidEntryPoint
 class IntroductionActivity : AppCompatActivity() {
     private lateinit var binding: ActivityIntroductionBinding
-    private val viewModel: IntroductionViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,10 +54,7 @@ class IntroductionActivity : AppCompatActivity() {
                 binding.viewPager.currentItem++
             },
             onPlayBtnClicked = {
-                lifecycleScope.launch {
-                    viewModel.setIntroductionShown()
-                    startMainActivity()
-                }
+                startMainActivity()
             }
         )
 
