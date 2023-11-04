@@ -21,11 +21,14 @@ import com.justcircleprod.btsquiz.ui.levels.LevelsActivity
 import com.justcircleprod.btsquiz.ui.quiz.QuizActivity
 import com.justcircleprod.btsquiz.ui.quizResult.doubleCoinsConfirmationDialog.DoubleCoinsConfirmationDialog
 import com.justcircleprod.btsquiz.ui.quizResult.doubleCoinsConfirmationDialog.DoubleCoinsConfirmationDialogCallback
-import com.yandex.mobile.ads.common.AdRequest
+import com.yandex.mobile.ads.common.AdError
+import com.yandex.mobile.ads.common.AdRequestConfiguration
 import com.yandex.mobile.ads.common.AdRequestError
 import com.yandex.mobile.ads.common.ImpressionData
 import com.yandex.mobile.ads.interstitial.InterstitialAd
 import com.yandex.mobile.ads.interstitial.InterstitialAdEventListener
+import com.yandex.mobile.ads.interstitial.InterstitialAdLoadListener
+import com.yandex.mobile.ads.interstitial.InterstitialAdLoader
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -36,7 +39,8 @@ class QuizResultActivity : AppCompatActivity(), DoubleCoinsConfirmationDialogCal
     private lateinit var binding: ActivityQuizResultBinding
     private val viewModel: QuizResultViewModel by viewModels()
 
-    private lateinit var interstitialAd: InterstitialAd
+    private var interstitialAd: InterstitialAd? = null
+    private var interstitialAdLoader: InterstitialAdLoader? = null
     private var isAdLoaded = false
 
     private lateinit var resultPlayer: MediaPlayer
@@ -98,55 +102,63 @@ class QuizResultActivity : AppCompatActivity(), DoubleCoinsConfirmationDialogCal
             return
         }
 
-        interstitialAd = InterstitialAd(this)
+        interstitialAdLoader = InterstitialAdLoader(this).apply {
+            setAdLoadListener(object : InterstitialAdLoadListener {
+                override fun onAdLoaded(loadedInterstitialAd: InterstitialAd) {
+                    interstitialAd = loadedInterstitialAd
+                    isAdLoaded = true
+                    showAd()
+                }
+
+                override fun onAdFailedToLoad(adRequestError: AdRequestError) {
+                    viewModel.isLoading.value = listOf(viewModel.isLoading.value!![0], false)
+                    destroyInterstitialAd()
+                }
+            })
+        }
 
         val adUnitId =
             String(Base64.decode("Ui1NLTI0NjM5MTktMg==", Base64.DEFAULT), Charsets.UTF_8)
+        val adRequestConfiguration = AdRequestConfiguration.Builder(adUnitId).build()
 
-        interstitialAd.setAdUnitId(adUnitId)
-
-        val adRequest = AdRequest.Builder().build()
-
-        interstitialAd.setInterstitialAdEventListener(object : InterstitialAdEventListener {
-            override fun onAdLoaded() {
-                isAdLoaded = true
-                interstitialAd.show()
-            }
-
-            override fun onAdFailedToLoad(p0: AdRequestError) {
-                viewModel.isLoading.value = listOf(viewModel.isLoading.value!![0], false)
-                interstitialAd.destroy()
-            }
-
-            override fun onAdShown() {}
-
-            override fun onAdDismissed() {
-                viewModel.isLoading.value = listOf(viewModel.isLoading.value!![0], false)
-                interstitialAd.destroy()
-            }
-
-            override fun onAdClicked() {}
-
-            override fun onLeftApplication() {}
-
-            override fun onReturnedToApplication() {}
-
-            override fun onImpression(p0: ImpressionData?) {}
-        })
-
-        interstitialAd.loadAd(adRequest)
+        interstitialAdLoader?.loadAd(adRequestConfiguration)
 
         // to limit the time to load an ad
-        object : CountDownTimer(4000, 4000) {
+        object : CountDownTimer(5000, 5000) {
             override fun onTick(mills: Long) {}
 
             override fun onFinish() {
                 if (!isAdLoaded) {
+                    interstitialAdLoader?.cancelLoading()
                     viewModel.isLoading.value = listOf(viewModel.isLoading.value!![0], false)
-                    interstitialAd.destroy()
+                    destroyInterstitialAd()
                 }
             }
         }.start()
+    }
+
+    private fun showAd() {
+        interstitialAd?.apply {
+            setAdEventListener(object : InterstitialAdEventListener {
+                override fun onAdShown() {}
+
+                override fun onAdFailedToShow(adError: AdError) {
+                    viewModel.isLoading.value = listOf(viewModel.isLoading.value!![0], false)
+                    destroyInterstitialAd()
+                }
+
+                override fun onAdDismissed() {
+                    viewModel.isLoading.value = listOf(viewModel.isLoading.value!![0], false)
+                    destroyInterstitialAd()
+                }
+
+                override fun onAdClicked() {}
+
+                override fun onAdImpression(impressionData: ImpressionData?) {}
+            })
+
+            show(this@QuizResultActivity)
+        }
     }
 
     private fun setEarnedCoinsObserver() {
@@ -313,8 +325,18 @@ class QuizResultActivity : AppCompatActivity(), DoubleCoinsConfirmationDialogCal
         finish()
     }
 
+    private fun destroyInterstitialAd() {
+        interstitialAdLoader?.setAdLoadListener(null)
+        interstitialAdLoader = null
+
+        interstitialAd?.setAdEventListener(null)
+        interstitialAd = null
+    }
+
     override fun onDestroy() {
         super.onDestroy()
+
+        destroyInterstitialAd()
 
         if (::resultPlayer.isInitialized) {
             resultPlayer.release()

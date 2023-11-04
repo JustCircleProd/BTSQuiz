@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.os.CountDownTimer
 import android.util.Base64
 import android.view.View
+import android.view.ViewTreeObserver
 import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -29,8 +30,9 @@ import com.justcircleprod.btsquiz.ui.common.enable
 import com.justcircleprod.btsquiz.ui.levels.LevelsActivity
 import com.justcircleprod.btsquiz.ui.quizResult.QuizResultActivity
 import com.justcircleprod.btsquiz.ui.watchRewardedAdConfirmationDialog.WatchRewardedAdConfirmationDialog
-import com.yandex.mobile.ads.banner.AdSize
 import com.yandex.mobile.ads.banner.BannerAdEventListener
+import com.yandex.mobile.ads.banner.BannerAdSize
+import com.yandex.mobile.ads.banner.BannerAdView
 import com.yandex.mobile.ads.common.AdRequest
 import com.yandex.mobile.ads.common.AdRequestError
 import com.yandex.mobile.ads.common.ImpressionData
@@ -38,12 +40,31 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 
 
 @AndroidEntryPoint
 class QuizActivity : AppCompatActivity() {
     private lateinit var binding: ActivityQuizBinding
     private val viewModel: QuizViewModel by viewModels()
+
+    private var bannerAdView: BannerAdView? = null
+    private val adSize: BannerAdSize
+        get() {
+            // Calculate the width of the ad, taking into account the padding in the ad container.
+            var adWidthPixels = binding.bannerAdView.width
+            if (adWidthPixels == 0) {
+                // If the ad hasn't been laid out, default to the full screen width
+                adWidthPixels = resources.displayMetrics.widthPixels
+            }
+            val adWidth =
+                ((adWidthPixels - resources.getDimensionPixelSize(R.dimen.banner_ad_horizontal_margin) * 2) / resources.displayMetrics.density).roundToInt()
+            val maxAdHeight =
+                (resources.getDimensionPixelSize(R.dimen.banner_ad_height) / resources.displayMetrics.density).roundToInt()
+
+            return BannerAdSize.inlineSize(this, adWidth, maxAdHeight)
+        }
+    private var refreshAdTimer: CountDownTimer? = null
 
     private lateinit var rightAnswerPlayer: MediaPlayer
     private var isRightAnswerPlayerPrepared = false
@@ -82,11 +103,13 @@ class QuizActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         resumePlayers()
+        refreshAdTimer?.start()
     }
 
     override fun onPause() {
         super.onPause()
         pausePlayers()
+        refreshAdTimer?.cancel()
     }
 
     private fun resumePlayers() {
@@ -135,43 +158,67 @@ class QuizActivity : AppCompatActivity() {
     }
 
     private fun initAd() {
-        val adUnitId =
-            String(Base64.decode("Ui1NLTI0NjM5MTktMQ==", Base64.DEFAULT), Charsets.UTF_8)
+        binding.bannerAdView.viewTreeObserver.addOnGlobalLayoutListener(object :
+            ViewTreeObserver.OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                binding.bannerAdView.viewTreeObserver.removeOnGlobalLayoutListener(this)
 
-        binding.bannerAdView.setAdUnitId(adUnitId)
-        binding.bannerAdView.setAdSize(AdSize.stickySize(this@QuizActivity, 300))
+                binding.bannerAdView.apply {
+                    setAdSize(this@QuizActivity.adSize)
 
-        loadAd()
+                    val adUnitId =
+                        String(
+                            Base64.decode("Ui1NLTI0NjM5MTktMQ==", Base64.DEFAULT),
+                            Charsets.UTF_8
+                        )
+                    binding.bannerAdView.setAdUnitId(adUnitId)
+                }
+
+                bannerAdView = loadBannerAd()
+            }
+        })
     }
 
-    private fun loadAd() {
-        val adRequest = AdRequest.Builder().build()
-        binding.bannerAdView.setBannerAdEventListener(object : BannerAdEventListener {
-            override fun onAdLoaded() {
-                binding.bannerAdView.visibility = View.VISIBLE
-
-                // to update ad every n seconds
-                object : CountDownTimer(36000, 36000) {
-                    override fun onTick(mills: Long) {}
-
-                    override fun onFinish() {
-                        loadAd()
+    private fun loadBannerAd(): BannerAdView {
+        return binding.bannerAdView.apply {
+            setBannerAdEventListener(object : BannerAdEventListener {
+                override fun onAdLoaded() {
+                    // If this callback occurs after the activity is destroyed, you
+                    // must call destroy and return or you may get a memory leak.
+                    // Note `isDestroyed` is a method on Activity.
+                    if (isDestroyed) {
+                        bannerAdView?.destroy()
+                        return
                     }
-                }.start()
-            }
 
-            override fun onAdFailedToLoad(p0: AdRequestError) {}
+                    // to update ad every n seconds
+                    if (refreshAdTimer != null) {
+                        refreshAdTimer?.start()
+                        return
+                    }
 
-            override fun onAdClicked() {}
+                    refreshAdTimer = object : CountDownTimer(20000, 20000) {
+                        override fun onTick(mills: Long) {}
 
-            override fun onLeftApplication() {}
+                        override fun onFinish() {
+                            bannerAdView = loadBannerAd()
+                        }
+                    }.start()
+                }
 
-            override fun onReturnedToApplication() {}
+                override fun onAdFailedToLoad(adRequestError: AdRequestError) {}
 
-            override fun onImpression(p0: ImpressionData?) {}
-        })
+                override fun onAdClicked() {}
 
-        binding.bannerAdView.loadAd(adRequest)
+                override fun onLeftApplication() {}
+
+                override fun onReturnedToApplication() {}
+
+                override fun onImpression(impressionData: ImpressionData?) {}
+            })
+
+            loadAd(AdRequest.Builder().build())
+        }
     }
 
     private fun initAnswerPlayers() {
@@ -684,7 +731,9 @@ class QuizActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        binding.bannerAdView.destroy()
+
+        refreshAdTimer?.cancel()
+        bannerAdView?.destroy()
 
         rightAnswerPlayer.release()
         wrongAnswerPlayer.release()

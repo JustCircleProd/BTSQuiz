@@ -2,10 +2,10 @@ plugins {
     id 'com.android.application'
     id 'kotlin-android'
     id 'kotlin-parcelize'
-    id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
     id 'com.jaredsburrows.license' version '0.9.3'
     id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
 }
 
 // create license list by ./gradlew license${Release/Debug}Report
@@ -22,15 +22,15 @@ licenseReport {
 }
 
 android {
-    compileSdkVersion 33
+    compileSdkVersion 34
     buildToolsVersion "30.0.3"
 
     defaultConfig {
         applicationId "com.justcircleprod.btsquiz"
         minSdkVersion 21
-        targetSdkVersion 33
-        versionCode 22
-        versionName "2.0.1"
+        targetSdkVersion 34
+        versionCode 27
+        versionName "2.0.2"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         javaCompileOptions {
@@ -65,39 +65,39 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.core:core-ktx:1.10.1'
+    implementation 'androidx.core:core-ktx:1.12.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.9.0'
+    implementation 'com.google.android.material:material:1.10.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 
-    implementation 'androidx.compose.ui:ui:1.4.3'
-    implementation 'androidx.compose.foundation:foundation:1.4.3'
-    implementation 'androidx.compose.material:material:1.4.3'
-    implementation 'androidx.compose.ui:ui-tooling-preview:1.4.3'
+    implementation 'androidx.compose.ui:ui:1.5.4'
+    implementation 'androidx.compose.foundation:foundation:1.5.4'
+    implementation 'androidx.compose.material:material:1.5.4'
+    implementation 'androidx.compose.ui:ui-tooling-preview:1.5.4'
 
     implementation 'com.google.dagger:hilt-android:2.47'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2'
     kapt 'com.google.dagger:hilt-compiler:2.47'
 
-    implementation 'androidx.activity:activity-ktx:1.7.2'
-    implementation 'androidx.navigation:navigation-fragment-ktx:2.6.0'
+    implementation 'androidx.activity:activity-ktx:1.8.0'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.7.4'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
-    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.6.1'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.6.2'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2'
 
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1'
 
-    implementation 'androidx.room:room-runtime:2.5.2'
-    implementation 'androidx.room:room-ktx:2.5.2'
-    kapt 'androidx.room:room-compiler:2.5.2'
+    implementation 'androidx.room:room-runtime:2.6.0'
+    implementation 'androidx.room:room-ktx:2.6.0'
+    kapt 'androidx.room:room-compiler:2.6.0'
 
     implementation 'androidx.datastore:datastore-preferences:1.0.0'
 
     implementation 'me.saket:better-link-movement-method:2.2.0'
 
     // ads
-    implementation 'com.yandex.android:mobileads:5.10.0'
+    implementation 'com.yandex.android:mobileads:6.1.0'
 
     implementation 'com.github.bumptech.glide:glide:4.15.1'
 
@@ -106,8 +106,8 @@ dependencies {
     implementation 'androidx.viewpager2:viewpager2:1.0.0'
     implementation 'com.tbuonomo:dotsindicator:5.0'
 
-    implementation 'com.google.android.play:review:2.0.0'
-    implementation 'com.google.android.play:review-ktx:2.0.0'
+    implementation 'com.google.android.play:review:2.0.1'
+    implementation 'com.google.android.play:review-ktx:2.0.1'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'

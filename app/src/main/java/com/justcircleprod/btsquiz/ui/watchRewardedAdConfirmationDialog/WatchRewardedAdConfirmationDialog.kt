@@ -16,12 +16,15 @@ import com.justcircleprod.btsquiz.R
 import com.justcircleprod.btsquiz.common.CoinConstants
 import com.justcircleprod.btsquiz.databinding.DialogWatchRewardedAdConfirmationBinding
 import com.justcircleprod.btsquiz.ui.common.RewardedAdState
-import com.yandex.mobile.ads.common.AdRequest
+import com.yandex.mobile.ads.common.AdError
+import com.yandex.mobile.ads.common.AdRequestConfiguration
 import com.yandex.mobile.ads.common.AdRequestError
 import com.yandex.mobile.ads.common.ImpressionData
 import com.yandex.mobile.ads.rewarded.Reward
 import com.yandex.mobile.ads.rewarded.RewardedAd
 import com.yandex.mobile.ads.rewarded.RewardedAdEventListener
+import com.yandex.mobile.ads.rewarded.RewardedAdLoadListener
+import com.yandex.mobile.ads.rewarded.RewardedAdLoader
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -45,7 +48,8 @@ class WatchRewardedAdConfirmationDialog : DialogFragment() {
 
     private var missingCoinsQuantity: Int? = null
 
-    private lateinit var rewardedAd: RewardedAd
+    private var rewardedAd: RewardedAd? = null
+    private var rewardedAdLoader: RewardedAdLoader? = null
     private var rewardedAdLoaded = false
 
     private lateinit var rewardReceivedPlayer: MediaPlayer
@@ -86,61 +90,76 @@ class WatchRewardedAdConfirmationDialog : DialogFragment() {
     }
 
     private fun loadRewardedAd() {
-        rewardedAd = RewardedAd(requireContext())
-
-        val adUnitId = String(Base64.decode("Ui1NLTI0NjM5MTktMw==", Base64.DEFAULT), Charsets.UTF_8)
-        rewardedAd.setAdUnitId(adUnitId)
-
-        val adRequest = AdRequest.Builder().build()
-
-        rewardedAd.setRewardedAdEventListener(object : RewardedAdEventListener {
-            override fun onAdLoaded() {
-                rewardedAdLoaded = true
-                rewardedAd.show()
-            }
-
-            override fun onAdFailedToLoad(p0: AdRequestError) {
-                viewModel.rewardedAdState.value = RewardedAdState.FailedToLoad
-                rewardedAd.destroy()
-            }
-
-            override fun onAdShown() {}
-
-            override fun onAdDismissed() {
-                if (viewModel.rewardReceived) {
-                    viewModel.rewardedAdState.value = RewardedAdState.RewardReceived
+        rewardedAdLoader = RewardedAdLoader(requireContext()).apply {
+            setAdLoadListener(object : RewardedAdLoadListener {
+                override fun onAdLoaded(loadedRewardedAd: RewardedAd) {
+                    rewardedAd = loadedRewardedAd
+                    rewardedAdLoaded = true
+                    showAd()
                 }
 
-                rewardedAd.destroy()
-            }
+                override fun onAdFailedToLoad(adRequestError: AdRequestError) {
+                    viewModel.rewardedAdState.value = RewardedAdState.FailedToLoad
+                    destroyRewardedAd()
+                }
+            })
+        }
 
-            override fun onRewarded(p0: Reward) {
-                viewModel.addReward()
-                viewModel.rewardReceived = true
-            }
+        val adUnitId =
+            String(Base64.decode("Ui1NLTI0NjM5MTktMw==", Base64.DEFAULT), Charsets.UTF_8)
+        val adRequestConfiguration = AdRequestConfiguration.Builder(adUnitId).build()
 
-            override fun onAdClicked() {}
-
-            override fun onLeftApplication() {}
-
-            override fun onReturnedToApplication() {}
-
-            override fun onImpression(p0: ImpressionData?) {}
-        })
-
-        rewardedAd.loadAd(adRequest)
+        rewardedAdLoader?.loadAd(adRequestConfiguration)
 
         // to limit the time to load an ad
-        object : CountDownTimer(7000, 250) {
+        object : CountDownTimer(10000, 10000) {
             override fun onTick(mills: Long) {}
 
             override fun onFinish() {
                 if (!rewardedAdLoaded) {
+                    rewardedAdLoader?.cancelLoading()
                     viewModel.rewardedAdState.value = RewardedAdState.FailedToLoad
-                    rewardedAd.destroy()
+                    destroyRewardedAd()
                 }
             }
         }.start()
+    }
+
+    private fun showAd() {
+        rewardedAd?.apply {
+            setAdEventListener(object : RewardedAdEventListener {
+                override fun onAdShown() {}
+
+                override fun onAdFailedToShow(adError: AdError) {
+                    viewModel.rewardedAdState.value = if (viewModel.rewardReceived) {
+                        RewardedAdState.RewardReceived
+                    } else {
+                        RewardedAdState.FailedToLoad
+                    }
+
+                    destroyRewardedAd()
+                }
+
+                override fun onAdDismissed() {
+                    if (viewModel.rewardReceived) {
+                        viewModel.rewardedAdState.value = RewardedAdState.RewardReceived
+                    }
+
+                    destroyRewardedAd()
+                }
+
+                override fun onAdClicked() {}
+
+                override fun onAdImpression(impressionData: ImpressionData?) {}
+
+                override fun onRewarded(reward: Reward) {
+                    viewModel.addReward()
+                    viewModel.rewardReceived = true
+                }
+            })
+
+            show(requireActivity())
+        }
     }
 
     private fun setStateObserver() {
@@ -209,8 +228,18 @@ class WatchRewardedAdConfirmationDialog : DialogFragment() {
         }
     }
 
+    private fun destroyRewardedAd() {
+        rewardedAdLoader?.setAdLoadListener(null)
+        rewardedAdLoader = null
+
+        rewardedAd?.setAdEventListener(null)
+        rewardedAd = null
+    }
+
     override fun onDestroy() {
         super.onDestroy()
+
+        destroyRewardedAd()
 
         if (::rewardReceivedPlayer.isInitialized) {
             rewardReceivedPlayer.release()

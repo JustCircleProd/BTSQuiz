@@ -30,6 +30,8 @@
 
     <dimen name="icon_coins_margin_start">1dp</dimen>
 
+    <dimen name="banner_ad_height">50dp</dimen>
+    <dimen name="banner_ad_horizontal_margin">30dp</dimen>
     <dimen name="screen_with_banner_ad_root_layout_bottom_margin">70dp</dimen>
 
     <!--  Dialog common  -->

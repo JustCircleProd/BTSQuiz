@@ -33,7 +33,7 @@ class IntroductionCardAdapter(
 
             binding.title.text = context.getString(cardResources[position].title)
 
-            if (adapterPosition == 1) {
+            if (absoluteAdapterPosition == 1) {
                 binding.titleIconCoins.visibility = View.VISIBLE
             } else {
                 binding.titleIconCoins.visibility = View.GONE
@@ -47,7 +47,7 @@ class IntroductionCardAdapter(
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .into(binding.gif)
 
-            if (adapterPosition == 2) {
+            if (absoluteAdapterPosition == 2) {
                 binding.nextBtn.visibility = View.GONE
                 binding.playBtn.visibility = View.VISIBLE
             } else {

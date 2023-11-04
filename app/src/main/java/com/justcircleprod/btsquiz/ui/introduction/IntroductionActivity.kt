@@ -3,9 +3,7 @@ package com.justcircleprod.btsquiz.ui.introduction
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.ViewPager2
 import com.justcircleprod.btsquiz.R
 import com.justcircleprod.btsquiz.databinding.ActivityIntroductionBinding
@@ -14,7 +12,6 @@ import com.justcircleprod.btsquiz.ui.introduction.introductionCardAdapter.Introd
 import com.justcircleprod.btsquiz.ui.introduction.introductionCardAdapter.IntroductionCardResources
 import com.justcircleprod.btsquiz.ui.main.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 import kotlin.math.abs
 
 @AndroidEntryPoint

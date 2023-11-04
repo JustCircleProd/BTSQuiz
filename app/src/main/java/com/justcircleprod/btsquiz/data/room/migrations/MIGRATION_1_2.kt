@@ -9,9 +9,9 @@ import com.justcircleprod.btsquiz.data.models.questions.VideoQuestion
 
 
 val MIGRATION_1_2: Migration = object : Migration(1, 2) {
-    override fun migrate(database: SupportSQLiteDatabase) {
+    override fun migrate(db: SupportSQLiteDatabase) {
         for (question in textQuestions) {
-            database.execSQL(
+            db.execSQL(
                 """INSERT OR IGNORE INTO text_questions
                 | (id, question, first_option, second_option, 
                 | third_option, fourth_option, answer_num, points) 
@@ -23,7 +23,7 @@ val MIGRATION_1_2: Migration = object : Migration(1, 2) {
         }
 
         for (question in imageQuestions) {
-            database.execSQL(
+            db.execSQL(
                 """INSERT OR IGNORE INTO image_questions
                 | (id, image_entry_name, first_option, second_option, 
                 | third_option, fourth_option, answer_num, points) 
@@ -35,7 +35,7 @@ val MIGRATION_1_2: Migration = object : Migration(1, 2) {
         }
 
         for (question in audioQuestions) {
-            database.execSQL(
+            db.execSQL(
                 """INSERT OR IGNORE INTO audio_questions
                 | (id, audio_entry_name, first_option, second_option, 
                 | third_option, fourth_option, answer_num, points) 
@@ -47,7 +47,7 @@ val MIGRATION_1_2: Migration = object : Migration(1, 2) {
         }
 
         for (question in videoQuestions) {
-            database.execSQL(
+            db.execSQL(
                 """INSERT OR IGNORE INTO video_questions    
                 | (id, video_entry_name, first_option, second_option, 
                 | third_option, fourth_option, answer_num, points) 

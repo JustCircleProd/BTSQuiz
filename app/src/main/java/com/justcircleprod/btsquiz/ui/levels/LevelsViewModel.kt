@@ -52,7 +52,7 @@ class LevelsViewModel @Inject constructor(private val repository: AppRepository)
 
                 if (passedQuestionsCount != 0) {
                     repository.editUserCoinsQuantity(
-                         CoinConstants.INITIAL_COINS_QUANTITY + 5000 + LevelConstants.LEVEL_3_QUESTION_WORTH * passedQuestionsCount
+                        CoinConstants.INITIAL_COINS_QUANTITY + 5000 + LevelConstants.LEVEL_3_QUESTION_WORTH * passedQuestionsCount
                     )
                     repository.deleteAllPassedQuestions()
 

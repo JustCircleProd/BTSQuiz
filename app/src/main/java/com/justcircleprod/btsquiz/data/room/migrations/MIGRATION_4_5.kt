@@ -8,14 +8,14 @@ import com.justcircleprod.btsquiz.data.models.questions.VideoQuestion
 
 
 val MIGRATION_4_5: Migration = object : Migration(4, 5) {
-    override fun migrate(database: SupportSQLiteDatabase) {
-        database.execSQL(
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL(
             "UPDATE OR IGNORE text_questions SET question = \"Какой хештег, связанный с Jin, стал вирусным после Billboard Music Awards в 2017 году?\" WHERE id = 96"
         )
 
 
         for (question in textQuestions) {
-            database.execSQL(
+            db.execSQL(
                 """INSERT OR IGNORE INTO text_questions
                 | (id, question, first_option, second_option, 
                 | third_option, fourth_option, answer_num, points) 
@@ -27,7 +27,7 @@ val MIGRATION_4_5: Migration = object : Migration(4, 5) {
         }
 
         for (question in audioQuestions) {
-            database.execSQL(
+            db.execSQL(
                 """INSERT OR IGNORE INTO audio_questions
                 | (id, audio_entry_name, first_option, second_option, 
                 | third_option, fourth_option, answer_num, points) 
@@ -39,7 +39,7 @@ val MIGRATION_4_5: Migration = object : Migration(4, 5) {
         }
 
         for (question in videoQuestions) {
-            database.execSQL(
+            db.execSQL(
                 """INSERT OR IGNORE INTO video_questions    
                 | (id, video_entry_name, first_option, second_option, 
                 | third_option, fourth_option, answer_num, points) 

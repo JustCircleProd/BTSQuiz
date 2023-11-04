@@ -8,7 +8,7 @@ import dagger.hilt.android.HiltAndroidApp
 class App : Application() {
     // to determine the display of ads after each 3 passed the test
     var passedTestNum = 0
-    val passedTestNumForShowingAd = 3
+    val passedTestNumForShowingAd = 2
 
     override fun onCreate() {
         super.onCreate()
