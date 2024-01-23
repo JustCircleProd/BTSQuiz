@@ -11,7 +11,6 @@ import android.view.View
 import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.justcircleprod.btsquiz.App
@@ -30,8 +29,6 @@ import com.yandex.mobile.ads.interstitial.InterstitialAdEventListener
 import com.yandex.mobile.ads.interstitial.InterstitialAdLoadListener
 import com.yandex.mobile.ads.interstitial.InterstitialAdLoader
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 @AndroidEntryPoint
@@ -260,13 +257,12 @@ class QuizResultActivity : AppCompatActivity(), DoubleCoinsConfirmationDialogCal
             resultPlayer.start()
         }
 
-        lifecycleScope.launch(Dispatchers.IO) {
-            resultPlayer.setDataSource(
-                this@QuizResultActivity,
-                Uri.parse("android.resource://$packageName/raw/$audioName")
-            )
-            resultPlayer.prepareAsync()
-        }
+
+        resultPlayer.setDataSource(
+            this@QuizResultActivity,
+            Uri.parse("android.resource://$packageName/raw/$audioName")
+        )
+        resultPlayer.prepareAsync()
     }
 
     private fun setEarnedCoinsDoubledObserver() {

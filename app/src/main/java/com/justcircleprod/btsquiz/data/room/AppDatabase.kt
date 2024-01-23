@@ -23,10 +23,11 @@ import com.justcircleprod.btsquiz.data.room.migrations.MIGRATION_5_6
 import com.justcircleprod.btsquiz.data.room.migrations.MIGRATION_6_7
 import com.justcircleprod.btsquiz.data.room.migrations.MIGRATION_7_8
 import com.justcircleprod.btsquiz.data.room.migrations.MIGRATION_8_9
+import com.justcircleprod.btsquiz.data.room.migrations.MIGRATION_9_10
 
 
 @Database(
-    version = 9,
+    version = 10,
     entities = [TextQuestion::class, ImageQuestion::class, AudioQuestion::class,
         VideoQuestion::class, PassedQuestion::class, Score::class, Setting::class, LockedLevel::class,
         LevelProgress::class]
@@ -56,6 +57,7 @@ abstract class AppDatabase : RoomDatabase() {
                     MIGRATION_6_7,
                     MIGRATION_7_8,
                     MIGRATION_8_9,
+                    MIGRATION_9_10
                 )
                 .build()
     }

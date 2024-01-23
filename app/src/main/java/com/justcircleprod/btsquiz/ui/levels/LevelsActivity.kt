@@ -172,7 +172,7 @@ class LevelsActivity : AppCompatActivity(), UnlockLevelConfirmationDialogCallbac
                         return
                     }
 
-                    refreshAdTimer = object : CountDownTimer(20000, 20000) {
+                    refreshAdTimer = object : CountDownTimer(36000, 36000) {
                         override fun onTick(mills: Long) {}
 
                         override fun onFinish() {
