@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.os.CountDownTimer
 import android.util.Base64
 import android.view.View
+import android.view.ViewTreeObserver
 import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -20,7 +21,11 @@ import com.justcircleprod.btsquiz.ui.levels.LevelsActivity
 import com.justcircleprod.btsquiz.ui.quiz.QuizActivity
 import com.justcircleprod.btsquiz.ui.quizResult.doubleCoinsConfirmationDialog.DoubleCoinsConfirmationDialog
 import com.justcircleprod.btsquiz.ui.quizResult.doubleCoinsConfirmationDialog.DoubleCoinsConfirmationDialogCallback
+import com.yandex.mobile.ads.banner.BannerAdEventListener
+import com.yandex.mobile.ads.banner.BannerAdSize
+import com.yandex.mobile.ads.banner.BannerAdView
 import com.yandex.mobile.ads.common.AdError
+import com.yandex.mobile.ads.common.AdRequest
 import com.yandex.mobile.ads.common.AdRequestConfiguration
 import com.yandex.mobile.ads.common.AdRequestError
 import com.yandex.mobile.ads.common.ImpressionData
@@ -35,6 +40,24 @@ import kotlin.math.roundToInt
 class QuizResultActivity : AppCompatActivity(), DoubleCoinsConfirmationDialogCallback {
     private lateinit var binding: ActivityQuizResultBinding
     private val viewModel: QuizResultViewModel by viewModels()
+
+    private var bannerAdView: BannerAdView? = null
+    private val adSize: BannerAdSize
+        get() {
+            // Calculate the width of the ad, taking into account the padding in the ad container.
+            var adWidthPixels = binding.bannerAdView.width
+            if (adWidthPixels == 0) {
+                // If the ad hasn't been laid out, default to the full screen width
+                adWidthPixels = resources.displayMetrics.widthPixels
+            }
+            val adWidth =
+                ((adWidthPixels - resources.getDimensionPixelSize(R.dimen.banner_ad_horizontal_margin) * 2) / resources.displayMetrics.density).roundToInt()
+            val maxAdHeight =
+                (resources.getDimensionPixelSize(R.dimen.banner_ad_height) / resources.displayMetrics.density).roundToInt()
+
+            return BannerAdSize.inlineSize(this, adWidth, maxAdHeight)
+        }
+    private var refreshAdTimer: CountDownTimer? = null
 
     private var interstitialAd: InterstitialAd? = null
     private var interstitialAdLoader: InterstitialAdLoader? = null
@@ -55,6 +78,7 @@ class QuizResultActivity : AppCompatActivity(), DoubleCoinsConfirmationDialogCal
         binding = ActivityQuizResultBinding.inflate(layoutInflater)
 
         enableAnimations()
+        initAd()
 
         setLoadingObserver()
         workWithInterstitialAd()
@@ -69,8 +93,82 @@ class QuizResultActivity : AppCompatActivity(), DoubleCoinsConfirmationDialogCal
         setContentView(binding.root)
     }
 
+    override fun onStart() {
+        super.onStart()
+        refreshAdTimer?.start()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        refreshAdTimer?.cancel()
+    }
+
     private fun enableAnimations() {
         binding.contentLayout.layoutTransition.enableTransitionType(LayoutTransition.CHANGING)
+    }
+
+    private fun initAd() {
+        binding.bannerAdView.viewTreeObserver.addOnGlobalLayoutListener(object :
+            ViewTreeObserver.OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                binding.bannerAdView.viewTreeObserver.removeOnGlobalLayoutListener(this)
+
+                binding.bannerAdView.apply {
+                    setAdSize(this@QuizResultActivity.adSize)
+
+                    val adUnitId =
+                        String(
+                            Base64.decode("Ui1NLTI0NjM5MTktNg==", Base64.DEFAULT),
+                            Charsets.UTF_8
+                        )
+                    binding.bannerAdView.setAdUnitId(adUnitId)
+                }
+
+                bannerAdView = loadBannerAd()
+            }
+        })
+    }
+
+    private fun loadBannerAd(): BannerAdView {
+        return binding.bannerAdView.apply {
+            setBannerAdEventListener(object : BannerAdEventListener {
+                override fun onAdLoaded() {
+                    // If this callback occurs after the activity is destroyed, you
+                    // must call destroy and return or you may get a memory leak.
+                    // Note `isDestroyed` is a method on Activity.
+                    if (isDestroyed) {
+                        bannerAdView?.destroy()
+                        return
+                    }
+
+                    // to update ad every n seconds
+                    if (refreshAdTimer != null) {
+                        refreshAdTimer?.start()
+                        return
+                    }
+
+                    refreshAdTimer = object : CountDownTimer(30000, 30000) {
+                        override fun onTick(mills: Long) {}
+
+                        override fun onFinish() {
+                            bannerAdView = loadBannerAd()
+                        }
+                    }.start()
+                }
+
+                override fun onAdFailedToLoad(adRequestError: AdRequestError) {}
+
+                override fun onAdClicked() {}
+
+                override fun onLeftApplication() {}
+
+                override fun onReturnedToApplication() {}
+
+                override fun onImpression(impressionData: ImpressionData?) {}
+            })
+
+            loadAd(AdRequest.Builder().build())
+        }
     }
 
     private fun setLoadingObserver() {
@@ -331,6 +429,9 @@ class QuizResultActivity : AppCompatActivity(), DoubleCoinsConfirmationDialogCal
 
     override fun onDestroy() {
         super.onDestroy()
+
+        refreshAdTimer?.cancel()
+        bannerAdView?.destroy()
 
         destroyInterstitialAd()
 

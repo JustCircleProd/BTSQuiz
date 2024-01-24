@@ -9,6 +9,10 @@ import com.justcircleprod.btsquiz.data.models.questions.VideoQuestion
 
 val MIGRATION_9_10: Migration = object : Migration(9, 10) {
     override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL(
+            "UPDATE OR IGNORE audio_questions SET third_option = \"RM 'Yun ft. Erykah Badu'\" WHERE id = 129"
+        )
+
         for (question in textQuestions) {
             db.execSQL(
                 """INSERT OR IGNORE INTO text_questions    
