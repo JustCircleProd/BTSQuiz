@@ -41,3 +41,5 @@
 
 -dontwarn com.google.j2objc.annotations.RetainedWith
 -dontwarn com.google.j2objc.annotations.Weak
+
+-dontwarn com.yandex.metrica.ModulesFacade

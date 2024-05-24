@@ -16,7 +16,7 @@ class SettingsViewModel @Inject constructor(private val repository: AppRepositor
 
     fun updateWithoutQuizHintsState(state: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            repository.editWithoutQuzHintsState(state)
+            repository.editWithoutQuizHintsState(state)
         }
     }
 

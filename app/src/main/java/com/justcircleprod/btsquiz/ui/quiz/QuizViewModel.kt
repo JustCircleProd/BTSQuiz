@@ -8,7 +8,11 @@ import com.justcircleprod.btsquiz.common.CoinConstants
 import com.justcircleprod.btsquiz.common.LevelConstants
 import com.justcircleprod.btsquiz.data.AppRepository
 import com.justcircleprod.btsquiz.data.models.passedQuestion.PassedQuestion.Companion.toPassedQuestion
+import com.justcircleprod.btsquiz.data.models.questions.AudioQuestion
+import com.justcircleprod.btsquiz.data.models.questions.ImageQuestion
 import com.justcircleprod.btsquiz.data.models.questions.Question
+import com.justcircleprod.btsquiz.data.models.questions.TextQuestion
+import com.justcircleprod.btsquiz.data.models.questions.VideoQuestion
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -29,6 +33,7 @@ class QuizViewModel @Inject constructor(
 
     val levelId =
         state.get<Int>(QuizActivity.LEVEL_ARGUMENT_NAME) ?: LevelConstants.LEVEL_PASSED_QUESTIONS_ID
+
     val questionWorth = MutableLiveData(
         when (levelId) {
             LevelConstants.LEVEL_PASSED_QUESTIONS_ID -> LevelConstants.LEVEL_PASSED_QUESTIONS_QUESTION_WORTH
@@ -47,7 +52,7 @@ class QuizViewModel @Inject constructor(
     var correctlyAnsweredQuestionsCount = 0
 
     private var questions = mutableListOf<Question>()
-    var startQuestionsCount = 0
+    var questionsCount = 0
 
     private var questionPosition = 0
 
@@ -105,7 +110,7 @@ class QuizViewModel @Inject constructor(
     // and shuffles questions when the desired number of questions is reached
     private fun onLoadingEnd() {
         questions = questions.shuffled() as MutableList<Question>
-        startQuestionsCount = questions.size
+        questionsCount = questions.size
         isLoading.postValue(false)
     }
 
@@ -126,12 +131,45 @@ class QuizViewModel @Inject constructor(
             question.fourthOption,
         ).shuffled()
 
-        question.firstOption = options[0]
-        question.secondOption = options[1]
-        question.thirdOption = options[2]
-        question.fourthOption = options[3]
+        return when (question) {
+            is TextQuestion -> {
+                question.copy(
+                    firstOption = options[0],
+                    secondOption = options[1],
+                    thirdOption = options[2],
+                    fourthOption = options[3]
+                )
+            }
 
-        return question
+            is ImageQuestion -> {
+                question.copy(
+                    firstOption = options[0],
+                    secondOption = options[1],
+                    thirdOption = options[2],
+                    fourthOption = options[3]
+                )
+            }
+
+            is AudioQuestion -> {
+                question.copy(
+                    firstOption = options[0],
+                    secondOption = options[1],
+                    thirdOption = options[2],
+                    fourthOption = options[3]
+                )
+            }
+
+            is VideoQuestion -> {
+                question.copy(
+                    firstOption = options[0],
+                    secondOption = options[1],
+                    thirdOption = options[2],
+                    fourthOption = options[3]
+                )
+            }
+
+            else -> question
+        }
     }
 
     fun setQuestionOnCurrentPosition() {

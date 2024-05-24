@@ -216,7 +216,7 @@ class AppRepository @Inject constructor(
     fun getWithoutQuizHintsState() =
         dataStoreManager.collect(stringPreferencesKey(DataStoreConstants.WITHOUT_QUIZ_HINTS_KEY))
 
-    suspend fun editWithoutQuzHintsState(state: String) {
+    suspend fun editWithoutQuizHintsState(state: String) {
         dataStoreManager.edit(
             stringPreferencesKey(DataStoreConstants.WITHOUT_QUIZ_HINTS_KEY),
             state

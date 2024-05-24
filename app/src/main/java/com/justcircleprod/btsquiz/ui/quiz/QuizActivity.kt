@@ -259,14 +259,14 @@ class QuizActivity : AppCompatActivity() {
             }
 
             if (!isLoading) {
-                if (viewModel.startQuestionsCount != 0) {
+                if (viewModel.questionsCount != 0) {
                     viewModel.setQuestionOnCurrentPosition()
 
                     setCoinsObservers()
                     setWithoutQuizHintsCollector()
                     setQuestionsObserver()
 
-                    binding.progress.max = viewModel.startQuestionsCount
+                    binding.progress.max = viewModel.questionsCount
 
                     binding.loadLayout.visibility = View.GONE
                     binding.contentLayout.visibility = View.VISIBLE
@@ -723,7 +723,7 @@ class QuizActivity : AppCompatActivity() {
         )
         intent.putExtra(
             QuizResultActivity.QUESTIONS_COUNT_ARGUMENT_NAME,
-            viewModel.startQuestionsCount
+            viewModel.questionsCount
         )
         startActivity(intent)
         finish()
