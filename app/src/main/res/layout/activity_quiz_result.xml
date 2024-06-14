@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.quizResult.QuizResultActivity">
+    tools:context=".quizResult.presentation.QuizResultActivity">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -28,7 +28,7 @@
                 android:layout_marginBottom="@dimen/brand_margin_bottom"
                 android:gravity="center"
                 android:text="@string/app_name"
-                android:textColor="@color/brand_color"
+                android:textColor="@color/brand_text_color"
                 android:textSize="@dimen/brand_text_size"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toTopOf="@id/root_cardview"
@@ -56,8 +56,10 @@
                     android:id="@+id/load_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:layout_margin="@dimen/inner_padding"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    tools:ignore="UseCompoundDrawables">
 
                     <TextView
                         android:layout_width="match_parent"
@@ -68,14 +70,12 @@
                         android:textColor="@color/gray_text_color"
                         android:textSize="@dimen/hint_text_size" />
 
-                    <com.google.android.material.progressindicator.LinearProgressIndicator
-                        android:id="@+id/load_progress"
+                    <ImageView
+                        android:id="@+id/loading_gif"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/load_layout_progress_margin_top"
-                        android:indeterminate="true"
-                        app:indicatorColor="@color/progress_indicator_color"
-                        app:trackColor="@color/progress_track_color" />
+                        android:layout_height="@dimen/loading_gif_height"
+                        android:layout_marginTop="@dimen/loading_gif_top_margin"
+                        android:importantForAccessibility="no" />
 
                 </LinearLayout>
 
@@ -94,7 +94,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center_horizontal"
-                        android:text="@string/you_get"
+                        android:text="@string/you_got"
                         android:textColor="@color/gray_text_color"
                         android:textSize="@dimen/quiz_result_earned_coins_label_text_size" />
 
@@ -111,7 +111,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center_horizontal"
-                            android:textColor="@color/result_color"
+                            android:textColor="@color/gray_text_color"
                             android:textSize="@dimen/quiz_result_earned_coins_text_size"
                             android:textStyle="bold"
                             tools:text="1000" />
@@ -136,7 +136,7 @@
                         android:text="@string/double_coins"
                         android:textAlignment="center"
                         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                        android:textColor="@color/white_text_color"
+                        android:textColor="@color/second_btn_text_color"
                         android:textSize="@dimen/button_text_size"
                         android:visibility="gone"
                         app:cornerRadius="@dimen/button_corner_radius"
@@ -167,7 +167,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:adjustViewBounds="true"
-                        android:contentDescription="@string/result_image_content_description"
+                        android:importantForAccessibility="no"
                         android:paddingHorizontal="@dimen/congratulation_image_padding_horizontal"
                         android:scaleType="fitXY" />
 
@@ -198,7 +198,7 @@
                         android:elevation="@dimen/button_elevation"
                         android:padding="@dimen/button_padding"
                         android:stateListAnimator="@null"
-                        android:text="@string/to_levels"
+                        android:text="@string/to_level_selection"
                         android:textAlignment="center"
                         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                         android:textColor="@color/black_text_color"

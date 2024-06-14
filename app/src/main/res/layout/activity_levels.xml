@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.levels.LevelsActivity">
+    tools:context=".levels.presentation.LevelsActivity">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -22,11 +22,11 @@
                 android:id="@+id/brand_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/screen_content_space_size"
                 android:layout_marginBottom="@dimen/brand_margin_bottom"
                 android:gravity="center"
                 android:text="@string/app_name"
-                android:layout_marginTop="@dimen/screen_content_space_size"
-                android:textColor="@color/brand_color"
+                android:textColor="@color/brand_text_color"
                 android:textSize="@dimen/brand_text_size"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toTopOf="@id/root_cardview"
@@ -37,8 +37,8 @@
 
             <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/back_btn"
-                android:layout_width="@dimen/back_button_size"
-                android:layout_height="@dimen/back_button_size"
+                android:layout_width="@dimen/icon_button_size"
+                android:layout_height="@dimen/icon_button_size"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:contentDescription="@string/back"
@@ -55,10 +55,10 @@
                 android:id="@+id/root_cardview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/screen_content_space_size"
                 android:clipToPadding="false"
                 app:cardBackgroundColor="@color/card_background"
                 app:cardCornerRadius="@dimen/card_corner_radius"
-                android:layout_marginHorizontal="@dimen/screen_content_space_size"
                 app:cardElevation="@dimen/card_elevation"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -386,8 +386,11 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="@dimen/level_card_margin_between"
                         android:backgroundTint="@color/btn_background"
+                        android:clickable="true"
+                        android:focusable="true"
                         app:cardCornerRadius="@dimen/button_corner_radius"
                         app:cardElevation="@dimen/button_elevation"
+                        app:rippleColor="@color/ripple_color"
                         app:strokeColor="@color/btn_stroke_color"
                         app:strokeWidth="@dimen/button_stroke_width">
 

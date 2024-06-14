@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:clipToPadding="false"
-    tools:context=".ui.settings.developersAndLicenses.DevelopersAndLicensesActivity">
+    tools:context=".developersAndLicenses.presentation.DevelopersAndLicensesActivity">
 
     <TextView
         android:id="@+id/brand_label"
@@ -15,7 +15,7 @@
         android:layout_marginBottom="@dimen/brand_margin_bottom"
         android:gravity="center"
         android:text="@string/app_name"
-        android:textColor="@color/brand_color"
+        android:textColor="@color/brand_text_color"
         android:textSize="@dimen/brand_text_size"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@id/root_cardview"
@@ -26,12 +26,12 @@
 
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/back_btn"
-        android:layout_width="@dimen/back_button_size"
-        android:layout_height="@dimen/back_button_size"
+        android:layout_width="@dimen/icon_button_size"
+        android:layout_height="@dimen/icon_button_size"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:clickable="true"
-        android:focusable="true"
         android:contentDescription="@string/back"
+        android:focusable="true"
         android:src="@drawable/icon_back"
         app:layout_constraintBottom_toBottomOf="@id/brand_label"
         app:layout_constraintEnd_toStartOf="@id/brand_label"
@@ -57,7 +57,7 @@
             android:id="@+id/compose_view"
             android:layout_width="match_parent"
             android:layout_height="@dimen/developers_licenses_content_height"
-            android:layout_margin="@dimen/inner_padding" />
+            android:layout_marginHorizontal="@dimen/inner_padding" />
 
     </com.google.android.material.card.MaterialCardView>
 

@@ -6,9 +6,9 @@
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
     android:background="@drawable/dialog_background"
-    android:gravity="center"
     android:clipChildren="false"
     android:clipToPadding="false"
+    android:gravity="center"
     android:orientation="vertical"
     android:padding="@dimen/dialog_padding">
 
@@ -22,7 +22,7 @@
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/not_enough_money_title"
+            android:text="@string/not_enough_coins_title"
             android:textColor="@color/gray_text_color"
             android:textSize="@dimen/dialog_title_text_size"
             android:textStyle="bold"
@@ -49,9 +49,9 @@
         android:id="@+id/question_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
         android:clipChildren="false"
         android:clipToPadding="false"
+        android:gravity="center"
         android:orientation="vertical">
 
         <TextView
@@ -168,7 +168,7 @@
                 android:text="@string/watch_ad"
                 android:textAlignment="center"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                android:textColor="@color/white_text_color"
+                android:textColor="@color/second_btn_text_color"
                 android:textSize="@dimen/button_text_size"
                 app:cornerRadius="@dimen/button_corner_radius"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -186,7 +186,8 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="vertical"
-        android:visibility="gone">
+        android:visibility="gone"
+        tools:ignore="UseCompoundDrawables">
 
         <TextView
             android:layout_width="wrap_content"
@@ -196,14 +197,12 @@
             android:textColor="@color/gray_text_color"
             android:textSize="@dimen/dialog_hint_text_size" />
 
-        <com.google.android.material.progressindicator.LinearProgressIndicator
-            android:id="@+id/load_progress"
+        <ImageView
+            android:id="@+id/loading_gif"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/load_layout_progress_margin_top"
-            android:indeterminate="true"
-            app:trackColor="@color/progress_track_color"
-            app:indicatorColor="@color/progress_indicator_color" />
+            android:layout_height="@dimen/loading_gif_height"
+            android:layout_marginTop="@dimen/loading_gif_top_margin"
+            android:importantForAccessibility="no" />
 
     </LinearLayout>
 
@@ -211,9 +210,9 @@
         android:id="@+id/reward_result_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
         android:clipChildren="false"
         android:clipToPadding="false"
+        android:gravity="center"
         android:orientation="vertical"
         android:visibility="gone">
 
@@ -221,8 +220,8 @@
             android:id="@+id/reward_result_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAlignment="center"
             android:text="@string/reward_received"
+            android:textAlignment="center"
             android:textColor="@color/gray_text_color"
             android:textSize="@dimen/dialog_hint_text_size" />
 
@@ -266,7 +265,7 @@
             android:text="@string/confirm"
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            android:textColor="@color/white_text_color"
+            android:textColor="@color/second_btn_text_color"
             android:textSize="@dimen/button_text_size"
             app:cornerRadius="@dimen/button_corner_radius"
             app:layout_constraintBottom_toBottomOf="parent"

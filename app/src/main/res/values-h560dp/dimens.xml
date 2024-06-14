@@ -1,25 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="brand_margin_bottom">6dp</dimen>
+    <dimen name="brand_margin_bottom">7dp</dimen>
 
-    <dimen name="developers_licenses_content_height">350dp</dimen>
+    <dimen name="developers_licenses_content_height">420dp</dimen>
 
-    <dimen name="content_loading_progress_size">40dp</dimen>
+    <dimen name="content_loading_progress_size">50dp</dimen>
 
-    <dimen name="question_height">150dp</dimen>
+    <dimen name="question_height">170dp</dimen>
 
-    <dimen name="tv_question_margin_top">5dp</dimen>
-    <dimen name="tv_question_margin_bottom">10dp</dimen>
+    <dimen name="question_top_margin">9dp</dimen>
+    <dimen name="question_bottom_margin">8dp</dimen>
 
-    <dimen name="question_image_top_margin">5dp</dimen>
-    <dimen name="question_image_bottom_margin">10dp</dimen>
-
-    <dimen name="video_question_width">200dp</dimen>
-    <dimen name="video_question_height">110dp</dimen>
-    <dimen name="video_question_margin_top">22dp</dimen>
-    <dimen name="video_question_margin_bottom">33dp</dimen>
-
-    <dimen name="audio_question_size">80dp</dimen>
-    <dimen name="audio_question_margin_top">34dp</dimen>
-    <dimen name="audio_question_margin_bottom">51dp</dimen>
+    <dimen name="audio_question_size">95dp</dimen>
 </resources>

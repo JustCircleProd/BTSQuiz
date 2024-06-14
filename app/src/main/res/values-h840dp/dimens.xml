@@ -2,24 +2,14 @@
 <resources>
     <dimen name="brand_margin_bottom">14dp</dimen>
 
-    <dimen name="developers_licenses_content_height">540dp</dimen>
+    <dimen name="developers_licenses_content_height">700dp</dimen>
 
-    <dimen name="content_loading_progress_size">80dp</dimen>
+    <dimen name="content_loading_progress_size">85dp</dimen>
 
-    <dimen name="question_height">290dp</dimen>
+    <dimen name="question_height">300dp</dimen>
 
-    <dimen name="tv_question_margin_top">15dp</dimen>
-    <dimen name="tv_question_margin_bottom">25dp</dimen>
+    <dimen name="question_top_margin">15dp</dimen>
+    <dimen name="question_bottom_margin">14dp</dimen>
 
-    <dimen name="question_image_top_margin">15dp</dimen>
-    <dimen name="question_image_bottom_margin">25dp</dimen>
-
-    <dimen name="video_question_width">331dp</dimen>
-    <dimen name="video_question_height">186dp</dimen>
-    <dimen name="video_question_margin_top">66dp</dimen>
-    <dimen name="video_question_margin_bottom">78dp</dimen>
-
-    <dimen name="audio_question_size">120dp</dimen>
-    <dimen name="audio_question_margin_top">94dp</dimen>
-    <dimen name="audio_question_margin_bottom">116dp</dimen>
+    <dimen name="audio_question_size">130dp</dimen>
 </resources>

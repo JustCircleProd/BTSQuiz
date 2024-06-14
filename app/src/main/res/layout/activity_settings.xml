@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    tools:context=".ui.settings.SettingsActivity">
+    tools:context=".settings.presentation.SettingsActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -15,24 +15,24 @@
             android:id="@+id/brand_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/screen_content_space_size"
             android:layout_marginBottom="@dimen/brand_margin_bottom"
             android:gravity="center"
-            android:layout_marginTop="@dimen/screen_content_space_size"
             android:text="@string/app_name"
-            android:textColor="@color/brand_color"
+            android:textColor="@color/brand_text_color"
             android:textSize="@dimen/brand_text_size"
             android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@id/root_cardview"
             app:layout_constraintEnd_toEndOf="@id/root_cardview"
             app:layout_constraintStart_toStartOf="@id/root_cardview"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_chainStyle="packed"
-            app:layout_constraintVertical_bias="0.42" />
+            app:layout_constraintVertical_bias="0.42"
+            app:layout_constraintVertical_chainStyle="packed" />
 
         <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/back_btn"
-            android:layout_width="@dimen/back_button_size"
-            android:layout_height="@dimen/back_button_size"
+            android:layout_width="@dimen/icon_button_size"
+            android:layout_height="@dimen/icon_button_size"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:clickable="true"
             android:contentDescription="@string/back"
@@ -48,12 +48,12 @@
             android:id="@+id/root_cardview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardBackgroundColor="@color/card_background"
-            android:layout_marginBottom="@dimen/screen_content_space_size"
             android:layout_marginHorizontal="@dimen/screen_content_space_size"
+            android:layout_marginBottom="@dimen/screen_content_space_size"
             android:elevation="@dimen/card_elevation"
+            app:cardBackgroundColor="@color/card_background"
             app:cardCornerRadius="@dimen/card_corner_radius"
-            app:layout_constraintBottom_toBottomOf="@id/creators_and_licenses"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/brand_label">
@@ -70,11 +70,11 @@
                     android:backgroundTint="@color/btn_background"
                     app:cardCornerRadius="@dimen/button_corner_radius"
                     app:cardElevation="@dimen/button_elevation"
-                    app:strokeColor="@color/btn_stroke_color"
-                    app:strokeWidth="@dimen/button_stroke_width"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:strokeColor="@color/btn_stroke_color"
+                    app:strokeWidth="@dimen/button_stroke_width">
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
@@ -123,12 +123,12 @@
                     android:textColor="@color/black_text_color"
                     android:textSize="@dimen/button_text_size"
                     app:cornerRadius="@dimen/button_corner_radius"
-                    app:rippleColor="@color/ripple_color"
-                    app:strokeColor="@color/btn_stroke_color"
-                    app:strokeWidth="@dimen/button_stroke_width"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/without_quiz_hints_card" />
+                    app:layout_constraintTop_toBottomOf="@id/without_quiz_hints_card"
+                    app:rippleColor="@color/ripple_color"
+                    app:strokeColor="@color/btn_stroke_color"
+                    app:strokeWidth="@dimen/button_stroke_width" />
 
                 <View
                     android:id="@+id/line"
@@ -136,42 +136,19 @@
                     android:layout_height="@dimen/line_height"
                     android:layout_marginBottom="@dimen/line_bottom_margin"
                     android:background="@color/line_color"
-                    app:layout_constraintTop_toBottomOf="@id/reset_progress_btn"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent" />
-
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/share_app_btn"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="@color/btn_background"
-                    android:elevation="@dimen/button_elevation"
-                    android:padding="@dimen/button_padding"
-                    android:insetTop="0dp"
-                    android:stateListAnimator="@null"
-                    android:text="@string/share_app"
-                    android:textAlignment="center"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                    android:textColor="@color/black_text_color"
-                    android:textSize="@dimen/button_text_size"
-                    app:cornerRadius="@dimen/button_corner_radius"
-                    app:rippleColor="@color/ripple_color"
-                    app:strokeColor="@color/btn_stroke_color"
-                    app:strokeWidth="@dimen/button_stroke_width"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/rate_app_btn" />
+                    app:layout_constraintTop_toBottomOf="@id/reset_progress_btn" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/rate_app_btn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/line_bottom_margin"
                     android:backgroundTint="@color/btn_background"
                     android:elevation="@dimen/button_elevation"
-                    android:padding="@dimen/button_padding"
                     android:insetTop="0dp"
-                    android:layout_marginTop="@dimen/line_bottom_margin"
+                    android:padding="@dimen/button_padding"
                     android:stateListAnimator="@null"
                     android:text="@string/rate_app"
                     android:textAlignment="center"
@@ -179,31 +156,71 @@
                     android:textColor="@color/black_text_color"
                     android:textSize="@dimen/button_text_size"
                     app:cornerRadius="@dimen/button_corner_radius"
-                    app:rippleColor="@color/ripple_color"
-                    app:strokeColor="@color/btn_stroke_color"
-                    app:strokeWidth="@dimen/button_stroke_width"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/line" />
+                    app:layout_constraintTop_toBottomOf="@id/line"
+                    app:rippleColor="@color/ripple_color"
+                    app:strokeColor="@color/btn_stroke_color"
+                    app:strokeWidth="@dimen/button_stroke_width" />
 
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/share_app_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/btn_background"
+                    android:elevation="@dimen/button_elevation"
+                    android:insetTop="0dp"
+                    android:padding="@dimen/button_padding"
+                    android:stateListAnimator="@null"
+                    android:text="@string/share_app"
+                    android:textAlignment="center"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    android:textColor="@color/black_text_color"
+                    android:textSize="@dimen/button_text_size"
+                    app:cornerRadius="@dimen/button_corner_radius"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/rate_app_btn"
+                    app:rippleColor="@color/ripple_color"
+                    app:strokeColor="@color/btn_stroke_color"
+                    app:strokeWidth="@dimen/button_stroke_width" />
+
+                <View
+                    android:id="@+id/line2"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/line_height"
+                    android:layout_marginBottom="@dimen/line_bottom_margin"
+                    android:background="@color/line_color"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/share_app_btn" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/developers_and_licenses_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/line_bottom_margin"
+                    android:backgroundTint="@color/btn_background"
+                    android:elevation="@dimen/button_elevation"
+                    android:insetTop="0dp"
+                    android:padding="@dimen/button_padding"
+                    android:stateListAnimator="@null"
+                    android:text="@string/developers_and_licenses"
+                    android:textAlignment="center"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    android:textColor="@color/black_text_color"
+                    android:textSize="@dimen/button_text_size"
+                    app:cornerRadius="@dimen/button_corner_radius"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/line2"
+                    app:rippleColor="@color/ripple_color"
+                    app:strokeColor="@color/btn_stroke_color"
+                    app:strokeWidth="@dimen/button_stroke_width" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </com.google.android.material.card.MaterialCardView>
-
-        <TextView
-            android:id="@+id/creators_and_licenses"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/hint_bottom_margin"
-            android:gravity="top|center_horizontal"
-            android:text="@string/developers_and_licenses"
-            android:textSize="@dimen/creators_and_licenses_text_size"
-            android:layout_marginHorizontal="@dimen/screen_content_space_size"
-            android:textColor="@color/white_text_color"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

@@ -15,25 +15,24 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:gravity="center"
+        android:orientation="vertical"
         android:padding="@dimen/inner_padding">
 
         <ImageView
             android:id="@+id/gif"
             android:layout_width="match_parent"
             android:layout_height="@dimen/introduction_gif_size"
-            android:layout_marginTop="@dimen/introduction_gif_margin_top"
             android:layout_marginBottom="@dimen/introduction_gif_margin_bottom"
-            android:contentDescription="@string/introduction_gif_content_description" />
+            android:importantForAccessibility="no" />
 
         <LinearLayout
             android:id="@+id/user_coins_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/introduction_card_title_margin_bottom"
             android:animateLayoutChanges="true"
             android:gravity="center"
-            android:layout_marginBottom="@dimen/introduction_card_title_margin_bottom"
             android:orientation="horizontal"
             tools:ignore="UseCompoundDrawables">
 
@@ -52,10 +51,10 @@
                 android:id="@+id/title_icon_coins"
                 android:layout_width="@dimen/introduction_card_title_icon_coins_size"
                 android:layout_height="@dimen/introduction_card_title_icon_coins_size"
-                android:visibility="gone"
                 android:layout_marginStart="@dimen/icon_coins_margin_start"
                 android:contentDescription="@string/icon_coins_content_description"
-                android:src="@drawable/icon_coins" />
+                android:src="@drawable/icon_coins"
+                android:visibility="gone" />
 
         </LinearLayout>
 
@@ -73,17 +72,17 @@
             android:id="@+id/next_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/introduction_button_margin_top"
             android:backgroundTint="@color/btn_background"
             android:elevation="@dimen/button_elevation"
             android:padding="@dimen/button_padding"
-            android:layout_marginTop="@dimen/introduction_button_margin_top"
             android:stateListAnimator="@null"
             android:text="@string/next"
-            android:visibility="gone"
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:textColor="@color/black_text_color"
             android:textSize="@dimen/button_text_size"
+            android:visibility="gone"
             app:cornerRadius="@dimen/button_corner_radius"
             app:rippleColor="@color/ripple_color"
             app:strokeColor="@color/btn_stroke_color"
@@ -93,17 +92,17 @@
             android:id="@+id/play_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/introduction_button_margin_top"
             android:backgroundTint="@color/second_btn_color"
             android:elevation="@dimen/button_elevation"
-            android:visibility="gone"
             android:padding="@dimen/button_padding"
-            android:layout_marginTop="@dimen/introduction_button_margin_top"
             android:stateListAnimator="@null"
             android:text="@string/play"
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            android:textColor="@color/white_text_color"
+            android:textColor="@color/second_btn_text_color"
             android:textSize="@dimen/button_text_size"
+            android:visibility="gone"
             app:cornerRadius="@dimen/button_corner_radius"
             app:rippleColor="@color/ripple_color" />
 

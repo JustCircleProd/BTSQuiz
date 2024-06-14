@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.quiz.QuizActivity">
+    tools:context=".quiz.presentation.QuizActivity">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -32,7 +32,7 @@
                 android:layout_marginBottom="@dimen/brand_margin_bottom"
                 android:gravity="center"
                 android:text="@string/app_name"
-                android:textColor="@color/brand_color"
+                android:textColor="@color/brand_text_color"
                 android:textSize="@dimen/brand_text_size"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toTopOf="@id/root_cardview"
@@ -62,7 +62,7 @@
                     android:layout_gravity="center"
                     android:orientation="vertical"
                     android:padding="@dimen/inner_padding"
-                    android:visibility="visible">
+                    tools:ignore="UseCompoundDrawables">
 
                     <TextView
                         android:id="@+id/load_hint"
@@ -74,14 +74,12 @@
                         android:textColor="@color/gray_text_color"
                         android:textSize="@dimen/hint_text_size" />
 
-                    <com.google.android.material.progressindicator.LinearProgressIndicator
-                        android:id="@+id/load_progress"
+                    <ImageView
+                        android:id="@+id/loading_gif"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/load_layout_progress_margin_top"
-                        android:indeterminate="true"
-                        app:trackColor="@color/progress_track_color"
-                        app:indicatorColor="@color/progress_indicator_color" />
+                        android:layout_height="@dimen/loading_gif_height"
+                        android:layout_marginTop="@dimen/loading_gif_top_margin"
+                        android:importantForAccessibility="no" />
 
                 </LinearLayout>
 
@@ -114,7 +112,7 @@
                         android:elevation="@dimen/button_elevation"
                         android:padding="@dimen/button_padding"
                         android:stateListAnimator="@null"
-                        android:text="@string/to_levels"
+                        android:text="@string/to_level_selection"
                         android:textAlignment="center"
                         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                         android:textColor="@color/black"
@@ -203,11 +201,11 @@
                     <TextView
                         android:id="@+id/text_question"
                         android:layout_width="match_parent"
-                        android:layout_height="@dimen/question_height"
-                        android:layout_marginTop="@dimen/tv_question_margin_top"
-                        android:layout_marginBottom="@dimen/tv_question_margin_bottom"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/question_top_margin"
+                        android:layout_marginBottom="@dimen/question_bottom_margin"
                         android:gravity="center"
-                        android:paddingHorizontal="@dimen/tv_question_pudding"
+                        android:minHeight="@dimen/question_height"
                         android:textColor="@color/gray_text_color"
                         android:textSize="@dimen/text_question_text_size"
                         android:visibility="invisible"
@@ -223,19 +221,19 @@
                         android:indeterminate="true"
                         android:visibility="gone"
                         app:indicatorColor="@color/progress_indicator_color"
-                        app:trackColor="@color/progress_track_color"
                         app:indicatorSize="@dimen/content_loading_progress_size"
                         app:layout_constraintBottom_toTopOf="@id/progress"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/coins_barrier" />
+                        app:layout_constraintTop_toBottomOf="@id/coins_barrier"
+                        app:trackColor="@color/progress_track_color" />
 
                     <ImageView
                         android:id="@+id/image_question"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/question_height"
-                        android:layout_marginTop="@dimen/question_image_top_margin"
-                        android:layout_marginBottom="@dimen/question_image_bottom_margin"
+                        android:layout_marginTop="@dimen/question_top_margin"
+                        android:layout_marginBottom="@dimen/question_bottom_margin"
                         android:contentDescription="@string/image_for_question_description"
                         android:visibility="invisible"
                         app:layout_constraintBottom_toTopOf="@id/progress"
@@ -246,11 +244,10 @@
 
                     <FrameLayout
                         android:id="@+id/video_question_layout"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="@dimen/video_question_margin_horizontal"
-                        android:layout_marginTop="@dimen/video_question_margin_top"
-                        android:layout_marginBottom="@dimen/video_question_margin_bottom"
+                        android:layout_marginTop="@dimen/question_top_margin"
+                        android:layout_marginBottom="@dimen/question_bottom_margin"
                         android:visibility="invisible"
                         app:layout_constraintBottom_toTopOf="@id/progress"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -259,8 +256,9 @@
 
                         <VideoView
                             android:id="@+id/video_question"
-                            android:layout_width="@dimen/video_question_width"
-                            android:layout_height="@dimen/video_question_height"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/question_height"
+                            android:layout_gravity="center_horizontal"
                             android:contentDescription="@string/video_for_question_description" />
 
                     </FrameLayout>
@@ -269,8 +267,8 @@
                         android:id="@+id/audio_question"
                         android:layout_width="@dimen/audio_question_size"
                         android:layout_height="@dimen/audio_question_size"
-                        android:layout_marginTop="@dimen/audio_question_margin_top"
-                        android:layout_marginBottom="@dimen/audio_question_margin_bottom"
+                        android:layout_marginTop="@dimen/question_top_margin"
+                        android:layout_marginBottom="@dimen/question_bottom_margin"
                         android:contentDescription="@string/audio_question_content_description"
                         android:src="@drawable/icon_audio_question"
                         android:visibility="invisible"
@@ -286,11 +284,13 @@
                         android:indeterminate="false"
                         android:paddingVertical="@dimen/quiz_progress_indicator_padding_vertical"
                         android:progress="0"
-                        app:trackColor="@color/progress_track_color"
                         app:indicatorColor="@color/progress_indicator_color"
                         app:layout_constraintBottom_toTopOf="@id/first_option"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent" />
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:trackColor="@color/progress_track_color"
+                        app:trackCornerRadius="@dimen/quiz_progress_indicator_corner_radius"
+                        app:trackThickness="@dimen/quiz_progress_indicator_thickness" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/first_option"
@@ -359,6 +359,7 @@
                         android:id="@+id/fourth_option"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/quiz_hint_divider_margin_top"
                         android:backgroundTint="@color/btn_background"
                         android:elevation="@dimen/button_elevation"
                         android:enabled="false"
@@ -382,8 +383,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="@dimen/quiz_hint_divider_margin_bottom"
                         android:gravity="center"
-                        android:visibility="gone"
                         android:orientation="horizontal"
+                        android:visibility="gone"
                         app:layout_constraintBottom_toTopOf="@id/hint_50_50"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent">
@@ -444,7 +445,7 @@
                                 android:maxLines="1"
                                 android:text="@string/remove_2_options"
                                 android:textAlignment="center"
-                                android:textColor="@color/white_text_color"
+                                android:textColor="@color/second_btn_text_color"
                                 app:autoSizeMaxTextSize="@dimen/quiz_hint_title_max_text_size"
                                 app:autoSizeMinTextSize="@dimen/quiz_hint_title_min_text_size"
                                 app:autoSizeStepGranularity="1sp"
@@ -458,7 +459,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textAlignment="center"
-                                android:textColor="@color/white_text_color"
+                                android:textColor="@color/second_btn_text_color"
                                 app:autoSizeMaxTextSize="@dimen/quiz_hint_price_max_text_size"
                                 app:autoSizeMinTextSize="@dimen/quiz_hint_price_min_text_size"
                                 app:autoSizeStepGranularity="1sp"
@@ -474,9 +475,9 @@
                                 android:id="@+id/hint_50_50_price_icon"
                                 android:layout_width="@dimen/quiz_hint_icon_coins_size"
                                 android:layout_height="@dimen/quiz_hint_icon_coins_size"
+                                android:layout_marginStart="@dimen/icon_coins_margin_start"
                                 android:contentDescription="@string/icon_coins_content_description"
                                 android:src="@drawable/icon_coins"
-                                android:layout_marginStart="@dimen/icon_coins_margin_start"
                                 app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintStart_toEndOf="@id/hint_50_50_price"
@@ -519,7 +520,7 @@
                                 android:maxLines="1"
                                 android:text="@string/right_answer"
                                 android:textAlignment="center"
-                                android:textColor="@color/white_text_color"
+                                android:textColor="@color/second_btn_text_color"
                                 app:autoSizeMaxTextSize="@dimen/quiz_hint_title_max_text_size"
                                 app:autoSizeMinTextSize="@dimen/quiz_hint_title_min_text_size"
                                 app:autoSizeStepGranularity="1sp"
@@ -533,7 +534,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textAlignment="center"
-                                android:textColor="@color/white_text_color"
+                                android:textColor="@color/second_btn_text_color"
                                 app:autoSizeMaxTextSize="@dimen/quiz_hint_price_max_text_size"
                                 app:autoSizeMinTextSize="@dimen/quiz_hint_price_min_text_size"
                                 app:autoSizeStepGranularity="1sp"
@@ -549,9 +550,9 @@
                                 android:id="@+id/hint_correct_answer_price_icon"
                                 android:layout_width="@dimen/quiz_hint_icon_coins_size"
                                 android:layout_height="@dimen/quiz_hint_icon_coins_size"
+                                android:layout_marginStart="@dimen/icon_coins_margin_start"
                                 android:contentDescription="@string/icon_coins_content_description"
                                 android:src="@drawable/icon_coins"
-                                android:layout_marginStart="@dimen/icon_coins_margin_start"
                                 app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintStart_toEndOf="@id/hint_correct_answer_price"
