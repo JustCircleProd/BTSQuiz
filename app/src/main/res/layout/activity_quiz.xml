@@ -69,7 +69,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:paddingHorizontal="@dimen/load_text_pudding"
                         android:text="@string/tv_loading_quiz_text"
                         android:textColor="@color/gray_text_color"
                         android:textSize="@dimen/hint_text_size" />
@@ -99,7 +98,6 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="@dimen/hint_bottom_margin"
                         android:gravity="center"
-                        android:paddingHorizontal="@dimen/load_text_pudding"
                         android:text="@string/tv_out_of_questions_hint_text"
                         android:textColor="@color/gray_text_color"
                         android:textSize="@dimen/hint_text_size" />
@@ -135,11 +133,12 @@
                     android:visibility="gone">
 
                     <LinearLayout
-                        android:id="@+id/question_coins_layout"
+                        android:id="@+id/question_worth_layout"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:orientation="horizontal"
+                        android:visibility="invisible"
                         app:layout_constraintEnd_toStartOf="@id/user_coins_layout"
                         app:layout_constraintHorizontal_chainStyle="spread_inside"
                         app:layout_constraintStart_toStartOf="parent"
@@ -150,9 +149,9 @@
                             android:id="@+id/question_worth"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/quiz_question_worth_label"
                             android:textColor="@color/gray_text_color"
-                            android:textSize="@dimen/quiz_coins_tv_text_size" />
+                            android:textSize="@dimen/quiz_coins_tv_text_size"
+                            tools:text="@string/quiz_question_worth_label" />
 
                         <ImageView
                             android:layout_width="@dimen/quiz_coins_icon_size"
@@ -169,8 +168,9 @@
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:orientation="horizontal"
+                        android:visibility="invisible"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@id/question_coins_layout"
+                        app:layout_constraintStart_toEndOf="@id/question_worth_layout"
                         app:layout_constraintTop_toTopOf="parent"
                         tools:ignore="UseCompoundDrawables">
 
@@ -178,9 +178,9 @@
                             android:id="@+id/user_coins_tv"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/quiz_users_coins_quantity"
                             android:textColor="@color/gray_text_color"
-                            android:textSize="@dimen/quiz_coins_tv_text_size" />
+                            android:textSize="@dimen/quiz_coins_tv_text_size"
+                            tools:text="@string/quiz_users_coins_quantity" />
 
                         <ImageView
                             android:layout_width="@dimen/quiz_coins_icon_size"
@@ -196,7 +196,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:barrierDirection="bottom"
-                        app:constraint_referenced_ids="question_coins_layout,user_coins_layout" />
+                        app:constraint_referenced_ids="question_worth_layout,user_coins_layout" />
 
                     <TextView
                         android:id="@+id/text_question"
@@ -359,7 +359,6 @@
                         android:id="@+id/fourth_option"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/quiz_hint_divider_margin_top"
                         android:backgroundTint="@color/btn_background"
                         android:elevation="@dimen/button_elevation"
                         android:enabled="false"
@@ -384,7 +383,8 @@
                         android:layout_marginBottom="@dimen/quiz_hint_divider_margin_bottom"
                         android:gravity="center"
                         android:orientation="horizontal"
-                        android:visibility="gone"
+                        android:paddingTop="@dimen/quiz_hint_divider_margin_top"
+                        android:visibility="visible"
                         app:layout_constraintBottom_toTopOf="@id/hint_50_50"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent">
@@ -446,42 +446,40 @@
                                 android:text="@string/remove_2_options"
                                 android:textAlignment="center"
                                 android:textColor="@color/second_btn_text_color"
-                                app:autoSizeMaxTextSize="@dimen/quiz_hint_title_max_text_size"
-                                app:autoSizeMinTextSize="@dimen/quiz_hint_title_min_text_size"
-                                app:autoSizeStepGranularity="1sp"
-                                app:autoSizeTextType="uniform"
+                                android:textSize="@dimen/quiz_hint_button_text_size"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toTopOf="parent" />
 
-                            <TextView
-                                android:id="@+id/hint_50_50_price"
-                                android:layout_width="wrap_content"
+                            <LinearLayout
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:textAlignment="center"
-                                android:textColor="@color/second_btn_text_color"
-                                app:autoSizeMaxTextSize="@dimen/quiz_hint_price_max_text_size"
-                                app:autoSizeMinTextSize="@dimen/quiz_hint_price_min_text_size"
-                                app:autoSizeStepGranularity="1sp"
-                                app:autoSizeTextType="uniform"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintEnd_toStartOf="@id/hint_50_50_price_icon"
-                                app:layout_constraintHorizontal_chainStyle="packed"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toBottomOf="@id/hint_50_50_title"
-                                tools:text="50" />
-
-                            <ImageView
-                                android:id="@+id/hint_50_50_price_icon"
-                                android:layout_width="@dimen/quiz_hint_icon_coins_size"
-                                android:layout_height="@dimen/quiz_hint_icon_coins_size"
-                                android:layout_marginStart="@dimen/icon_coins_margin_start"
-                                android:contentDescription="@string/icon_coins_content_description"
-                                android:src="@drawable/icon_coins"
+                                android:gravity="center"
+                                android:orientation="horizontal"
                                 app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintStart_toEndOf="@id/hint_50_50_price"
-                                app:layout_constraintTop_toBottomOf="@id/hint_50_50_title" />
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@id/hint_50_50_title"
+                                tools:ignore="UseCompoundDrawables">
+
+                                <TextView
+                                    android:id="@+id/hint_50_50_price"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textAlignment="center"
+                                    android:textColor="@color/second_btn_text_color"
+                                    android:textSize="@dimen/quiz_hint_button_text_size"
+                                    tools:text="50" />
+
+                                <ImageView
+                                    android:id="@+id/hint_50_50_price_icon"
+                                    android:layout_width="@dimen/quiz_hint_icon_coins_size"
+                                    android:layout_height="@dimen/quiz_hint_icon_coins_size"
+                                    android:layout_marginStart="@dimen/icon_coins_margin_start"
+                                    android:contentDescription="@string/icon_coins_content_description"
+                                    android:src="@drawable/icon_coins" />
+
+                            </LinearLayout>
 
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -521,42 +519,40 @@
                                 android:text="@string/right_answer"
                                 android:textAlignment="center"
                                 android:textColor="@color/second_btn_text_color"
-                                app:autoSizeMaxTextSize="@dimen/quiz_hint_title_max_text_size"
-                                app:autoSizeMinTextSize="@dimen/quiz_hint_title_min_text_size"
-                                app:autoSizeStepGranularity="1sp"
-                                app:autoSizeTextType="uniform"
+                                android:textSize="@dimen/quiz_hint_button_text_size"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toTopOf="parent" />
 
-                            <TextView
-                                android:id="@+id/hint_correct_answer_price"
-                                android:layout_width="wrap_content"
+                            <LinearLayout
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:textAlignment="center"
-                                android:textColor="@color/second_btn_text_color"
-                                app:autoSizeMaxTextSize="@dimen/quiz_hint_price_max_text_size"
-                                app:autoSizeMinTextSize="@dimen/quiz_hint_price_min_text_size"
-                                app:autoSizeStepGranularity="1sp"
-                                app:autoSizeTextType="uniform"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintEnd_toStartOf="@id/hint_correct_answer_price_icon"
-                                app:layout_constraintHorizontal_chainStyle="packed"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toBottomOf="@id/hint_correct_answer_title"
-                                tools:text="100" />
-
-                            <ImageView
-                                android:id="@+id/hint_correct_answer_price_icon"
-                                android:layout_width="@dimen/quiz_hint_icon_coins_size"
-                                android:layout_height="@dimen/quiz_hint_icon_coins_size"
-                                android:layout_marginStart="@dimen/icon_coins_margin_start"
-                                android:contentDescription="@string/icon_coins_content_description"
-                                android:src="@drawable/icon_coins"
+                                android:gravity="center"
+                                android:orientation="horizontal"
                                 app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintStart_toEndOf="@id/hint_correct_answer_price"
-                                app:layout_constraintTop_toBottomOf="@id/hint_correct_answer_title" />
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@id/hint_correct_answer_title"
+                                tools:ignore="UseCompoundDrawables">
+
+                                <TextView
+                                    android:id="@+id/hint_correct_answer_price"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textAlignment="center"
+                                    android:textColor="@color/second_btn_text_color"
+                                    android:textSize="@dimen/quiz_hint_button_text_size"
+                                    tools:text="100" />
+
+                                <ImageView
+                                    android:id="@+id/hint_correct_answer_price_icon"
+                                    android:layout_width="@dimen/quiz_hint_icon_coins_size"
+                                    android:layout_height="@dimen/quiz_hint_icon_coins_size"
+                                    android:layout_marginStart="@dimen/icon_coins_margin_start"
+                                    android:contentDescription="@string/icon_coins_content_description"
+                                    android:src="@drawable/icon_coins" />
+
+                            </LinearLayout>
 
                         </androidx.constraintlayout.widget.ConstraintLayout>
 

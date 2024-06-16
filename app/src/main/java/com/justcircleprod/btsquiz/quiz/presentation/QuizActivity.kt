@@ -325,14 +325,16 @@ class QuizActivity : AppCompatActivity() {
     private fun setCoinsObservers() {
         viewModel.questionWorth.observe(this) {
             binding.questionWorth.text = getString(R.string.quiz_question_worth_label, it)
+            binding.questionWorthLayout.visibility = View.VISIBLE
         }
 
         lifecycleScope.launch {
             viewModel.userCoinsQuantity.collect {
                 val userCoinsQuantity = it?.toInt() ?: 0
-
                 binding.userCoinsTv.text =
                     getString(R.string.quiz_users_coins_quantity, userCoinsQuantity)
+
+                binding.userCoinsLayout.visibility = View.VISIBLE
             }
         }
     }

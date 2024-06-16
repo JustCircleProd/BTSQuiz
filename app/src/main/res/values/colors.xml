@@ -3,7 +3,7 @@
     <color name="black">#222222</color>
     <color name="white">#FDFDFD</color>
 
-    <color name="purple_200">#FFBB86FC</color>
+    <color name="main_color">#FFBB86FC</color>
 
     <color name="upper_gradient_color">#837DDB</color>
     <color name="lower_gradient_color">#EB86BE</color>

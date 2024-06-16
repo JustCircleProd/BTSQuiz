@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Common -->
+
     <dimen name="screen_content_space_size">20dp</dimen>
 
     <dimen name="card_elevation">3dp</dimen>
@@ -13,8 +14,6 @@
 
     <dimen name="hint_text_size">17sp</dimen>
     <dimen name="hint_bottom_margin">5dp</dimen>
-
-    <dimen name="load_text_pudding">10dp</dimen>
 
     <dimen name="line_height">1dp</dimen>
 
@@ -47,7 +46,7 @@
     <dimen name="dialog_buttons_layout_top_margin">10dp</dimen>
     <dimen name="raw_buttons_horizontal_margin">6dp</dimen>
     <dimen name="dialog_coins_text_size">18sp</dimen>
-    <dimen name="dialog_icon_coins_size">19dp</dimen>
+    <dimen name="dialog_icon_coins_size">17dp</dimen>
 
     <!-- Introduction -->
 
@@ -57,13 +56,12 @@
     <dimen name="introduction_dots_spacing">3dp</dimen>
 
     <dimen name="introduction_card_text_size">18sp</dimen>
-    <dimen name="introduction_card_text_text_size">17sp</dimen>
+    <dimen name="introduction_card_text_text_size">16sp</dimen>
     <dimen name="introduction_card_title_margin_bottom">10dp</dimen>
-    <dimen name="introduction_card_title_icon_coins_size">19dp</dimen>
+    <dimen name="introduction_card_title_icon_coins_size">17dp</dimen>
     <dimen name="introduction_button_margin_top">20dp</dimen>
-    <dimen name="load_layout_progress_margin_top">12dp</dimen>
     <dimen name="introduction_gif_size">180dp</dimen>
-    <dimen name="introduction_gif_margin_bottom">20dp</dimen>
+    <dimen name="introduction_gif_margin_bottom">10dp</dimen>
 
     <!-- Main -->
 
@@ -76,7 +74,7 @@
     <!-- Levels -->
 
     <dimen name="levels_user_coins_text_size">18sp</dimen>
-    <dimen name="levels_user_coins_icon_size">19dp</dimen>
+    <dimen name="levels_user_coins_icon_size">17dp</dimen>
 
     <dimen name="level_card_inner_margin">11dp</dimen>
     <dimen name="level_card_margin_between">12dp</dimen>
@@ -92,12 +90,12 @@
     <dimen name="level_progress_track_corner_radius">10dp</dimen>
     <dimen name="level_progress_track_thickness">30dp</dimen>
 
-    <dimen name="level_price_icon_coins_size">16dp</dimen>
+    <dimen name="level_price_icon_coins_size">14dp</dimen>
 
     <!-- Quiz -->
 
     <dimen name="quiz_coins_tv_text_size">14sp</dimen>
-    <dimen name="quiz_coins_icon_size">15dp</dimen>
+    <dimen name="quiz_coins_icon_size">14dp</dimen>
 
     <dimen name="content_loading_progress_size">40dp</dimen>
 
@@ -117,19 +115,18 @@
     <dimen name="quiz_hint_divider_margin_top">5dp</dimen>
     <dimen name="quiz_hint_divider_margin_bottom">7dp</dimen>
     <dimen name="quiz_hint_divider_title_text_size">15sp</dimen>
-    <dimen name="quiz_hint_card_padding">6dp</dimen>
     <dimen name="quiz_divider_tv_horizontal_margin">6dp</dimen>
-    <dimen name="quiz_hint_title_max_text_size">14sp</dimen>
-    <dimen name="quiz_hint_title_min_text_size">11sp</dimen>
-    <dimen name="quiz_hint_price_max_text_size">13sp</dimen>
-    <dimen name="quiz_hint_price_min_text_size">10sp</dimen>
-    <dimen name="quiz_hint_icon_coins_size">14dp</dimen>
+
+    <dimen name="quiz_hint_card_padding">6dp</dimen>
+
+    <dimen name="quiz_hint_button_text_size">13sp</dimen>
+    <dimen name="quiz_hint_icon_coins_size">13dp</dimen>
 
     <!-- Quiz Result -->
 
     <dimen name="quiz_result_earned_coins_label_text_size">17sp</dimen>
     <dimen name="quiz_result_earned_coins_text_size">19sp</dimen>
-    <dimen name="quiz_result_coins_icon_size">20dp</dimen>
+    <dimen name="quiz_result_coins_icon_size">18dp</dimen>
 
     <dimen name="congratulation_text_size">20sp</dimen>
     <dimen name="congratulation_tv_bottom_margin">5dp</dimen>

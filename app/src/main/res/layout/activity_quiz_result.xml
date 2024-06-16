@@ -65,7 +65,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:paddingHorizontal="@dimen/load_text_pudding"
                         android:text="@string/tv_loading_result_text"
                         android:textColor="@color/gray_text_color"
                         android:textSize="@dimen/hint_text_size" />

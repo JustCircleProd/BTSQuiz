@@ -139,6 +139,8 @@
 
     <string name="double_coins">Удвоить монеты</string>
     <string name="do_you_want_to_watch_an_ad_to_double_coins">Хотите посмотреть рекламу, чтобы удвоить полученные монеты?</string>
+    <string name="double_coins_quantity_with_placeholder">%1$d x 2</string>
+
     <string name="coins_doubled_title">Монеты удвоены</string>
     <string name="coins_doubled">Полученные монеты были удвоены</string>
 

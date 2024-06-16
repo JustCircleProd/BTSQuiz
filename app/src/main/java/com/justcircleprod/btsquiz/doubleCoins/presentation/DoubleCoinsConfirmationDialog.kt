@@ -192,7 +192,8 @@ class DoubleCoinsConfirmationDialog : DialogFragment() {
                     binding.questionLayout.visibility = View.VISIBLE
 
                     if (earnedCoins != null) {
-                        binding.earnedCoinsToDouble.text = earnedCoins.toString()
+                        binding.earnedCoinsToDouble.text =
+                            getString(R.string.double_coins_quantity_with_placeholder, earnedCoins)
                     }
                 }
 
