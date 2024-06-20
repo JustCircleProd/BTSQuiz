@@ -1,8 +1,8 @@
 package com.justcircleprod.btsquiz.core.domain.repositories
 
-import androidx.lifecycle.LiveData
 import com.justcircleprod.btsquiz.core.data.models.passedQuestion.PassedQuestion
 import com.justcircleprod.btsquiz.core.data.models.questions.Question
+import kotlinx.coroutines.flow.Flow
 
 interface PassedQuestionRepository {
 
@@ -14,5 +14,5 @@ interface PassedQuestionRepository {
 
     suspend fun getPassedQuestionsCount(): Int
 
-    fun getPassedQuestionsCountLiveData(): LiveData<Int>
+    fun getPassedQuestionsCountFlow(): Flow<Int>
 }

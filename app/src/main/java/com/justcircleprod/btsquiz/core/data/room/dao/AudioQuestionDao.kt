@@ -8,7 +8,7 @@ import com.justcircleprod.btsquiz.core.data.models.questions.AudioQuestion
 interface AudioQuestionDao {
 
     @Query("SELECT * FROM audio_questions WHERE id IN (:ids)")
-    suspend fun getByIds(ids: IntArray): Array<AudioQuestion>
+    suspend fun getByIds(ids: IntArray): List<AudioQuestion>
 
     @Query("SELECT COUNT(id) FROM audio_questions")
     suspend fun getCount(): Int

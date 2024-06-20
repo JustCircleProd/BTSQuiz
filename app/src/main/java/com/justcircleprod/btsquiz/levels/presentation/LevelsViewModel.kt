@@ -1,6 +1,6 @@
 package com.justcircleprod.btsquiz.levels.presentation
 
-import androidx.lifecycle.MutableLiveData
+import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.justcircleprod.btsquiz.core.data.constants.CoinConstants
@@ -12,7 +12,10 @@ import com.justcircleprod.btsquiz.core.domain.repositories.PassedQuestionReposit
 import com.justcircleprod.btsquiz.core.domain.repositories.ScoreRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -24,36 +27,54 @@ class LevelsViewModel @Inject constructor(
     private val lockedLevelRepository: LockedLevelRepository,
     private val scoreRepository: ScoreRepository
 ) : ViewModel() {
-    val compensationReceived = MutableLiveData(false)
+
+    val compensationReceived = MutableStateFlow(false)
 
     val userCoinsQuantity = coinRepository.getUserCoinsQuantity()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), "NOT_INITIALIZED")
 
-    val passedQuestionsCount = passedQuestionRepository.getPassedQuestionsCountLiveData()
+    val passedQuestionsCount = passedQuestionRepository.getPassedQuestionsCountFlow()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
 
     val level1Progress = levelProgressRepository.getLevelProgressLiveData(LevelConstants.LEVEL_1_ID)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
 
     val level2Info = lockedLevelRepository.getLockedLevelLiveData(LevelConstants.LEVEL_2_ID)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
     val level2Progress = levelProgressRepository.getLevelProgressLiveData(LevelConstants.LEVEL_2_ID)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
 
     val level3Info = lockedLevelRepository.getLockedLevelLiveData(LevelConstants.LEVEL_3_ID)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
     val level3Progress = levelProgressRepository.getLevelProgressLiveData(LevelConstants.LEVEL_3_ID)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
 
     val level4Info = lockedLevelRepository.getLockedLevelLiveData(LevelConstants.LEVEL_4_ID)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
     val level4Progress = levelProgressRepository.getLevelProgressLiveData(LevelConstants.LEVEL_4_ID)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
 
     val level5Info = lockedLevelRepository.getLockedLevelLiveData(LevelConstants.LEVEL_5_ID)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
     val level5Progress = levelProgressRepository.getLevelProgressLiveData(LevelConstants.LEVEL_5_ID)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
 
     val level6Info = lockedLevelRepository.getLockedLevelLiveData(LevelConstants.LEVEL_6_ID)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
     val level6Progress = levelProgressRepository.getLevelProgressLiveData(LevelConstants.LEVEL_6_ID)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
 
     val level7Info = lockedLevelRepository.getLockedLevelLiveData(LevelConstants.LEVEL_7_ID)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
     val level7Progress = levelProgressRepository.getLevelProgressLiveData(LevelConstants.LEVEL_7_ID)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
 
+    // calculating initial coins quantity or compensation
     init {
-        // calculating initial coins or compensation
         viewModelScope.launch(Dispatchers.IO) {
-            if (userCoinsQuantity.first() == null) {
+            userCoinsQuantity.collect { coinsQuantity ->
+                if (coinsQuantity?.isDigitsOnly() == false || coinsQuantity != null) return@collect
+
                 val passedQuestionsCount = passedQuestionRepository.getPassedQuestionsCount()
 
                 // if there are passed questions,
@@ -66,9 +87,10 @@ class LevelsViewModel @Inject constructor(
                     )
                     passedQuestionRepository.deleteAllPassedQuestions()
 
-                    compensationReceived.postValue(true)
+                    compensationReceived.value = true
 
-                    return@launch
+                    cancel()
+                    return@collect
                 }
 
                 // if there are no passed questions, then we roughly count coins according to the results
@@ -97,13 +119,16 @@ class LevelsViewModel @Inject constructor(
                     coinRepository.editUserCoinsQuantity(initialCoins)
                     passedQuestionRepository.deleteAllPassedQuestions()
 
-                    compensationReceived.postValue(true)
+                    compensationReceived.value = true
 
-                    return@launch
+                    cancel()
+                    return@collect
                 }
 
                 // if user has not played before the update with coins
                 coinRepository.editUserCoinsQuantity(CoinConstants.INITIAL_COINS_QUANTITY)
+
+                cancel()
             }
         }
     }

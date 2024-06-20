@@ -71,7 +71,7 @@ class WatchRewardedAdConfirmationDialog : DialogFragment() {
         enableAnimations()
         setLoadingGif()
         setOnButtonsClickListeners()
-        setStateObserver()
+        setRewardedAdStateCollector()
 
         dialogBuilder.setView(binding.root).setCancelable(true)
         return dialogBuilder.create()
@@ -91,8 +91,8 @@ class WatchRewardedAdConfirmationDialog : DialogFragment() {
     }
 
     private fun setOnButtonsClickListeners() {
-        binding.titleCancelBtn.setOnClickListener { dismiss() }
-        binding.cancelBtn.setOnClickListener { dismiss() }
+        binding.titleCancelBtn.setOnClickListener { dialog?.cancel() }
+        binding.cancelBtn.setOnClickListener { dialog?.cancel() }
 
         binding.watchAdBtn.setOnClickListener {
             viewModel.rewardedAdState.value = RewardedAdState.Loading
@@ -154,11 +154,13 @@ class WatchRewardedAdConfirmationDialog : DialogFragment() {
                 }
 
                 override fun onAdDismissed() {
+                    destroyRewardedAd()
+
                     if (viewModel.rewardReceived) {
                         viewModel.rewardedAdState.value = RewardedAdState.RewardReceived
+                    } else {
+                        dialog?.cancel()
                     }
-
-                    destroyRewardedAd()
                 }
 
                 override fun onAdClicked() {}
@@ -175,49 +177,62 @@ class WatchRewardedAdConfirmationDialog : DialogFragment() {
         }
     }
 
-    private fun setStateObserver() {
-        viewModel.rewardedAdState.observe(this) {
-            binding.questionLayout.visibility = View.GONE
-            binding.loadingLayout.visibility = View.GONE
-            binding.rewardResultLayout.visibility = View.GONE
-            binding.rewardResultQuantityLayout.visibility = View.GONE
+    private fun setRewardedAdStateCollector() {
+        lifecycleScope.launch {
+            viewModel.rewardedAdState.collect {
+                when (it) {
+                    RewardedAdState.UserNotAgreedYet -> {
+                        binding.title.text = getString(R.string.not_enough_coins_title)
 
-            when (it) {
-                RewardedAdState.UserNotAgreedYet -> {
-                    binding.title.text = getString(R.string.not_enough_coins_title)
+                        binding.loadingLayout.visibility = View.GONE
+                        binding.rewardResultLayout.visibility = View.GONE
+                        binding.rewardResultQuantityLayout.visibility = View.GONE
 
-                    binding.questionLayout.visibility = View.VISIBLE
+                        if (missingCoinsQuantity != null) {
+                            binding.missingCoinsQuantity.text = missingCoinsQuantity.toString()
+                        }
+                        binding.rewardedAdWorth.text = CoinConstants.REWARDED_AD_WORTH.toString()
 
-                    if (missingCoinsQuantity != null) {
-                        binding.missingCoinsQuantity.text = missingCoinsQuantity.toString()
+                        binding.questionLayout.visibility = View.VISIBLE
                     }
-                    binding.rewardedAdWorth.text = CoinConstants.REWARDED_AD_WORTH.toString()
-                }
 
-                RewardedAdState.Loading -> {
-                    binding.title.text = getString(R.string.loading_ad_title)
+                    RewardedAdState.Loading -> {
+                        binding.title.text = getString(R.string.loading_ad_title)
 
-                    binding.loadingLayout.visibility = View.VISIBLE
-                }
+                        binding.questionLayout.visibility = View.GONE
+                        binding.rewardResultLayout.visibility = View.GONE
+                        binding.rewardResultQuantityLayout.visibility = View.GONE
 
-                RewardedAdState.FailedToLoad -> {
-                    binding.title.text = getString(R.string.failed_to_load_rewarded_ad_title)
+                        binding.loadingLayout.visibility = View.VISIBLE
+                    }
 
-                    binding.rewardResultLayout.visibility = View.VISIBLE
+                    RewardedAdState.FailedToLoad -> {
+                        binding.title.text = getString(R.string.failed_to_load_rewarded_ad_title)
 
-                    binding.rewardResultTv.text = getString(R.string.failed_to_load_rewarded_ad)
-                }
+                        binding.questionLayout.visibility = View.GONE
+                        binding.loadingLayout.visibility = View.GONE
+                        binding.rewardResultQuantityLayout.visibility = View.GONE
 
-                RewardedAdState.RewardReceived -> {
-                    binding.title.text = getString(R.string.reward_received_title)
+                        binding.rewardResultTv.text = getString(R.string.failed_to_load_rewarded_ad)
 
-                    binding.rewardResultTv.text = getString(R.string.reward_received)
-                    binding.rewardResultQuantity.text = CoinConstants.REWARDED_AD_WORTH.toString()
+                        binding.rewardResultLayout.visibility = View.VISIBLE
+                    }
 
-                    binding.rewardResultLayout.visibility = View.VISIBLE
-                    binding.rewardResultQuantityLayout.visibility = View.VISIBLE
+                    RewardedAdState.RewardReceived -> {
+                        binding.title.text = getString(R.string.reward_received_title)
 
-                    playRewardReceivedSound()
+                        binding.rewardResultTv.text = getString(R.string.reward_received)
+                        binding.rewardResultQuantity.text =
+                            CoinConstants.REWARDED_AD_WORTH.toString()
+
+                        binding.questionLayout.visibility = View.GONE
+                        binding.loadingLayout.visibility = View.GONE
+
+                        binding.rewardResultLayout.visibility = View.VISIBLE
+                        binding.rewardResultQuantityLayout.visibility = View.VISIBLE
+
+                        playRewardReceivedSound()
+                    }
                 }
             }
         }

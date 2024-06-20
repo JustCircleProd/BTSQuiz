@@ -1,11 +1,11 @@
 package com.justcircleprod.btsquiz.quiz.presentation
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.justcircleprod.btsquiz.core.data.constants.CoinConstants
 import com.justcircleprod.btsquiz.core.data.constants.LevelConstants
+import com.justcircleprod.btsquiz.core.data.models.passedQuestion.PassedQuestion
 import com.justcircleprod.btsquiz.core.data.models.passedQuestion.PassedQuestion.Companion.toPassedQuestion
 import com.justcircleprod.btsquiz.core.data.models.questions.AudioQuestion
 import com.justcircleprod.btsquiz.core.data.models.questions.ImageQuestion
@@ -19,6 +19,9 @@ import com.justcircleprod.btsquiz.core.domain.repositories.QuestionRepository
 import com.justcircleprod.btsquiz.core.domain.repositories.SettingRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -32,17 +35,19 @@ class QuizViewModel @Inject constructor(
     private val levelProgressRepository: LevelProgressRepository,
     state: SavedStateHandle
 ) : ViewModel() {
-    val isLoading = MutableLiveData(true)
+
+    val isLoading = MutableStateFlow(true)
 
     // value to prevent the observer from triggering when setting the default value
     var isFirstStart = true
 
     val userCoinsQuantity = coinRepository.getUserCoinsQuantity()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
 
     val levelId =
         state.get<Int>(QuizActivity.LEVEL_ARGUMENT_NAME) ?: LevelConstants.LEVEL_PASSED_QUESTIONS_ID
 
-    val questionWorth = MutableLiveData(
+    val questionWorth = MutableStateFlow(
         when (levelId) {
             LevelConstants.LEVEL_PASSED_QUESTIONS_ID -> LevelConstants.LEVEL_PASSED_QUESTIONS_QUESTION_WORTH
             LevelConstants.LEVEL_1_ID -> LevelConstants.LEVEL_1_QUESTION_WORTH
@@ -62,17 +67,20 @@ class QuizViewModel @Inject constructor(
     private var questions = mutableListOf<Question>()
     var questionsCount = 0
 
-    private var questionPosition = 0
+    var questionPosition = -1
 
     // the current question or a sign of the end of questions is placed here
-    val question = MutableLiveData<Question?>()
+    val question = MutableStateFlow<Question?>(null)
     var rightAnswer = ""
 
-    val withoutQuizHintsState = settingRepository.getWithoutQuizHintsState()
+    val withoutQuizHints = settingRepository.getWithoutQuizHintsState()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), "NOT_INITIALIZED")
 
     // for current question
-    val hint5050Used = MutableLiveData(false)
-    val hintCorrectAnswerUsed = MutableLiveData(false)
+    val hint5050Used = MutableStateFlow(false)
+    val hintCorrectAnswerUsed = MutableStateFlow(false)
+
+    private val passedQuestions = mutableListOf<PassedQuestion>()
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
@@ -119,7 +127,7 @@ class QuizViewModel @Inject constructor(
     private fun onLoadingEnd() {
         questions = questions.shuffled() as MutableList<Question>
         questionsCount = questions.size
-        isLoading.postValue(false)
+        isLoading.value = false
     }
 
     private fun setRightAnswer(question: Question) {
@@ -181,24 +189,33 @@ class QuizViewModel @Inject constructor(
     }
 
     fun setQuestionOnCurrentPosition() {
-        if (questionPosition < questions.size) {
+        if (questionPosition + 1 < questions.size) {
+            // If this is the first call, shuffle the question options,
+            // otherwise they are already shuffled
+            if (questionPosition == -1) {
+                questionPosition = 0
+                question.value = getQuestionWithShuffledOptions(questions[questionPosition])
+            }
+
             setRightAnswer(questions[questionPosition])
-            question.value = getQuestionWithShuffledOptions(questions[questionPosition])
         } else {
             question.value = null
         }
     }
 
     fun setQuestionOnNextPosition() {
-        questionPosition++
-        hint5050Used.value = false
-        hintCorrectAnswerUsed.value = false
+        viewModelScope.launch {
+            questionPosition++
+            hint5050Used.value = false
+            hintCorrectAnswerUsed.value = false
 
-        if (questionPosition < questions.size) {
-            setRightAnswer(questions[questionPosition])
-            question.value = getQuestionWithShuffledOptions(questions[questionPosition])
-        } else {
-            question.value = null
+            if (questionPosition < questions.size) {
+                setRightAnswer(questions[questionPosition])
+                question.value = getQuestionWithShuffledOptions(questions[questionPosition])
+            } else {
+                savePassedQuestions()
+                question.value = null
+            }
         }
     }
 
@@ -212,38 +229,40 @@ class QuizViewModel @Inject constructor(
     }
 
     fun onRightAnswer() {
-        viewModelScope.launch {
-            if (levelId != LevelConstants.LEVEL_PASSED_QUESTIONS_ID) {
-                val passedQuestion = question.value!!.toPassedQuestion()
-
-                withContext(Dispatchers.IO) {
-                    passedQuestionRepository.insertPassedQuestion(passedQuestion)
-                }
-            }
-
-            earnedCoins += questionWorth.value!!
-            correctlyAnsweredQuestionsCount++
-
-            if (levelId != LevelConstants.LEVEL_PASSED_QUESTIONS_ID) {
-                withContext(Dispatchers.IO) {
-                    levelProgressRepository.addLevelProgress(levelId, 1)
-                }
-            }
+        if (levelId != LevelConstants.LEVEL_PASSED_QUESTIONS_ID) {
+            val passedQuestion = question.value!!.toPassedQuestion()
+            passedQuestions.add(passedQuestion)
         }
 
+        earnedCoins += questionWorth.value
+        correctlyAnsweredQuestionsCount++
     }
 
     fun useHint5050() {
         viewModelScope.launch(Dispatchers.IO) {
             coinRepository.subtractUserCoins(CoinConstants.HINT_50_50_PRICE)
-            hint5050Used.postValue(true)
+            hint5050Used.value = true
         }
     }
 
     fun useHintCorrectAnswer() {
         viewModelScope.launch(Dispatchers.IO) {
             coinRepository.subtractUserCoins(CoinConstants.HINT_CORRECT_ANSWER_PRICE)
-            hintCorrectAnswerUsed.postValue(true)
+            hintCorrectAnswerUsed.value = true
+        }
+    }
+
+    private suspend fun savePassedQuestions() {
+        if (passedQuestions.size == 0) return
+
+        passedQuestions.forEach {
+            withContext(Dispatchers.IO) {
+                passedQuestionRepository.insertPassedQuestion(it)
+            }
+        }
+
+        withContext(Dispatchers.IO) {
+            levelProgressRepository.addLevelProgress(levelId, passedQuestions.size)
         }
     }
 }

@@ -26,6 +26,7 @@
     <style name="DialogRoundedCorner" parent="Theme.AppCompat.Light.Dialog">
         <item name="android:windowBackground">@drawable/dialog_background</item>
         <item name="android:windowMinWidthMinor">85%</item>
-        <item name="android:windowMinWidthMajor">70%</item>
+        <item name="android:windowMinWidthMajor">85%</item>
     </style>
+
 </resources>

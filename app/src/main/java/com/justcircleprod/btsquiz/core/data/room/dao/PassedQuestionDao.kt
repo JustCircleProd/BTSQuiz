@@ -1,11 +1,11 @@
 package com.justcircleprod.btsquiz.core.data.room.dao
 
-import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import com.justcircleprod.btsquiz.core.data.models.passedQuestion.PassedQuestion
 import com.justcircleprod.btsquiz.core.data.models.passedQuestion.QuestionContentType
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface PassedQuestionDao {
@@ -20,7 +20,7 @@ interface PassedQuestionDao {
     suspend fun getCount(): Int
 
     @Query("SELECT COUNT(id) FROM passed_questions")
-    fun getCountLiveData(): LiveData<Int>
+    fun getCountFlow(): Flow<Int>
 
     @Insert
     suspend fun insert(passedQuestions: PassedQuestion)

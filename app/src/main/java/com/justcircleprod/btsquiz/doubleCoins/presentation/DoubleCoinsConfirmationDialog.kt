@@ -2,6 +2,7 @@ package com.justcircleprod.btsquiz.doubleCoins.presentation
 
 import android.animation.LayoutTransition
 import android.app.Dialog
+import android.content.DialogInterface
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
@@ -69,10 +70,18 @@ class DoubleCoinsConfirmationDialog : DialogFragment() {
         enableAnimations()
         setLoadingGif()
         setOnButtonsClickListeners()
-        setStateObserver()
+        setRewardedAdStateCollector()
 
         dialogBuilder.setView(binding.root).setCancelable(true)
         return dialogBuilder.create()
+    }
+
+    override fun onCancel(dialog: DialogInterface) {
+        super.onCancel(dialog)
+
+        if (viewModel.rewardedAdState.value == RewardedAdState.RewardReceived) {
+            (activity as DoubleCoinsConfirmationDialogCallback).onCoinsDoublingConfirmed()
+        }
     }
 
     private fun enableAnimations() {
@@ -89,8 +98,8 @@ class DoubleCoinsConfirmationDialog : DialogFragment() {
     }
 
     private fun setOnButtonsClickListeners() {
-        binding.titleCancelBtn.setOnClickListener { dismiss() }
-        binding.cancelBtn.setOnClickListener { dismiss() }
+        binding.titleCancelBtn.setOnClickListener { dialog?.cancel() }
+        binding.cancelBtn.setOnClickListener { dialog?.cancel() }
 
         binding.watchAdBtn.setOnClickListener {
             viewModel.rewardedAdState.value = RewardedAdState.Loading
@@ -99,7 +108,7 @@ class DoubleCoinsConfirmationDialog : DialogFragment() {
 
         binding.submitRewardResultBtn.setOnClickListener {
             if (viewModel.rewardedAdState.value == RewardedAdState.RewardReceived) {
-                (activity as DoubleCoinsConfirmationDialogCallback).onSubmitReward()
+                (activity as DoubleCoinsConfirmationDialogCallback).onCoinsDoublingConfirmed()
             }
             dismiss()
         }
@@ -157,11 +166,13 @@ class DoubleCoinsConfirmationDialog : DialogFragment() {
                 }
 
                 override fun onAdDismissed() {
+                    destroyRewardedAd()
+
                     if (viewModel.rewardReceived) {
                         viewModel.rewardedAdState.value = RewardedAdState.RewardReceived
+                    } else {
+                        dialog?.cancel()
                     }
-
-                    destroyRewardedAd()
                 }
 
                 override fun onAdClicked() {}
@@ -178,51 +189,66 @@ class DoubleCoinsConfirmationDialog : DialogFragment() {
         }
     }
 
-    private fun setStateObserver() {
-        viewModel.rewardedAdState.observe(this) {
-            binding.questionLayout.visibility = View.GONE
-            binding.loadingLayout.visibility = View.GONE
-            binding.rewardResultLayout.visibility = View.GONE
-            binding.rewardResultQuantityLayout.visibility = View.GONE
+    private fun setRewardedAdStateCollector() {
+        lifecycleScope.launch {
+            viewModel.rewardedAdState.collect {
+                when (it) {
+                    RewardedAdState.UserNotAgreedYet -> {
+                        binding.title.text = getString(R.string.double_coins)
 
-            when (it) {
-                RewardedAdState.UserNotAgreedYet -> {
-                    binding.title.text = getString(R.string.double_coins)
+                        binding.loadingLayout.visibility = View.GONE
+                        binding.rewardResultLayout.visibility = View.GONE
+                        binding.rewardResultQuantityLayout.visibility = View.GONE
 
-                    binding.questionLayout.visibility = View.VISIBLE
+                        if (earnedCoins != null) {
+                            binding.earnedCoinsToDouble.text =
+                                getString(
+                                    R.string.double_coins_quantity_with_placeholder,
+                                    earnedCoins
+                                )
+                        }
 
-                    if (earnedCoins != null) {
-                        binding.earnedCoinsToDouble.text =
-                            getString(R.string.double_coins_quantity_with_placeholder, earnedCoins)
-                    }
-                }
-
-                RewardedAdState.Loading -> {
-                    binding.title.text = getString(R.string.loading_ad_title)
-
-                    binding.loadingLayout.visibility = View.VISIBLE
-                }
-
-                RewardedAdState.FailedToLoad -> {
-                    binding.title.text = getString(R.string.failed_to_load_rewarded_ad_title)
-
-                    binding.rewardResultLayout.visibility = View.VISIBLE
-
-                    binding.rewardResultTv.text = getString(R.string.failed_to_load_rewarded_ad)
-                }
-
-                RewardedAdState.RewardReceived -> {
-                    binding.title.text = getString(R.string.coins_doubled_title)
-
-                    binding.rewardResultTv.text = getString(R.string.coins_doubled)
-                    if (earnedCoins != null) {
-                        binding.rewardResultQuantity.text = (earnedCoins!! * 2).toString()
+                        binding.questionLayout.visibility = View.VISIBLE
                     }
 
-                    binding.rewardResultLayout.visibility = View.VISIBLE
-                    binding.rewardResultQuantityLayout.visibility = View.VISIBLE
+                    RewardedAdState.Loading -> {
+                        binding.title.text = getString(R.string.loading_ad_title)
 
-                    playRewardReceivedSound()
+                        binding.questionLayout.visibility = View.GONE
+                        binding.rewardResultLayout.visibility = View.GONE
+                        binding.rewardResultQuantityLayout.visibility = View.GONE
+
+                        binding.loadingLayout.visibility = View.VISIBLE
+                    }
+
+                    RewardedAdState.FailedToLoad -> {
+                        binding.title.text = getString(R.string.failed_to_load_rewarded_ad_title)
+
+                        binding.questionLayout.visibility = View.GONE
+                        binding.loadingLayout.visibility = View.GONE
+                        binding.rewardResultQuantityLayout.visibility = View.GONE
+
+                        binding.rewardResultTv.text = getString(R.string.failed_to_load_rewarded_ad)
+
+                        binding.rewardResultLayout.visibility = View.VISIBLE
+                    }
+
+                    RewardedAdState.RewardReceived -> {
+                        binding.title.text = getString(R.string.coins_doubled_title)
+
+                        binding.rewardResultTv.text = getString(R.string.coins_doubled)
+                        if (earnedCoins != null) {
+                            binding.rewardResultQuantity.text = (earnedCoins!! * 2).toString()
+                        }
+
+                        binding.questionLayout.visibility = View.GONE
+                        binding.loadingLayout.visibility = View.GONE
+
+                        binding.rewardResultLayout.visibility = View.VISIBLE
+                        binding.rewardResultQuantityLayout.visibility = View.VISIBLE
+
+                        playRewardReceivedSound()
+                    }
                 }
             }
         }

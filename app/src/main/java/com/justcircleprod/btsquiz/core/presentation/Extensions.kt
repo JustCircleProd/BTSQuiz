@@ -1,7 +1,10 @@
 package com.justcircleprod.btsquiz.core.presentation
 
+import android.animation.ObjectAnimator
+import android.view.animation.DecelerateInterpolator
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.card.MaterialCardView
+import com.google.android.material.progressindicator.LinearProgressIndicator
 
 fun MaterialButton.disableWithTransparency() {
     this.isEnabled = false
@@ -21,4 +24,15 @@ fun MaterialCardView.disableWithTransparency() {
 fun MaterialCardView.enable() {
     this.isEnabled = true
     this.alpha = 1f
+}
+
+fun LinearProgressIndicator.animateProgress(currentProgress: Int, newProgress: Int) {
+    ObjectAnimator.ofInt(
+        this,
+        "progress",
+        currentProgress,
+        newProgress
+    ).apply {
+        interpolator = DecelerateInterpolator()
+    }.start()
 }

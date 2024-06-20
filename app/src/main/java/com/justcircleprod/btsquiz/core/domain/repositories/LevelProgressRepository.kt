@@ -1,11 +1,11 @@
 package com.justcircleprod.btsquiz.core.domain.repositories
 
-import androidx.lifecycle.LiveData
 import com.justcircleprod.btsquiz.core.data.models.levels.LevelProgress
+import kotlinx.coroutines.flow.Flow
 
 interface LevelProgressRepository {
 
-    fun getLevelProgressLiveData(levelId: Int): LiveData<LevelProgress>
+    fun getLevelProgressLiveData(levelId: Int): Flow<LevelProgress>
 
     suspend fun addLevelProgress(levelId: Int, progressToAdd: Int)
 

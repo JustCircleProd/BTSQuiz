@@ -5,23 +5,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
-    android:background="@drawable/dialog_background"
     android:clipChildren="false"
     android:clipToPadding="false"
     android:gravity="center"
     android:orientation="vertical"
-    android:padding="@dimen/dialog_padding">
+    tools:background="@drawable/dialog_background">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/title_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/dialog_title_layout_bottom_margin">
+        android:layout_marginTop="@dimen/dialog_title_layout_margin_top">
 
         <TextView
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dialog_main_margin"
             android:text="@string/receiving_coins"
             android:textColor="@color/gray_text_color"
             android:textSize="@dimen/dialog_title_text_size"
@@ -33,9 +33,10 @@
 
         <ImageButton
             android:id="@+id/cancel_btn"
-            android:layout_width="@dimen/icon_button_size"
-            android:layout_height="@dimen/icon_button_size"
-            android:background="?android:selectableItemBackgroundBorderless"
+            android:layout_width="@dimen/cancel_icon_button_size"
+            android:layout_height="@dimen/cancel_icon_button_size"
+            android:layout_marginEnd="@dimen/dialog_cancel_icon_button_margin_end"
+            android:background="@drawable/close_button_ripple_effect"
             android:contentDescription="@string/close_dialog_content_description"
             android:src="@drawable/icon_cancel"
             app:layout_constraintEnd_toEndOf="parent"
@@ -48,6 +49,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/dialog_main_margin"
         android:text="@string/compensation_received_text"
         android:textAlignment="center"
         android:textColor="@color/gray_text_color"
@@ -56,6 +58,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/dialog_main_margin"
         android:layout_marginTop="8dp"
         android:gravity="center"
         android:text="@string/compensation_size_text"
@@ -66,6 +69,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/dialog_main_margin"
         android:gravity="center"
         android:orientation="horizontal"
         tools:ignore="UseCompoundDrawables">
@@ -93,9 +97,14 @@
         android:id="@+id/submit_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/dialog_main_margin"
         android:layout_marginTop="@dimen/dialog_buttons_layout_top_margin"
+        android:layout_marginBottom="@dimen/dialog_main_margin"
         android:backgroundTint="@color/second_btn_color"
         android:elevation="@dimen/button_elevation"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
+        android:minHeight="0dp"
         android:padding="@dimen/button_padding"
         android:stateListAnimator="@null"
         android:text="@string/confirm"
@@ -104,6 +113,6 @@
         android:textColor="@color/second_btn_text_color"
         android:textSize="@dimen/button_text_size"
         app:cornerRadius="@dimen/button_corner_radius"
-        app:rippleColor="@color/ripple_color" />
+        app:rippleColor="@color/second_btn_ripple_color" />
 
 </LinearLayout>

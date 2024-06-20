@@ -8,8 +8,10 @@
 
     <dimen name="question_height">220dp</dimen>
 
-    <dimen name="question_top_margin">11dp</dimen>
-    <dimen name="question_bottom_margin">10dp</dimen>
-
     <dimen name="audio_question_size">115dp</dimen>
+
+    <dimen name="question_top_margin">11dp</dimen>
+    <dimen name="question_bottom_margin">15dp</dimen>
+
+    <dimen name="quiz_progress_indicator_margin_bottom">10dp</dimen>
 </resources>

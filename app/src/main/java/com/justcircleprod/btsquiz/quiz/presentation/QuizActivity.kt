@@ -2,6 +2,7 @@ package com.justcircleprod.btsquiz.quiz.presentation
 
 import android.animation.LayoutTransition
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
@@ -13,9 +14,11 @@ import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.google.android.material.button.MaterialButton
 import com.justcircleprod.btsquiz.R
@@ -25,6 +28,7 @@ import com.justcircleprod.btsquiz.core.data.models.questions.AudioQuestion
 import com.justcircleprod.btsquiz.core.data.models.questions.ImageQuestion
 import com.justcircleprod.btsquiz.core.data.models.questions.TextQuestion
 import com.justcircleprod.btsquiz.core.data.models.questions.VideoQuestion
+import com.justcircleprod.btsquiz.core.presentation.animateProgress
 import com.justcircleprod.btsquiz.core.presentation.disableWithTransparency
 import com.justcircleprod.btsquiz.core.presentation.enable
 import com.justcircleprod.btsquiz.databinding.ActivityQuizBinding
@@ -39,6 +43,7 @@ import com.yandex.mobile.ads.common.AdRequestError
 import com.yandex.mobile.ads.common.ImpressionData
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
@@ -73,12 +78,22 @@ class QuizActivity : AppCompatActivity() {
     private lateinit var wrongAnswerPlayer: MediaPlayer
     private var isWrongAnswerPlayerPrepared = false
 
-    private var musicPlayer: MediaPlayer? = null
+    private var audioQuestionPlayer: MediaPlayer? = null
 
     private lateinit var hint5050Player: MediaPlayer
     private var hint5050PlayerPrepared = false
 
     private var positionOfVideoPlayer = 0
+
+    private var userCoinsQuantityCollectionJob: Job? = null
+    private var questionWorthCollectionJob: Job? = null
+
+    private var questionCollectionJob: Job? = null
+
+    private var withoutQuizHintsCollectionJob: Job? = null
+
+    private var hint5050UsedCollectionJob: Job? = null
+    private var hintCorrectAnswerUsedCollectionJob: Job? = null
 
     companion object {
         const val LEVEL_ARGUMENT_NAME = "LEVEL"
@@ -96,7 +111,7 @@ class QuizActivity : AppCompatActivity() {
         initAd()
         initAnswerPlayers()
 
-        setLoadingObserver()
+        setLoadingCollector()
 
         setOnOptionsClickListeners()
 
@@ -127,8 +142,8 @@ class QuizActivity : AppCompatActivity() {
                 setVideoQuestionData(viewModel.question.value!! as VideoQuestion)
             }
 
-            musicPlayer != null && binding.audioQuestion.visibility == View.VISIBLE -> {
-                musicPlayer?.start()
+            audioQuestionPlayer != null && binding.audioQuestion.visibility == View.VISIBLE -> {
+                audioQuestionPlayer?.start()
             }
             // if the application was minimized when downloading the audio
             viewModel.question.value is AudioQuestion &&
@@ -147,11 +162,11 @@ class QuizActivity : AppCompatActivity() {
             // if the application was minimized when downloading the audio
             viewModel.question.value is AudioQuestion &&
                     binding.audioQuestion.visibility == View.INVISIBLE -> {
-                musicPlayer = null
+                audioQuestionPlayer = null
             }
 
-            musicPlayer != null && binding.audioQuestion.visibility == View.VISIBLE -> {
-                musicPlayer?.pause()
+            audioQuestionPlayer != null && binding.audioQuestion.visibility == View.VISIBLE -> {
+                audioQuestionPlayer?.pause()
             }
         }
     }
@@ -218,7 +233,9 @@ class QuizActivity : AppCompatActivity() {
                     }.start()
                 }
 
-                override fun onAdFailedToLoad(error: AdRequestError) {}
+                override fun onAdFailedToLoad(error: AdRequestError) {
+                    destroyBannerAdView()
+                }
 
                 override fun onAdClicked() {}
 
@@ -263,28 +280,33 @@ class QuizActivity : AppCompatActivity() {
         }
     }
 
-    private fun setLoadingObserver() {
-        viewModel.isLoading.observe(this) { isLoading ->
-            if (viewModel.isFirstStart) {
-                viewModel.isFirstStart = false
-                return@observe
-            }
+    private fun setLoadingCollector() {
+        lifecycleScope.launch {
+            viewModel.isLoading.collect { isLoading ->
+                if (viewModel.isFirstStart) {
+                    viewModel.isFirstStart = false
+                    return@collect
+                }
 
-            if (!isLoading) {
-                if (viewModel.questionsCount != 0) {
-                    viewModel.setQuestionOnCurrentPosition()
+                if (!isLoading) {
+                    if (viewModel.questionsCount != 0) {
+                        viewModel.setQuestionOnCurrentPosition()
 
-                    setCoinsObservers()
-                    setWithoutQuizHintsCollector()
-                    setQuestionsObserver()
+                        setQuestionWorthCollectors()
+                        setUserCoinsQuantityCollector()
+                        setWithoutQuizHintsCollector()
+                        setQuestionsCollector()
 
-                    binding.progress.max = viewModel.questionsCount
+                        binding.videoQuestionLayout.clipToOutline = true
 
-                    binding.loadLayout.visibility = View.GONE
-                    binding.contentLayout.visibility = View.VISIBLE
-                } else {
-                    // if the download was successful, but there are no questions left for the user
-                    setOutOfQuestionsLayout()
+                        binding.quizProgress.max = viewModel.questionsCount * 100
+
+                        binding.loadLayout.visibility = View.GONE
+                        binding.contentLayout.visibility = View.VISIBLE
+                    } else {
+                        // if the loading was successful, but there are no questions left for the user
+                        setOutOfQuestionsLayout()
+                    }
                 }
             }
         }
@@ -322,82 +344,100 @@ class QuizActivity : AppCompatActivity() {
         }
     }
 
-    private fun setCoinsObservers() {
-        viewModel.questionWorth.observe(this) {
-            binding.questionWorth.text = getString(R.string.quiz_question_worth_label, it)
-            binding.questionWorthLayout.visibility = View.VISIBLE
+    private fun setQuestionWorthCollectors() {
+        if (questionWorthCollectionJob != null) return
+
+        questionWorthCollectionJob = lifecycleScope.launch {
+            viewModel.questionWorth.collect {
+                binding.questionWorth.text = getString(R.string.quiz_question_worth_label, it)
+                binding.questionWorthLayout.visibility = View.VISIBLE
+            }
         }
+    }
 
-        lifecycleScope.launch {
+    private fun setUserCoinsQuantityCollector() {
+        if (userCoinsQuantityCollectionJob != null) return
+
+        userCoinsQuantityCollectionJob = lifecycleScope.launch {
             viewModel.userCoinsQuantity.collect {
-                val userCoinsQuantity = it?.toInt() ?: 0
-                binding.userCoinsTv.text =
-                    getString(R.string.quiz_users_coins_quantity, userCoinsQuantity)
+                if (it == null || !it.isDigitsOnly()) return@collect
 
-                binding.userCoinsLayout.visibility = View.VISIBLE
+                binding.userCoinsQuantity.text =
+                    getString(R.string.quiz_users_coins_quantity, it.toInt())
+
+                binding.userCoinsQuantityLayout.visibility = View.VISIBLE
             }
         }
     }
 
     private fun setWithoutQuizHintsCollector() {
-        lifecycleScope.launch {
-            viewModel.withoutQuizHintsState.collect {
-                if (it == DataStoreConstants.WITHOUT_QUIZ_HINTS) {
-                    binding.hintDivider.visibility = View.GONE
-                    binding.hint5050.visibility = View.GONE
-                    binding.hintCorrectAnswer.visibility = View.GONE
-                } else {
-                    prepareHint5050Player()
-                    setHintPrices()
-                    setOnHintsClickListeners()
-                    setHint5050Observer()
-                    setHintCorrectAnswerObserver()
+        if (withoutQuizHintsCollectionJob != null) return
 
-                    binding.hintDivider.visibility = View.VISIBLE
-                    binding.hint5050.visibility = View.VISIBLE
-                    binding.hintCorrectAnswer.visibility = View.VISIBLE
+        withoutQuizHintsCollectionJob = lifecycleScope.launch {
+            viewModel.withoutQuizHints.collect {
+                when (it) {
+                    DataStoreConstants.WITHOUT_QUIZ_HINTS -> {
+                        binding.hintDivider.visibility = View.GONE
+                        binding.hint5050.visibility = View.GONE
+                        binding.hintCorrectAnswer.visibility = View.GONE
+                    }
+
+                    DataStoreConstants.WITH_QUIZ_HINTS, null -> {
+                        prepareHint5050Player()
+                        setHintPrices()
+                        setOnHintsClickListeners()
+                        setHint5050UsedCollector()
+                        setHintCorrectAnswerUsedCollector()
+
+                        binding.hintDivider.visibility = View.VISIBLE
+                        binding.hint5050.visibility = View.VISIBLE
+                        binding.hintCorrectAnswer.visibility = View.VISIBLE
+                    }
                 }
             }
         }
     }
 
-    private fun setQuestionsObserver() {
-        if (viewModel.question.hasActiveObservers()) return
+    private fun setQuestionsCollector() {
+        if (questionCollectionJob != null) return
 
-        viewModel.question.observe(this) { question ->
-            if (question == null) {
-                startResultActivity()
-                return@observe
-            }
+        questionCollectionJob = lifecycleScope.launch {
+            viewModel.question.collect { question ->
+                if (question == null) {
+                    startResultActivity()
+                    return@collect
+                }
 
-            hidePreviousQuestion()
-            updateViews()
+                hidePreviousQuestion()
+                animateQuizProgress()
+                setDefaultButtonColors()
 
-            if (question is TextQuestion) {
-                setTextQuestionData(question)
-                enableButtons()
-            } else {
-                binding.contentLoadingProgress.visibility = View.VISIBLE
+                if (question is TextQuestion) {
+                    setTextQuestionData(question)
+                    enableButtons()
+                } else {
+                    binding.contentLoadingProgress.visibility = View.VISIBLE
 
-                when (question) {
-                    is ImageQuestion -> {
-                        setImageQuestionData(question)
-                    }
+                    when (question) {
+                        is ImageQuestion -> {
+                            setImageQuestionData(question)
+                        }
 
-                    is VideoQuestion -> {
-                        setVideoQuestionData(question)
-                    }
+                        is VideoQuestion -> {
+                            setVideoQuestionData(question)
+                        }
 
-                    is AudioQuestion -> {
-                        setAudioQuestionData(question)
+                        is AudioQuestion -> {
+                            setAudioQuestionData(question)
+                        }
                     }
                 }
-            }
 
-            binding.firstOption.text = question.firstOption
-            binding.secondOption.text = question.secondOption
-            binding.thirdOption.text = question.thirdOption
-            binding.fourthOption.text = question.fourthOption
+                binding.firstOption.text = question.firstOption
+                binding.secondOption.text = question.secondOption
+                binding.thirdOption.text = question.thirdOption
+                binding.fourthOption.text = question.fourthOption
+            }
         }
     }
 
@@ -457,39 +497,41 @@ class QuizActivity : AppCompatActivity() {
         }
     }
 
-    private fun setHint5050Observer() {
-        if (viewModel.hint5050Used.hasActiveObservers()) return
+    private fun setHint5050UsedCollector() {
+        if (hint5050UsedCollectionJob != null) return
 
-        viewModel.hint5050Used.observe(this) { hint5050Used ->
-            if (hint5050Used) {
-                binding.hint5050.disableWithTransparency()
-                binding.hintCorrectAnswer.disableWithTransparency()
+        hint5050UsedCollectionJob = lifecycleScope.launch {
+            viewModel.hint5050Used.collect { hint5050Used ->
+                if (hint5050Used) {
+                    binding.hint5050.disableWithTransparency()
+                    binding.hintCorrectAnswer.disableWithTransparency()
 
-                var options = mutableListOf(
-                    binding.firstOption.text,
-                    binding.secondOption.text,
-                    binding.thirdOption.text,
-                    binding.fourthOption.text,
-                )
-                options.remove(viewModel.rightAnswer)
-                options = options.shuffled().toMutableList().take(2).toMutableList()
+                    var options = mutableListOf(
+                        binding.firstOption.text,
+                        binding.secondOption.text,
+                        binding.thirdOption.text,
+                        binding.fourthOption.text,
+                    )
+                    options.remove(viewModel.rightAnswer)
+                    options = options.shuffled().toMutableList().take(2).toMutableList()
 
-                options.forEach { option ->
-                    when (option) {
-                        binding.firstOption.text -> {
-                            binding.firstOption.disableWithTransparency()
-                        }
+                    options.forEach { option ->
+                        when (option) {
+                            binding.firstOption.text -> {
+                                binding.firstOption.disableWithTransparency()
+                            }
 
-                        binding.secondOption.text -> {
-                            binding.secondOption.disableWithTransparency()
-                        }
+                            binding.secondOption.text -> {
+                                binding.secondOption.disableWithTransparency()
+                            }
 
-                        binding.thirdOption.text -> {
-                            binding.thirdOption.disableWithTransparency()
-                        }
+                            binding.thirdOption.text -> {
+                                binding.thirdOption.disableWithTransparency()
+                            }
 
-                        binding.fourthOption.text -> {
-                            binding.fourthOption.disableWithTransparency()
+                            binding.fourthOption.text -> {
+                                binding.fourthOption.disableWithTransparency()
+                            }
                         }
                     }
                 }
@@ -497,28 +539,30 @@ class QuizActivity : AppCompatActivity() {
         }
     }
 
-    private fun setHintCorrectAnswerObserver() {
-        if (viewModel.hintCorrectAnswerUsed.hasActiveObservers()) return
+    private fun setHintCorrectAnswerUsedCollector() {
+        if (hintCorrectAnswerUsedCollectionJob != null) return
 
-        viewModel.hintCorrectAnswerUsed.observe(this) { hintCorrectAnswerUsed ->
-            if (hintCorrectAnswerUsed) {
-                viewModel.onRightAnswer()
+        hintCorrectAnswerUsedCollectionJob = lifecycleScope.launch {
+            viewModel.hintCorrectAnswerUsed.collect { hintCorrectAnswerUsed ->
+                if (hintCorrectAnswerUsed) {
+                    viewModel.onRightAnswer()
 
-                binding.hint5050.disableWithTransparency()
-                binding.hintCorrectAnswer.disableWithTransparency()
+                    binding.hint5050.disableWithTransparency()
+                    binding.hintCorrectAnswer.disableWithTransparency()
 
-                disableButtons()
-                stopAndResetPlayers()
+                    disableButtons()
+                    stopAndResetPlayers()
 
-                onRightAnswer(
-                    when (viewModel.rightAnswer) {
-                        binding.firstOption.text -> binding.firstOption
-                        binding.secondOption.text -> binding.secondOption
-                        binding.thirdOption.text -> binding.thirdOption
-                        binding.fourthOption.text -> binding.fourthOption
-                        else -> return@observe
-                    }
-                )
+                    onRightAnswer(
+                        btn = when (viewModel.rightAnswer) {
+                            binding.firstOption.text -> binding.firstOption
+                            binding.secondOption.text -> binding.secondOption
+                            binding.thirdOption.text -> binding.thirdOption
+                            binding.fourthOption.text -> binding.fourthOption
+                            else -> return@collect
+                        }
+                    )
+                }
             }
         }
     }
@@ -530,22 +574,24 @@ class QuizActivity : AppCompatActivity() {
         binding.videoQuestionLayout.visibility = View.INVISIBLE
     }
 
-    private fun updateViews() {
-        binding.progress.progress++
+    private fun animateQuizProgress() {
+        val currentProgress = (viewModel.questionPosition) * 100
+        val newProgress = currentProgress + 100
+        binding.quizProgress.animateProgress(currentProgress, newProgress)
+    }
 
-        binding.firstOption.setBackgroundColor(ContextCompat.getColor(this, R.color.btn_background))
-        binding.secondOption.setBackgroundColor(
-            ContextCompat.getColor(
-                this,
-                R.color.btn_background
-            )
+    private fun setDefaultButtonColors() {
+        binding.firstOption.backgroundTintList = ColorStateList.valueOf(
+            ContextCompat.getColor(this, R.color.btn_background)
         )
-        binding.thirdOption.setBackgroundColor(ContextCompat.getColor(this, R.color.btn_background))
-        binding.fourthOption.setBackgroundColor(
-            ContextCompat.getColor(
-                this,
-                R.color.btn_background
-            )
+        binding.secondOption.backgroundTintList = ColorStateList.valueOf(
+            ContextCompat.getColor(this, R.color.btn_background)
+        )
+        binding.thirdOption.backgroundTintList = ColorStateList.valueOf(
+            ContextCompat.getColor(this, R.color.btn_background)
+        )
+        binding.fourthOption.backgroundTintList = ColorStateList.valueOf(
+            ContextCompat.getColor(this, R.color.btn_background)
         )
     }
 
@@ -555,18 +601,13 @@ class QuizActivity : AppCompatActivity() {
     }
 
     private fun setImageQuestionData(question: ImageQuestion) {
-        binding.imageQuestion.visibility = View.INVISIBLE
-
         Glide
             .with(this)
             .load(
-                resources.getIdentifier(
-                    question.imageEntryName,
-                    "drawable",
-                    packageName
-                )
+                Uri.parse("android.resource://$packageName/drawable/${question.imageEntryName}")
             )
             .diskCacheStrategy(DiskCacheStrategy.NONE)
+            .transform(RoundedCorners(resources.getDimensionPixelSize(R.dimen.image_question_rounded_corner_size)))
             .into(binding.imageQuestion)
 
         binding.contentLoadingProgress.visibility = View.GONE
@@ -592,26 +633,25 @@ class QuizActivity : AppCompatActivity() {
             Uri.parse("android.resource://$packageName/raw/${question.videoEntryName}")
         )
         binding.videoQuestion.start()
-
     }
 
     private fun setAudioQuestionData(question: AudioQuestion) {
-        musicPlayer = MediaPlayer()
+        audioQuestionPlayer = MediaPlayer()
 
-        musicPlayer?.setOnPreparedListener {
-            if (musicPlayer != null) {
+        audioQuestionPlayer?.setOnPreparedListener {
+            if (audioQuestionPlayer != null) {
                 binding.contentLoadingProgress.visibility = View.GONE
                 binding.audioQuestion.visibility = View.VISIBLE
-                musicPlayer!!.start()
+                audioQuestionPlayer!!.start()
                 enableButtons()
             }
         }
 
-        musicPlayer?.setDataSource(
+        audioQuestionPlayer?.setDataSource(
             this,
             Uri.parse("android.resource://$packageName/raw/${question.audioEntryName}")
         )
-        musicPlayer?.prepareAsync()
+        audioQuestionPlayer?.prepareAsync()
     }
 
     private fun enableButtons() {
@@ -643,10 +683,10 @@ class QuizActivity : AppCompatActivity() {
             }
 
             binding.audioQuestion.visibility == View.VISIBLE -> {
-                musicPlayer?.stop()
-                musicPlayer?.release()
-                musicPlayer?.setOnPreparedListener(null)
-                musicPlayer = null
+                audioQuestionPlayer?.stop()
+                audioQuestionPlayer?.release()
+                audioQuestionPlayer?.setOnPreparedListener(null)
+                audioQuestionPlayer = null
             }
         }
     }
@@ -656,7 +696,9 @@ class QuizActivity : AppCompatActivity() {
             rightAnswerPlayer.start()
         }
 
-        btn.setBackgroundColor(ContextCompat.getColor(this, R.color.correct_answer_color))
+        btn.backgroundTintList = ColorStateList.valueOf(
+            ContextCompat.getColor(this, R.color.correct_answer_color)
+        )
 
         val timer = object : CountDownTimer(2000, 2000) {
             override fun onTick(millisUntilFinished: Long) {}
@@ -672,7 +714,9 @@ class QuizActivity : AppCompatActivity() {
             wrongAnswerPlayer.start()
         }
 
-        btn.setBackgroundColor(ContextCompat.getColor(this, R.color.incorrect_answer_color))
+        btn.backgroundTintList = ColorStateList.valueOf(
+            ContextCompat.getColor(this, R.color.incorrect_answer_color)
+        )
 
         var isRightAnswerShown = false
 
@@ -694,35 +738,23 @@ class QuizActivity : AppCompatActivity() {
     private fun showRightAnswer(rightAnswer: String) {
         when (rightAnswer) {
             binding.firstOption.text ->
-                binding.firstOption.setBackgroundColor(
-                    ContextCompat.getColor(
-                        this,
-                        R.color.correct_answer_color
-                    )
+                binding.firstOption.backgroundTintList = ColorStateList.valueOf(
+                    ContextCompat.getColor(this, R.color.correct_answer_color)
                 )
 
             binding.secondOption.text ->
-                binding.secondOption.setBackgroundColor(
-                    ContextCompat.getColor(
-                        this,
-                        R.color.correct_answer_color
-                    )
+                binding.secondOption.backgroundTintList = ColorStateList.valueOf(
+                    ContextCompat.getColor(this, R.color.correct_answer_color)
                 )
 
             binding.thirdOption.text ->
-                binding.thirdOption.setBackgroundColor(
-                    ContextCompat.getColor(
-                        this,
-                        R.color.correct_answer_color
-                    )
+                binding.thirdOption.backgroundTintList = ColorStateList.valueOf(
+                    ContextCompat.getColor(this, R.color.correct_answer_color)
                 )
 
             binding.fourthOption.text ->
-                binding.fourthOption.setBackgroundColor(
-                    ContextCompat.getColor(
-                        this,
-                        R.color.correct_answer_color
-                    )
+                binding.fourthOption.backgroundTintList = ColorStateList.valueOf(
+                    ContextCompat.getColor(this, R.color.correct_answer_color)
                 )
         }
     }
@@ -743,16 +775,23 @@ class QuizActivity : AppCompatActivity() {
         finish()
     }
 
+    private fun destroyBannerAdView() {
+        refreshAdTimer?.cancel()
+        refreshAdTimer = null
+
+        bannerAdView?.destroy()
+        bannerAdView = null
+    }
+
     override fun onDestroy() {
         super.onDestroy()
 
-        refreshAdTimer?.cancel()
-        bannerAdView?.destroy()
+        destroyBannerAdView()
 
         rightAnswerPlayer.release()
         wrongAnswerPlayer.release()
 
-        musicPlayer?.release()
+        audioQuestionPlayer?.release()
 
         if (hint5050PlayerPrepared) {
             hint5050Player.release()

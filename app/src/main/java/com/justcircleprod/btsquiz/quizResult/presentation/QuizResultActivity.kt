@@ -85,13 +85,13 @@ class QuizResultActivity : AppCompatActivity(), DoubleCoinsConfirmationDialogCal
         enableAnimations()
         setLoadingGif()
 
-        setLoadingObserver()
+        setLoadingCollector()
 
         initBannerAd()
         workWithInterstitialAd()
 
-        setEarnedCoinsObserver()
-        setEarnedCoinsDoubledObserver()
+        setEarnedCoinsCollector()
+        setEarnedCoinsDoubledCollector()
         setOnDoubleCoinsBtnClickListener()
 
         setOnRepeatQuizBtnClickListener()
@@ -198,7 +198,7 @@ class QuizResultActivity : AppCompatActivity(), DoubleCoinsConfirmationDialogCal
         }
     }
 
-    private fun setLoadingObserver() {
+    private fun setLoadingCollector() {
         lifecycleScope.launch {
             viewModel.isLoading.collect { isLoading ->
                 if (!isLoading) {
@@ -284,9 +284,11 @@ class QuizResultActivity : AppCompatActivity(), DoubleCoinsConfirmationDialogCal
         }
     }
 
-    private fun setEarnedCoinsObserver() {
-        viewModel.earnedCoins.observe(this) {
-            binding.earnedCoins.text = it.toString()
+    private fun setEarnedCoinsCollector() {
+        lifecycleScope.launch {
+            viewModel.earnedCoins.collect {
+                binding.earnedCoins.text = it.toString()
+            }
         }
     }
 
@@ -391,14 +393,16 @@ class QuizResultActivity : AppCompatActivity(), DoubleCoinsConfirmationDialogCal
         resultPlayer.prepareAsync()
     }
 
-    private fun setEarnedCoinsDoubledObserver() {
-        viewModel.earnedCoinsDoubled.observe(this) {
-            binding.doubleCoinsBtn.visibility =
-                if (it || viewModel.earnedCoins.value == 0) {
-                    View.GONE
-                } else {
-                    View.VISIBLE
-                }
+    private fun setEarnedCoinsDoubledCollector() {
+        lifecycleScope.launch {
+            viewModel.earnedCoinsDoubled.collect {
+                binding.doubleCoinsBtn.visibility =
+                    if (it || viewModel.earnedCoins.value == 0) {
+                        View.GONE
+                    } else {
+                        View.VISIBLE
+                    }
+            }
         }
     }
 
@@ -413,13 +417,11 @@ class QuizResultActivity : AppCompatActivity(), DoubleCoinsConfirmationDialogCal
         }
     }
 
-    override fun onSubmitReward() {
+    override fun onCoinsDoublingConfirmed() {
         viewModel.earnedCoinsDoubled.value = true
         val earnedCoins = viewModel.earnedCoins.value
 
-        if (earnedCoins != null) {
-            viewModel.earnedCoins.value = earnedCoins * 2
-        }
+        viewModel.earnedCoins.value = earnedCoins * 2
     }
 
     private fun setOnRepeatQuizBtnClickListener() {
@@ -449,12 +451,18 @@ class QuizResultActivity : AppCompatActivity(), DoubleCoinsConfirmationDialogCal
 
     private fun destroyBannerAd() {
         bannerAdLoadingTimer?.cancel()
+        bannerAdView = null
+
         refreshAdTimer?.cancel()
+        refreshAdTimer = null
+
         bannerAdView?.destroy()
+        bannerAdView = null
     }
 
     private fun destroyInterstitialAd() {
         interstitialAdLoadingTimer?.cancel()
+        interstitialAdLoadingTimer = null
 
         interstitialAdLoader?.setAdLoadListener(null)
         interstitialAdLoader = null

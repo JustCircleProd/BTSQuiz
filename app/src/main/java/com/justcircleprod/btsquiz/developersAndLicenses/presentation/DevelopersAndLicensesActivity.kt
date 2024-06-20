@@ -132,7 +132,7 @@ class DevelopersAndLicensesActivity : AppCompatActivity() {
             text = text,
             fontWeight = FontWeight.Bold,
             color = colorResource(id = R.color.gray_text_color),
-            fontSize = 19.sp,
+            fontSize = 18.sp,
             textAlign = TextAlign.Center
         )
 
@@ -154,7 +154,7 @@ class DevelopersAndLicensesActivity : AppCompatActivity() {
 
     @Composable
     fun Line() {
-        Spacer(modifier = Modifier.height(5.dp))
+        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.line_top_margin)))
 
         Divider(
             color = colorResource(id = R.color.line_color),

@@ -28,14 +28,18 @@
     <color name="coins_icon_color">#FFD700</color>
 
     <color name="back_icon_color">@color/white</color>
+    <color name="back_button_ripple_color">#66FDFDFD</color>
+
     <color name="close_dialog_icon_color">#707070</color>
+    <color name="close_button_ripple_color">#66B681CE</color>
 
     <color name="btn_background">@color/element_background</color>
     <color name="btn_stroke_color">#B681CE</color>
-    <color name="ripple_color">#BE9DCD</color>
+    <color name="btn_ripple_color">#99B681CE</color>
 
     <color name="second_btn_color">#C69BD8</color>
     <color name="second_btn_text_color">@color/element_background</color>
+    <color name="second_btn_ripple_color">#99FDFDFD</color>
 
     <color name="correct_answer_color">#A6F0B8</color>
     <color name="incorrect_answer_color">#F3A7B2</color>

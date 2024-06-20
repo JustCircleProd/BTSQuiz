@@ -1,6 +1,5 @@
 package com.justcircleprod.btsquiz.quizResult.presentation
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -37,13 +36,13 @@ class QuizResultViewModel @Inject constructor(
     val levelId = state.get<Int>(QuizResultActivity.LEVEL_ARGUMENT_NAME)!!
 
     val earnedCoins =
-        MutableLiveData(state.get<Int>(QuizResultActivity.EARNED_COINS_ARGUMENT_NAME)!!)
+        MutableStateFlow(state.get<Int>(QuizResultActivity.EARNED_COINS_ARGUMENT_NAME)!!)
 
-    val earnedCoinsDoubled = MutableLiveData(false)
+    val earnedCoinsDoubled = MutableStateFlow(false)
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            coinRepository.addUserCoins(earnedCoins.value!!)
+            coinRepository.addUserCoins(earnedCoins.value)
             areCoinsCalculating.value = false
         }
     }

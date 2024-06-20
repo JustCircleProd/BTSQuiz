@@ -1,15 +1,15 @@
 package com.justcircleprod.btsquiz.core.data.room.dao
 
-import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Query
 import com.justcircleprod.btsquiz.core.data.models.levels.LevelProgress
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface LevelProgressDao {
 
     @Query("SELECT * FROM levels_progress WHERE id = :levelId")
-    fun getLiveData(levelId: Int): LiveData<LevelProgress>
+    fun getLiveData(levelId: Int): Flow<LevelProgress>
 
     @Query("SELECT progress FROM levels_progress WHERE id = :levelId")
     suspend fun getLevelProgress(levelId: Int): Int

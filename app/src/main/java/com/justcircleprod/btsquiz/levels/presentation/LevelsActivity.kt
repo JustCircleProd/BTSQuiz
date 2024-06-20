@@ -12,10 +12,12 @@ import android.view.ViewTreeObserver
 import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.lifecycleScope
 import com.justcircleprod.btsquiz.R
 import com.justcircleprod.btsquiz.compensationReceived.presentation.CompensationReceivedDialog
 import com.justcircleprod.btsquiz.core.data.constants.LevelConstants
+import com.justcircleprod.btsquiz.core.presentation.animateProgress
 import com.justcircleprod.btsquiz.databinding.ActivityLevelsBinding
 import com.justcircleprod.btsquiz.main.presentation.MainActivity
 import com.justcircleprod.btsquiz.quiz.presentation.QuizActivity
@@ -30,7 +32,9 @@ import com.yandex.mobile.ads.common.AdRequestError
 import com.yandex.mobile.ads.common.ImpressionData
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.takeWhile
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
@@ -61,6 +65,13 @@ class LevelsActivity : AppCompatActivity(), UnlockLevelConfirmationDialogCallbac
         }
     private var refreshAdTimer: CountDownTimer? = null
 
+    private var level2ProgressCollectionJob: Job? = null
+    private var level3ProgressCollectionJob: Job? = null
+    private var level4ProgressCollectionJob: Job? = null
+    private var level5ProgressCollectionJob: Job? = null
+    private var level6ProgressCollectionJob: Job? = null
+    private var level7ProgressCollectionJob: Job? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLevelsBinding.inflate(layoutInflater)
@@ -74,7 +85,7 @@ class LevelsActivity : AppCompatActivity(), UnlockLevelConfirmationDialogCallbac
 
         setCoinsQuantityCollector()
 
-        setCompensationReceivedObserver()
+        setCompensationReceivedCollector()
 
         setupLevelPassedQuestionsCard()
         setupLevel1Card()
@@ -106,7 +117,7 @@ class LevelsActivity : AppCompatActivity(), UnlockLevelConfirmationDialogCallbac
     private fun enableAnimations() {
         binding.contentLayout.layoutTransition.enableTransitionType(LayoutTransition.CHANGING)
 
-        binding.userCoinsLayout.layoutTransition.enableTransitionType(LayoutTransition.CHANGING)
+        binding.userCoinsQuantityLayout.layoutTransition.enableTransitionType(LayoutTransition.CHANGING)
 
         binding.levelPassedQuestionsCardLayout.layoutTransition.enableTransitionType(
             LayoutTransition.CHANGING
@@ -181,7 +192,9 @@ class LevelsActivity : AppCompatActivity(), UnlockLevelConfirmationDialogCallbac
                     }.start()
                 }
 
-                override fun onAdFailedToLoad(error: AdRequestError) {}
+                override fun onAdFailedToLoad(error: AdRequestError) {
+                    destroyBannerAd()
+                }
 
                 override fun onAdClicked() {}
 
@@ -196,9 +209,10 @@ class LevelsActivity : AppCompatActivity(), UnlockLevelConfirmationDialogCallbac
         }
     }
 
-    private fun setCompensationReceivedObserver() {
-        viewModel.compensationReceived.observe(this) {
-            lifecycleScope.launch {
+    private fun setCompensationReceivedCollector() {
+        lifecycleScope.launch {
+            // false never hit this
+            viewModel.compensationReceived.takeWhile { it }.collect {
                 val coinsQuantity = viewModel.userCoinsQuantity.first()?.toInt()
 
                 if (it && coinsQuantity != null) {
@@ -214,25 +228,31 @@ class LevelsActivity : AppCompatActivity(), UnlockLevelConfirmationDialogCallbac
     private fun setCoinsQuantityCollector() {
         lifecycleScope.launch {
             viewModel.userCoinsQuantity.collect {
-                val userCoinsQuantity = it?.toInt() ?: 0
+                if (it == null || !it.isDigitsOnly()) return@collect
 
-                binding.coinsQuantity.text =
-                    getString(R.string.levels_users_coins_quantity, userCoinsQuantity)
+                binding.userCoinsQuantity.text =
+                    getString(R.string.levels_users_coins_quantity, it.toInt())
+
+                binding.userCoinsQuantityLayout.visibility = View.VISIBLE
             }
         }
     }
 
     private fun setupLevelPassedQuestionsCard() {
-        viewModel.passedQuestionsCount.observe(this) { passedQuestionsCount ->
-            if (passedQuestionsCount > 0) {
-                binding.levelPassedQuestionsCard.setOnClickListener {
-                    startQuizActivity(LevelConstants.LEVEL_PASSED_QUESTIONS_ID)
+        lifecycleScope.launch {
+            viewModel.passedQuestionsCount.collect {
+                if (it == null) return@collect
+
+                if (it > 0) {
+                    binding.levelPassedQuestionsCard.setOnClickListener {
+                        startQuizActivity(LevelConstants.LEVEL_PASSED_QUESTIONS_ID)
+                    }
+                    binding.levelPassedQuestionsCard.visibility = View.VISIBLE
+                    binding.levelPassedQuestionsProgressTv.text = it.toString()
+                } else {
+                    binding.levelPassedQuestionsCard.setOnClickListener(null)
+                    binding.levelPassedQuestionsCard.visibility = View.GONE
                 }
-                binding.levelPassedQuestionsCard.visibility = View.VISIBLE
-                binding.levelPassedQuestionsProgressTv.text = passedQuestionsCount.toString()
-            } else {
-                binding.levelPassedQuestionsCard.setOnClickListener(null)
-                binding.levelPassedQuestionsCard.visibility = View.GONE
             }
         }
     }
@@ -242,227 +262,279 @@ class LevelsActivity : AppCompatActivity(), UnlockLevelConfirmationDialogCallbac
             startQuizActivity(LevelConstants.LEVEL_1_ID)
         }
 
-        viewModel.level1Progress.observe(this) {
-            binding.level1ProgressIndicator.progress = it.progress
-            binding.level1ProgressIndicator.max = it.questionsQuantity
+        lifecycleScope.launch {
+            viewModel.level1Progress.collect {
+                if (it == null) return@collect
 
-            binding.level1ProgressTv.text =
-                getString(R.string.level_progress, it.progress, it.questionsQuantity)
+                binding.level1ProgressIndicator.max = it.questionsQuantity
+                binding.level1ProgressIndicator.animateProgress(0, it.progress)
+
+                binding.level1ProgressTv.text =
+                    getString(R.string.level_progress, it.progress, it.questionsQuantity)
+            }
         }
+
     }
 
     private fun setLevel2InfoObserver() {
-        viewModel.level2Info.observe(this) { lockedLevel ->
-            if (!lockedLevel.isOpened) {
-                binding.level2Card.setOnClickListener {
-                    tryToUnlockLevel(LevelConstants.LEVEL_2_ID, lockedLevel.price)
+        lifecycleScope.launch {
+            viewModel.level2Info.collect { lockedLevel ->
+                if (lockedLevel == null) return@collect
+
+                if (!lockedLevel.isOpened) {
+                    binding.level2Card.setOnClickListener {
+                        tryToUnlockLevel(LevelConstants.LEVEL_2_ID, lockedLevel.price)
+                    }
+
+                    binding.level2IconLock.visibility = View.VISIBLE
+                    binding.level2ProgressTv.text =
+                        getString(R.string.open_for_n_coins, lockedLevel.price)
+                    binding.level2ProgressCoinsIcon.visibility = View.VISIBLE
+
+                    return@collect
                 }
 
-                binding.level2IconLock.visibility = View.VISIBLE
-                binding.level2ProgressTv.text =
-                    getString(R.string.open_for_n_coins, lockedLevel.price)
-                binding.level2ProgressCoinsIcon.visibility = View.VISIBLE
+                binding.level2IconLock.visibility = View.GONE
+                binding.level2ProgressCoinsIcon.visibility = View.GONE
 
-                return@observe
-            }
+                if (level2ProgressCollectionJob != null) return@collect
 
-            binding.level2IconLock.visibility = View.GONE
-            binding.level2ProgressCoinsIcon.visibility = View.GONE
+                level2ProgressCollectionJob = lifecycleScope.launch {
+                    viewModel.level2Progress.collect collect2@{ levelProgress ->
+                        if (levelProgress == null) return@collect2
 
-            if (!viewModel.level2Progress.hasActiveObservers()) {
-                viewModel.level2Progress.observe(this) { levelProgress ->
-                    binding.level2Card.setOnClickListener { startQuizActivity(LevelConstants.LEVEL_2_ID) }
+                        binding.level2Card.setOnClickListener { startQuizActivity(LevelConstants.LEVEL_2_ID) }
 
-                    binding.level2ProgressIndicator.progress = levelProgress.progress
-                    binding.level2ProgressIndicator.max = levelProgress.questionsQuantity
+                        binding.level2ProgressIndicator.max = levelProgress.questionsQuantity
+                        binding.level2ProgressIndicator.animateProgress(0, levelProgress.progress)
 
-                    binding.level2ProgressTv.text =
-                        getString(
-                            R.string.level_progress,
-                            levelProgress.progress,
-                            levelProgress.questionsQuantity
-                        )
+                        binding.level2ProgressTv.text =
+                            getString(
+                                R.string.level_progress,
+                                levelProgress.progress,
+                                levelProgress.questionsQuantity
+                            )
+                    }
                 }
             }
         }
     }
 
     private fun setLevel3InfoObserver() {
-        viewModel.level3Info.observe(this) { lockedLevel ->
-            if (!lockedLevel.isOpened) {
-                binding.level3Card.setOnClickListener {
-                    tryToUnlockLevel(LevelConstants.LEVEL_3_ID, lockedLevel.price)
+        lifecycleScope.launch {
+            viewModel.level3Info.collect { lockedLevel ->
+                if (lockedLevel == null) return@collect
+
+                if (!lockedLevel.isOpened) {
+                    binding.level3Card.setOnClickListener {
+                        tryToUnlockLevel(LevelConstants.LEVEL_3_ID, lockedLevel.price)
+                    }
+
+                    binding.level3IconLock.visibility = View.VISIBLE
+                    binding.level3ProgressTv.text =
+                        getString(R.string.open_for_n_coins, lockedLevel.price)
+                    binding.level3ProgressCoinsIcon.visibility = View.VISIBLE
+
+                    return@collect
                 }
 
-                binding.level3IconLock.visibility = View.VISIBLE
-                binding.level3ProgressTv.text =
-                    getString(R.string.open_for_n_coins, lockedLevel.price)
-                binding.level3ProgressCoinsIcon.visibility = View.VISIBLE
+                binding.level3IconLock.visibility = View.GONE
+                binding.level3ProgressCoinsIcon.visibility = View.GONE
 
-                return@observe
-            }
+                if (level3ProgressCollectionJob != null) return@collect
 
-            binding.level3IconLock.visibility = View.GONE
-            binding.level3ProgressCoinsIcon.visibility = View.GONE
+                level3ProgressCollectionJob = lifecycleScope.launch {
+                    viewModel.level3Progress.collect collect2@{ levelProgress ->
+                        if (levelProgress == null) return@collect2
 
-            if (!viewModel.level3Progress.hasActiveObservers()) {
-                viewModel.level3Progress.observe(this) { levelProgress ->
-                    binding.level3Card.setOnClickListener { startQuizActivity(LevelConstants.LEVEL_3_ID) }
+                        binding.level3Card.setOnClickListener { startQuizActivity(LevelConstants.LEVEL_3_ID) }
 
-                    binding.level3ProgressIndicator.progress = levelProgress.progress
-                    binding.level3ProgressIndicator.max = levelProgress.questionsQuantity
+                        binding.level3ProgressIndicator.max = levelProgress.questionsQuantity
+                        binding.level3ProgressIndicator.animateProgress(0, levelProgress.progress)
 
-                    binding.level3ProgressTv.text =
-                        getString(
-                            R.string.level_progress,
-                            levelProgress.progress,
-                            levelProgress.questionsQuantity
-                        )
+                        binding.level3ProgressTv.text =
+                            getString(
+                                R.string.level_progress,
+                                levelProgress.progress,
+                                levelProgress.questionsQuantity
+                            )
+                    }
                 }
             }
         }
     }
 
     private fun setLevel4ProgressObserver() {
-        viewModel.level4Info.observe(this) { lockedLevel ->
-            if (!lockedLevel.isOpened) {
-                binding.level4Card.setOnClickListener {
-                    tryToUnlockLevel(LevelConstants.LEVEL_4_ID, lockedLevel.price)
+        lifecycleScope.launch {
+            viewModel.level4Info.collect { lockedLevel ->
+                if (lockedLevel == null) return@collect
+
+                if (!lockedLevel.isOpened) {
+                    binding.level4Card.setOnClickListener {
+                        tryToUnlockLevel(LevelConstants.LEVEL_4_ID, lockedLevel.price)
+                    }
+
+                    binding.level4IconLock.visibility = View.VISIBLE
+                    binding.level4ProgressTv.text =
+                        getString(R.string.open_for_n_coins, lockedLevel.price)
+                    binding.level4ProgressCoinsIcon.visibility = View.VISIBLE
+
+                    return@collect
                 }
 
-                binding.level4IconLock.visibility = View.VISIBLE
-                binding.level4ProgressTv.text =
-                    getString(R.string.open_for_n_coins, lockedLevel.price)
-                binding.level4ProgressCoinsIcon.visibility = View.VISIBLE
+                binding.level4IconLock.visibility = View.GONE
+                binding.level4ProgressCoinsIcon.visibility = View.GONE
 
-                return@observe
-            }
+                if (level4ProgressCollectionJob != null) return@collect
 
-            binding.level4IconLock.visibility = View.GONE
-            binding.level4ProgressCoinsIcon.visibility = View.GONE
+                level4ProgressCollectionJob = lifecycleScope.launch {
+                    viewModel.level4Progress.collect collect2@{ levelProgress ->
+                        if (levelProgress == null) return@collect2
 
-            if (!viewModel.level4Progress.hasActiveObservers()) {
-                viewModel.level4Progress.observe(this) { levelProgress ->
-                    binding.level4Card.setOnClickListener { startQuizActivity(LevelConstants.LEVEL_4_ID) }
+                        binding.level4Card.setOnClickListener { startQuizActivity(LevelConstants.LEVEL_4_ID) }
 
-                    binding.level4ProgressIndicator.progress = levelProgress.progress
-                    binding.level4ProgressIndicator.max = levelProgress.questionsQuantity
+                        binding.level4ProgressIndicator.max = levelProgress.questionsQuantity
+                        binding.level4ProgressIndicator.animateProgress(0, levelProgress.progress)
 
-                    binding.level4ProgressTv.text =
-                        getString(
-                            R.string.level_progress,
-                            levelProgress.progress,
-                            levelProgress.questionsQuantity
-                        )
+                        binding.level4ProgressTv.text =
+                            getString(
+                                R.string.level_progress,
+                                levelProgress.progress,
+                                levelProgress.questionsQuantity
+                            )
+                    }
                 }
             }
         }
     }
 
     private fun setLevel5ProgressObserver() {
-        viewModel.level5Info.observe(this) { lockedLevel ->
-            if (!lockedLevel.isOpened) {
-                binding.level5Card.setOnClickListener {
-                    tryToUnlockLevel(LevelConstants.LEVEL_5_ID, lockedLevel.price)
+        lifecycleScope.launch {
+            viewModel.level5Info.collect { lockedLevel ->
+                if (lockedLevel == null) return@collect
+
+                if (!lockedLevel.isOpened) {
+                    binding.level5Card.setOnClickListener {
+                        tryToUnlockLevel(LevelConstants.LEVEL_5_ID, lockedLevel.price)
+                    }
+
+                    binding.level5IconLock.visibility = View.VISIBLE
+                    binding.level5ProgressTv.text =
+                        getString(R.string.open_for_n_coins, lockedLevel.price)
+                    binding.level5ProgressCoinsIcon.visibility = View.VISIBLE
+
+                    return@collect
                 }
 
-                binding.level5IconLock.visibility = View.VISIBLE
-                binding.level5ProgressTv.text =
-                    getString(R.string.open_for_n_coins, lockedLevel.price)
-                binding.level5ProgressCoinsIcon.visibility = View.VISIBLE
+                binding.level5IconLock.visibility = View.GONE
+                binding.level5ProgressCoinsIcon.visibility = View.GONE
 
-                return@observe
-            }
+                if (level5ProgressCollectionJob != null) return@collect
 
-            binding.level5IconLock.visibility = View.GONE
-            binding.level5ProgressCoinsIcon.visibility = View.GONE
+                level5ProgressCollectionJob = lifecycleScope.launch {
+                    viewModel.level5Progress.collect collect2@{ levelProgress ->
+                        if (levelProgress == null) return@collect2
 
-            if (!viewModel.level5Progress.hasActiveObservers()) {
-                viewModel.level5Progress.observe(this) { levelProgress ->
-                    binding.level5Card.setOnClickListener { startQuizActivity(LevelConstants.LEVEL_5_ID) }
+                        binding.level5Card.setOnClickListener { startQuizActivity(LevelConstants.LEVEL_5_ID) }
 
-                    binding.level5ProgressIndicator.progress = levelProgress.progress
-                    binding.level5ProgressIndicator.max = levelProgress.questionsQuantity
+                        binding.level5ProgressIndicator.max = levelProgress.questionsQuantity
+                        binding.level5ProgressIndicator.animateProgress(0, levelProgress.progress)
 
-                    binding.level5ProgressTv.text =
-                        getString(
-                            R.string.level_progress,
-                            levelProgress.progress,
-                            levelProgress.questionsQuantity
-                        )
+                        binding.level5ProgressTv.text =
+                            getString(
+                                R.string.level_progress,
+                                levelProgress.progress,
+                                levelProgress.questionsQuantity
+                            )
+                    }
                 }
             }
         }
     }
 
     private fun setLevel6ProgressObserver() {
-        viewModel.level6Info.observe(this) { lockedLevel ->
-            if (!lockedLevel.isOpened) {
-                binding.level6Card.setOnClickListener {
-                    tryToUnlockLevel(LevelConstants.LEVEL_6_ID, lockedLevel.price)
+        lifecycleScope.launch {
+            viewModel.level6Info.collect { lockedLevel ->
+                if (lockedLevel == null) return@collect
+
+                if (!lockedLevel.isOpened) {
+                    binding.level6Card.setOnClickListener {
+                        tryToUnlockLevel(LevelConstants.LEVEL_6_ID, lockedLevel.price)
+                    }
+
+                    binding.level6IconLock.visibility = View.VISIBLE
+                    binding.level6ProgressTv.text =
+                        getString(R.string.open_for_n_coins, lockedLevel.price)
+                    binding.level6ProgressCoinsIcon.visibility = View.VISIBLE
+
+                    return@collect
                 }
 
-                binding.level6IconLock.visibility = View.VISIBLE
+                binding.level6IconLock.visibility = View.GONE
+                binding.level6ProgressCoinsIcon.visibility = View.GONE
 
-                binding.level6ProgressTv.text =
-                    getString(R.string.open_for_n_coins, lockedLevel.price)
-                binding.level6ProgressCoinsIcon.visibility = View.VISIBLE
+                if (level6ProgressCollectionJob != null) return@collect
 
-                return@observe
-            }
+                level6ProgressCollectionJob = lifecycleScope.launch {
+                    viewModel.level6Progress.collect collect2@{ levelProgress ->
+                        if (levelProgress == null) return@collect2
 
-            binding.level6IconLock.visibility = View.GONE
-            binding.level6ProgressCoinsIcon.visibility = View.GONE
+                        binding.level6Card.setOnClickListener { startQuizActivity(LevelConstants.LEVEL_6_ID) }
 
-            if (!viewModel.level6Progress.hasActiveObservers()) {
-                viewModel.level6Progress.observe(this) { levelProgress ->
-                    binding.level6Card.setOnClickListener { startQuizActivity(LevelConstants.LEVEL_6_ID) }
+                        binding.level6ProgressIndicator.max = levelProgress.questionsQuantity
+                        binding.level6ProgressIndicator.animateProgress(0, levelProgress.progress)
 
-                    binding.level6ProgressIndicator.progress = levelProgress.progress
-                    binding.level6ProgressIndicator.max = levelProgress.questionsQuantity
-
-                    binding.level6ProgressTv.text =
-                        getString(
-                            R.string.level_progress,
-                            levelProgress.progress,
-                            levelProgress.questionsQuantity
-                        )
+                        binding.level6ProgressTv.text =
+                            getString(
+                                R.string.level_progress,
+                                levelProgress.progress,
+                                levelProgress.questionsQuantity
+                            )
+                    }
                 }
             }
         }
     }
 
     private fun setLevel7ProgressObserver() {
-        viewModel.level7Info.observe(this) { lockedLevel ->
-            if (!lockedLevel.isOpened) {
-                binding.level7Card.setOnClickListener {
-                    tryToUnlockLevel(LevelConstants.LEVEL_7_ID, lockedLevel.price)
+        lifecycleScope.launch {
+            viewModel.level7Info.collect { lockedLevel ->
+                if (lockedLevel == null) return@collect
+
+                if (!lockedLevel.isOpened) {
+                    binding.level7Card.setOnClickListener {
+                        tryToUnlockLevel(LevelConstants.LEVEL_7_ID, lockedLevel.price)
+                    }
+
+                    binding.level7IconLock.visibility = View.VISIBLE
+                    binding.level7ProgressTv.text =
+                        getString(R.string.open_for_n_coins, lockedLevel.price)
+                    binding.level7ProgressCoinsIcon.visibility = View.VISIBLE
+
+                    return@collect
                 }
 
-                binding.level7IconLock.visibility = View.VISIBLE
-                binding.level7ProgressTv.text =
-                    getString(R.string.open_for_n_coins, lockedLevel.price)
-                binding.level7ProgressCoinsIcon.visibility = View.VISIBLE
+                binding.level7IconLock.visibility = View.GONE
+                binding.level7ProgressCoinsIcon.visibility = View.GONE
 
-                return@observe
-            }
+                if (level7ProgressCollectionJob != null) return@collect
 
-            binding.level7IconLock.visibility = View.GONE
-            binding.level7ProgressCoinsIcon.visibility = View.GONE
+                level7ProgressCollectionJob = lifecycleScope.launch {
+                    viewModel.level7Progress.collect collect2@{ levelProgress ->
+                        if (levelProgress == null) return@collect2
 
-            if (!viewModel.level7Progress.hasActiveObservers()) {
-                viewModel.level7Progress.observe(this) { levelProgress ->
-                    binding.level7Card.setOnClickListener { startQuizActivity(LevelConstants.LEVEL_7_ID) }
+                        binding.level7Card.setOnClickListener { startQuizActivity(LevelConstants.LEVEL_7_ID) }
 
-                    binding.level7ProgressIndicator.progress = levelProgress.progress
-                    binding.level7ProgressIndicator.max = levelProgress.questionsQuantity
+                        binding.level7ProgressIndicator.max = levelProgress.questionsQuantity
+                        binding.level7ProgressIndicator.animateProgress(0, levelProgress.progress)
 
-                    binding.level7ProgressTv.text =
-                        getString(
-                            R.string.level_progress,
-                            levelProgress.progress,
-                            levelProgress.questionsQuantity
-                        )
+                        binding.level7ProgressTv.text =
+                            getString(
+                                R.string.level_progress,
+                                levelProgress.progress,
+                                levelProgress.questionsQuantity
+                            )
+                    }
                 }
             }
         }
@@ -587,14 +659,21 @@ class LevelsActivity : AppCompatActivity(), UnlockLevelConfirmationDialogCallbac
         }
     }
 
+    private fun destroyBannerAd() {
+        refreshAdTimer?.cancel()
+        refreshAdTimer = null
+
+        bannerAdView?.destroy()
+        bannerAdView = null
+    }
+
     override fun onDestroy() {
         super.onDestroy()
+
+        destroyBannerAd()
 
         if (levelUnlockedPlayerPrepared) {
             levelUnlockedPlayer.release()
         }
-
-        refreshAdTimer?.cancel()
-        bannerAdView?.destroy()
     }
 }

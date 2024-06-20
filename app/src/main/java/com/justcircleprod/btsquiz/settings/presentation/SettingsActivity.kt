@@ -14,22 +14,17 @@ import com.justcircleprod.btsquiz.databinding.ActivitySettingsBinding
 import com.justcircleprod.btsquiz.developersAndLicenses.presentation.DevelopersAndLicensesActivity
 import com.justcircleprod.btsquiz.main.presentation.MainActivity
 import com.justcircleprod.btsquiz.resetProgress.presentation.ResetProgressConfirmationDialog
-import com.justcircleprod.btsquiz.resetProgress.presentation.ResetProgressConfirmationDialogCallback
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
-class SettingsActivity : AppCompatActivity(), ResetProgressConfirmationDialogCallback {
+class SettingsActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySettingsBinding
     private val viewModel: SettingsViewModel by viewModels()
 
     private lateinit var reviewManager: ReviewManager
-
-    override fun onResetProgressBtnClicked() {
-        viewModel.resetProgress()
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,7 +33,7 @@ class SettingsActivity : AppCompatActivity(), ResetProgressConfirmationDialogCal
         onBackPressedDispatcher.addCallback { startMainActivity() }
         binding.backBtn.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
 
-        setWithoutQuizHintsStateObserver()
+        setWithoutQuizHintsCollector()
         setOnResetProgressClickListener()
 
         setOnShareAppBtnClickListener()
@@ -49,7 +44,7 @@ class SettingsActivity : AppCompatActivity(), ResetProgressConfirmationDialogCal
         setContentView(binding.root)
     }
 
-    private fun setWithoutQuizHintsStateObserver() {
+    private fun setWithoutQuizHintsCollector() {
         lifecycleScope.launch {
             viewModel.withoutQuizHints.collect {
                 binding.withoutQuizHintsSwitch.setOnCheckedChangeListener { _, _ -> }
@@ -59,7 +54,7 @@ class SettingsActivity : AppCompatActivity(), ResetProgressConfirmationDialogCal
                         binding.withoutQuizHintsSwitch.isChecked = true
                     }
 
-                    else -> {
+                    DataStoreConstants.WITH_QUIZ_HINTS, null -> {
                         binding.withoutQuizHintsSwitch.isChecked = false
                     }
                 }

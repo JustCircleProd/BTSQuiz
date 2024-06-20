@@ -12,7 +12,7 @@ import com.justcircleprod.btsquiz.introduction.presentation.IntroductionActivity
 import com.justcircleprod.btsquiz.levels.presentation.LevelsActivity
 import com.justcircleprod.btsquiz.settings.presentation.SettingsActivity
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.transformWhile
 import kotlinx.coroutines.launch
 
 
@@ -27,13 +27,22 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
 
         lifecycleScope.launch {
-            if (viewModel.isIntroductionShown.first() == DataStoreConstants.INTRODUCTION_IS_SHOWN) {
-                setOnClickListeners()
-                setContentView(binding.root)
-            } else {
-                startIntroductionActivity()
-                viewModel.setIntroductionShown()
-                finish()
+            // DataStoreConstants.INTRODUCTION_IS_SHOW or null will be the last value
+            viewModel.isIntroductionShown.transformWhile {
+                emit(it)
+                it != DataStoreConstants.INTRODUCTION_IS_SHOWN && it != null
+            }.collect {
+                when (it) {
+                    DataStoreConstants.INTRODUCTION_IS_SHOWN -> {
+                        setOnClickListeners()
+                        setContentView(binding.root)
+                    }
+
+                    null -> {
+                        viewModel.setIntroductionShown()
+                        startIntroductionActivity()
+                    }
+                }
             }
         }
     }
@@ -46,6 +55,7 @@ class MainActivity : AppCompatActivity() {
     private fun startIntroductionActivity() {
         val intent = Intent(this, IntroductionActivity::class.java)
         startActivity(intent)
+        finish()
     }
 
     private fun startLevelsActivity() {

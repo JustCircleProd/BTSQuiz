@@ -4,49 +4,58 @@
 
     <dimen name="screen_content_space_size">20dp</dimen>
 
-    <dimen name="card_elevation">3dp</dimen>
-    <dimen name="card_corner_radius">20dp</dimen>
+    <dimen name="card_elevation">4dp</dimen>
+    <dimen name="card_corner_radius">35dp</dimen>
     <dimen name="inner_padding">20dp</dimen>
 
     <dimen name="brand_margin_bottom">5dp</dimen>
     <dimen name="brand_text_size">20sp</dimen>
-    <dimen name="brand_image_padding_horizontal">20dp</dimen>
 
     <dimen name="hint_text_size">17sp</dimen>
-    <dimen name="hint_bottom_margin">5dp</dimen>
 
     <dimen name="line_height">1dp</dimen>
 
+    <dimen name="line_top_margin">5dp</dimen>
     <dimen name="line_bottom_margin">8dp</dimen>
 
-    <dimen name="icon_button_size">48dp</dimen>
+    <dimen name="back_icon_button_size">48dp</dimen>
 
     <dimen name="button_stroke_width">1dp</dimen>
     <dimen name="button_corner_radius">15dp</dimen>
     <dimen name="button_text_size">16sp</dimen>
-    <dimen name="button_elevation">1dp</dimen>
+    <dimen name="button_elevation">2dp</dimen>
     <dimen name="button_padding">11dp</dimen>
+    <dimen name="button_margin_between">8dp</dimen>
 
-    <dimen name="icon_coins_margin_start">1dp</dimen>
-
-    <dimen name="banner_ad_height">50dp</dimen>
-    <dimen name="banner_ad_horizontal_margin">30dp</dimen>
-    <dimen name="screen_with_banner_ad_root_layout_bottom_margin">70dp</dimen>
+    <dimen name="raw_buttons_horizontal_margin">4dp</dimen>
 
     <dimen name="loading_gif_height">150dp</dimen>
     <dimen name="loading_gif_top_margin">10dp</dimen>
 
+    <dimen name="icon_coins_margin_start">1dp</dimen>
+
+    <dimen name="banner_ad_height">50dp</dimen>
+    <dimen name="banner_ad_horizontal_margin">20dp</dimen>
+    <dimen name="screen_with_banner_ad_root_layout_bottom_margin">70dp</dimen>
+
     <!--  Dialog common  -->
 
-    <dimen name="dialog_padding">14dp</dimen>
+    <dimen name="dialog_main_margin">20dp</dimen>
+
+    <dimen name="dialog_title_layout_margin_top">4dp</dimen>
+    <dimen name="dialog_cancel_icon_button_margin_end">5dp</dimen>
+
     <dimen name="dialog_title_text_size">18sp</dimen>
-    <dimen name="dialog_title_layout_bottom_margin">12dp</dimen>
+
+    <dimen name="cancel_icon_button_size">48dp</dimen>
     <dimen name="icon_cancel_size">30dp</dimen>
+
     <dimen name="dialog_hint_text_size">17sp</dimen>
-    <dimen name="dialog_buttons_layout_top_margin">10dp</dimen>
-    <dimen name="raw_buttons_horizontal_margin">6dp</dimen>
+
     <dimen name="dialog_coins_text_size">18sp</dimen>
     <dimen name="dialog_icon_coins_size">17dp</dimen>
+
+    <dimen name="dialog_buttons_layout_top_margin">13dp</dimen>
 
     <!-- Introduction -->
 
@@ -66,6 +75,7 @@
     <!-- Main -->
 
     <dimen name="main_brand_text_bottom_margin">5dp</dimen>
+    <dimen name="brand_image_padding_horizontal">@dimen/card_corner_radius</dimen>
 
     <!-- Settings -->
 
@@ -77,17 +87,17 @@
     <dimen name="levels_user_coins_icon_size">17dp</dimen>
 
     <dimen name="level_card_inner_margin">11dp</dimen>
-    <dimen name="level_card_margin_between">12dp</dimen>
+    <dimen name="level_card_margin_between">8dp</dimen>
 
-    <dimen name="level_icon_lock_size">24dp</dimen>
-    <dimen name="level_icon_lock_margin_end">2dp</dimen>
+    <dimen name="level_icon_lock_size">23dp</dimen>
+    <dimen name="level_icon_lock_margin_end">1dp</dimen>
 
     <dimen name="level_name_text_size">17sp</dimen>
 
     <dimen name="level_progress_margin_top">5dp</dimen>
     <dimen name="level_progress_label_text_size">15sp</dimen>
 
-    <dimen name="level_progress_track_corner_radius">10dp</dimen>
+    <dimen name="level_progress_track_corner_radius">4dp</dimen>
     <dimen name="level_progress_track_thickness">30dp</dimen>
 
     <dimen name="level_price_icon_coins_size">14dp</dimen>
@@ -104,15 +114,18 @@
     <dimen name="text_question_text_size">19sp</dimen>
 
     <dimen name="question_top_margin">8dp</dimen>
-    <dimen name="question_bottom_margin">7dp</dimen>
+    <dimen name="question_bottom_margin">12dp</dimen>
+
+    <dimen name="image_question_rounded_corner_size">15dp</dimen>
+    <dimen name="video_question_rounded_corner_size">15dp</dimen>
 
     <dimen name="audio_question_size">85dp</dimen>
 
     <dimen name="quiz_progress_indicator_thickness">5dp</dimen>
-    <dimen name="quiz_progress_indicator_corner_radius">10dp</dimen>
-    <dimen name="quiz_progress_indicator_padding_vertical">6dp</dimen>
+    <dimen name="quiz_progress_indicator_corner_radius">15dp</dimen>
+    <dimen name="quiz_progress_indicator_margin_bottom">8dp</dimen>
 
-    <dimen name="quiz_hint_divider_margin_top">5dp</dimen>
+    <dimen name="quiz_hint_divider_padding_top">10dp</dimen>
     <dimen name="quiz_hint_divider_margin_bottom">7dp</dimen>
     <dimen name="quiz_hint_divider_title_text_size">15sp</dimen>
     <dimen name="quiz_divider_tv_horizontal_margin">6dp</dimen>
@@ -128,7 +141,7 @@
     <dimen name="quiz_result_earned_coins_text_size">19sp</dimen>
     <dimen name="quiz_result_coins_icon_size">18dp</dimen>
 
-    <dimen name="congratulation_text_size">20sp</dimen>
+    <dimen name="congratulation_text_size">19sp</dimen>
     <dimen name="congratulation_tv_bottom_margin">5dp</dimen>
     <dimen name="congratulation_image_padding_horizontal">10dp</dimen>
 </resources>

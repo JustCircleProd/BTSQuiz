@@ -15,7 +15,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:animateLayoutChanges="true"
+            android:clipChildren="false"
             android:clipToPadding="false"
             android:paddingBottom="@dimen/screen_with_banner_ad_root_layout_bottom_margin">
 
@@ -43,7 +43,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/screen_content_space_size"
                 android:layout_marginBottom="@dimen/screen_content_space_size"
-                android:animateLayoutChanges="true"
                 app:cardBackgroundColor="@color/card_background"
                 app:cardCornerRadius="@dimen/card_corner_radius"
                 app:cardElevation="@dimen/card_elevation"
@@ -82,8 +81,9 @@
                     android:id="@+id/content_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/inner_padding"
+                    android:padding="@dimen/inner_padding"
                     android:animateLayoutChanges="true"
+                    android:clipChildren="false"
                     android:clipToPadding="false"
                     android:gravity="center"
                     android:orientation="vertical"
@@ -128,8 +128,12 @@
                         android:id="@+id/double_coins_btn"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/button_margin_between"
                         android:backgroundTint="@color/second_btn_color"
                         android:elevation="@dimen/button_elevation"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"
+                        android:minHeight="0dp"
                         android:padding="@dimen/button_padding"
                         android:stateListAnimator="@null"
                         android:text="@string/double_coins"
@@ -139,12 +143,13 @@
                         android:textSize="@dimen/button_text_size"
                         android:visibility="gone"
                         app:cornerRadius="@dimen/button_corner_radius"
-                        app:rippleColor="@color/ripple_color" />
+                        app:rippleColor="@color/second_btn_ripple_color" />
 
                     <View
                         android:id="@+id/line"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/line_height"
+                        android:layout_marginTop="@dimen/line_top_margin"
                         android:layout_marginBottom="@dimen/line_bottom_margin"
                         android:background="@color/line_color"
                         app:layout_constraintBottom_toTopOf="@id/congratulation_text"
@@ -177,6 +182,8 @@
                         android:backgroundTint="@color/btn_background"
                         android:elevation="@dimen/button_elevation"
                         android:insetTop="0dp"
+                        android:insetBottom="0dp"
+                        android:minHeight="0dp"
                         android:padding="@dimen/button_padding"
                         android:stateListAnimator="@null"
                         android:text="@string/continue_quiz"
@@ -185,7 +192,7 @@
                         android:textColor="@color/black_text_color"
                         android:textSize="@dimen/button_text_size"
                         app:cornerRadius="@dimen/button_corner_radius"
-                        app:rippleColor="@color/ripple_color"
+                        app:rippleColor="@color/btn_ripple_color"
                         app:strokeColor="@color/btn_stroke_color"
                         app:strokeWidth="@dimen/button_stroke_width" />
 
@@ -193,8 +200,12 @@
                         android:id="@+id/to_levels_btn"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/button_margin_between"
                         android:backgroundTint="@color/btn_background"
                         android:elevation="@dimen/button_elevation"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"
+                        android:minHeight="0dp"
                         android:padding="@dimen/button_padding"
                         android:stateListAnimator="@null"
                         android:text="@string/to_level_selection"
@@ -203,7 +214,7 @@
                         android:textColor="@color/black_text_color"
                         android:textSize="@dimen/button_text_size"
                         app:cornerRadius="@dimen/button_corner_radius"
-                        app:rippleColor="@color/ripple_color"
+                        app:rippleColor="@color/btn_ripple_color"
                         app:strokeColor="@color/btn_stroke_color"
                         app:strokeWidth="@dimen/button_stroke_width" />
 
@@ -212,6 +223,7 @@
             </com.google.android.material.card.MaterialCardView>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
     </ScrollView>
 
     <com.yandex.mobile.ads.banner.BannerAdView

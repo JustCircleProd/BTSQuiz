@@ -1,11 +1,11 @@
 package com.justcircleprod.btsquiz.core.domain.repositories
 
-import androidx.lifecycle.LiveData
 import com.justcircleprod.btsquiz.core.data.models.levels.LockedLevel
+import kotlinx.coroutines.flow.Flow
 
 interface LockedLevelRepository {
 
-    fun getLockedLevelLiveData(levelId: Int): LiveData<LockedLevel>
+    fun getLockedLevelLiveData(levelId: Int): Flow<LockedLevel>
 
     suspend fun unlockLevel(levelId: Int)
 

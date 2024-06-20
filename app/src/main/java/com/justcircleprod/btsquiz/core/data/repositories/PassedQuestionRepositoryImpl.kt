@@ -52,6 +52,6 @@ class PassedQuestionRepositoryImpl @Inject constructor(
     override suspend fun getPassedQuestionsCount() =
         db.passedQuestionDao().getCount()
 
-    override fun getPassedQuestionsCountLiveData() =
-        db.passedQuestionDao().getCountLiveData()
+    override fun getPassedQuestionsCountFlow() =
+        db.passedQuestionDao().getCountFlow()
 }

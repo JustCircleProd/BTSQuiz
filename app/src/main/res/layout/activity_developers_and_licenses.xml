@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:clipToPadding="false"
     tools:context=".developersAndLicenses.presentation.DevelopersAndLicensesActivity">
 
     <TextView
@@ -24,14 +23,12 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed" />
 
-    <androidx.appcompat.widget.AppCompatImageButton
+    <ImageButton
         android:id="@+id/back_btn"
-        android:layout_width="@dimen/icon_button_size"
-        android:layout_height="@dimen/icon_button_size"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:clickable="true"
+        android:layout_width="@dimen/back_icon_button_size"
+        android:layout_height="@dimen/back_icon_button_size"
+        android:background="@drawable/back_button_ripple_effect"
         android:contentDescription="@string/back"
-        android:focusable="true"
         android:src="@drawable/icon_back"
         app:layout_constraintBottom_toBottomOf="@id/brand_label"
         app:layout_constraintEnd_toStartOf="@id/brand_label"
