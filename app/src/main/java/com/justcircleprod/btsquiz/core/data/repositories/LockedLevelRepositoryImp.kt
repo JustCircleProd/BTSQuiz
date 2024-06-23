@@ -9,7 +9,7 @@ class LockedLevelRepositoryImp @Inject constructor(
 ) : LockedLevelRepository {
 
     override fun getLockedLevelLiveData(levelId: Int) =
-        db.lockedLevelDao().getLiveData(levelId)
+        db.lockedLevelDao().getFlow(levelId)
 
     override suspend fun unlockLevel(levelId: Int) {
         db.lockedLevelDao().updateIsOpenedField(levelId, true)

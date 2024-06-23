@@ -44,8 +44,7 @@ class QuizViewModel @Inject constructor(
     val userCoinsQuantity = coinRepository.getUserCoinsQuantity()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
 
-    val levelId =
-        state.get<Int>(QuizActivity.LEVEL_ARGUMENT_NAME) ?: LevelConstants.LEVEL_PASSED_QUESTIONS_ID
+    val levelId = state.get<Int>(QuizActivity.LEVEL_ARGUMENT_NAME)!!
 
     val questionWorth = MutableStateFlow(
         when (levelId) {

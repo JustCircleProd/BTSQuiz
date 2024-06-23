@@ -9,7 +9,7 @@ class LevelProgressRepositoryImpl @Inject constructor(
 ) : LevelProgressRepository {
 
     override fun getLevelProgressLiveData(levelId: Int) =
-        db.levelProgressDao().getLiveData(levelId)
+        db.levelProgressDao().getFlow(levelId)
 
     override suspend fun addLevelProgress(levelId: Int, progressToAdd: Int) {
         val currentProgress = db.levelProgressDao().getLevelProgress(levelId)

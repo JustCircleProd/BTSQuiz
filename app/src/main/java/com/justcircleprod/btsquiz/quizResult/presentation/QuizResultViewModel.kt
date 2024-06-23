@@ -33,8 +33,6 @@ class QuizResultViewModel @Inject constructor(
             true
         )
 
-    val levelId = state.get<Int>(QuizResultActivity.LEVEL_ARGUMENT_NAME)!!
-
     val earnedCoins =
         MutableStateFlow(state.get<Int>(QuizResultActivity.EARNED_COINS_ARGUMENT_NAME)!!)
 

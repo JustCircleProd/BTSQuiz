@@ -16,7 +16,7 @@
     <dimen name="line_height">1dp</dimen>
 
     <dimen name="line_top_margin">5dp</dimen>
-    <dimen name="line_bottom_margin">8dp</dimen>
+    <dimen name="line_bottom_margin">7dp</dimen>
 
     <dimen name="back_icon_button_size">48dp</dimen>
 
@@ -24,7 +24,8 @@
     <dimen name="button_corner_radius">15dp</dimen>
     <dimen name="button_text_size">16sp</dimen>
     <dimen name="button_elevation">2dp</dimen>
-    <dimen name="button_padding">11dp</dimen>
+    <dimen name="button_padding_horizontal">17dp</dimen>
+    <dimen name="button_padding_vertical">11dp</dimen>
     <dimen name="button_margin_between">8dp</dimen>
 
     <dimen name="raw_buttons_horizontal_margin">4dp</dimen>

@@ -89,12 +89,12 @@ class LevelsActivity : AppCompatActivity(), UnlockLevelConfirmationDialogCallbac
 
         setupLevelPassedQuestionsCard()
         setupLevel1Card()
-        setLevel2InfoObserver()
-        setLevel3InfoObserver()
-        setLevel4ProgressObserver()
-        setLevel5ProgressObserver()
-        setLevel6ProgressObserver()
-        setLevel7ProgressObserver()
+        setLevel2InfoCollector()
+        setLevel3InfoCollector()
+        setLevel4ProgressCollector()
+        setLevel5ProgressCollector()
+        setLevel6ProgressCollector()
+        setLevel7ProgressCollector()
 
         setContentView(binding.root)
     }
@@ -276,7 +276,7 @@ class LevelsActivity : AppCompatActivity(), UnlockLevelConfirmationDialogCallbac
 
     }
 
-    private fun setLevel2InfoObserver() {
+    private fun setLevel2InfoCollector() {
         lifecycleScope.launch {
             viewModel.level2Info.collect { lockedLevel ->
                 if (lockedLevel == null) return@collect
@@ -320,7 +320,7 @@ class LevelsActivity : AppCompatActivity(), UnlockLevelConfirmationDialogCallbac
         }
     }
 
-    private fun setLevel3InfoObserver() {
+    private fun setLevel3InfoCollector() {
         lifecycleScope.launch {
             viewModel.level3Info.collect { lockedLevel ->
                 if (lockedLevel == null) return@collect
@@ -364,7 +364,7 @@ class LevelsActivity : AppCompatActivity(), UnlockLevelConfirmationDialogCallbac
         }
     }
 
-    private fun setLevel4ProgressObserver() {
+    private fun setLevel4ProgressCollector() {
         lifecycleScope.launch {
             viewModel.level4Info.collect { lockedLevel ->
                 if (lockedLevel == null) return@collect
@@ -408,7 +408,7 @@ class LevelsActivity : AppCompatActivity(), UnlockLevelConfirmationDialogCallbac
         }
     }
 
-    private fun setLevel5ProgressObserver() {
+    private fun setLevel5ProgressCollector() {
         lifecycleScope.launch {
             viewModel.level5Info.collect { lockedLevel ->
                 if (lockedLevel == null) return@collect
@@ -452,7 +452,7 @@ class LevelsActivity : AppCompatActivity(), UnlockLevelConfirmationDialogCallbac
         }
     }
 
-    private fun setLevel6ProgressObserver() {
+    private fun setLevel6ProgressCollector() {
         lifecycleScope.launch {
             viewModel.level6Info.collect { lockedLevel ->
                 if (lockedLevel == null) return@collect
@@ -496,7 +496,7 @@ class LevelsActivity : AppCompatActivity(), UnlockLevelConfirmationDialogCallbac
         }
     }
 
-    private fun setLevel7ProgressObserver() {
+    private fun setLevel7ProgressCollector() {
         lifecycleScope.launch {
             viewModel.level7Info.collect { lockedLevel ->
                 if (lockedLevel == null) return@collect

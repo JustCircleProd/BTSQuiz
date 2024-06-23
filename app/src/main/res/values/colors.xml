@@ -45,4 +45,5 @@
     <color name="incorrect_answer_color">#F3A7B2</color>
 
     <color name="license_title_color">#BB86FC</color>
+    <color name="license_title_ripple_color">#B681CE</color>
 </resources>

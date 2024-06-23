@@ -6,6 +6,7 @@ import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,8 +16,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material.ripple.LocalRippleTheme
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -33,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.justcircleprod.btsquiz.R
 import com.justcircleprod.btsquiz.databinding.ActivityDevelopersAndLicensesBinding
+import com.justcircleprod.btsquiz.developersAndLicenses.presentation.components.MyRippleTheme
 import com.justcircleprod.btsquiz.settings.presentation.SettingsActivity
 
 class DevelopersAndLicensesActivity : AppCompatActivity() {
@@ -51,67 +58,75 @@ class DevelopersAndLicensesActivity : AppCompatActivity() {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
 
             setContent {
-                LazyColumn(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.fillMaxSize()
+                CompositionLocalProvider(
+                    LocalRippleTheme provides MyRippleTheme(color = colorResource(id = R.color.license_title_ripple_color))
                 ) {
-                    item {
-                        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.inner_padding)))
-                    }
-
-                    item {
-                        SectionTitle(text = stringResource(id = R.string.copyright_disclaimer))
-                    }
-                    item {
-                        Text(
-                            text = stringResource(id = R.string.copyright_disclaimer_text),
-                            color = colorResource(id = R.color.gray_text_color),
-                            fontSize = 14.sp,
-                            textAlign = TextAlign.Center
-                        )
-                    }
-                    item {
-                        Line()
-                    }
-
-                    item {
-                        SectionTitle(text = stringResource(id = R.string.developers))
-                    }
-                    item {
-                        DevelopersImage()
-                    }
-                    item {
-                        Line()
-                    }
-
-                    item {
-                        SectionTitle(text = stringResource(id = R.string.licenses))
-                    }
-
-                    licenses.forEachIndexed { index, license ->
-                        item {
-                            if (index != 0) {
-                                Spacer(modifier = Modifier.height(8.dp))
+                    Surface(
+                        color = colorResource(id = R.color.card_background)
+                    ) {
+                        LazyColumn(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.fillMaxSize()
+                        ) {
+                            item {
+                                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.inner_padding)))
                             }
 
-                            LicenseName(
-                                licenseName = license["licenseName"] as String,
-                                licenseLink = license["licenseLink"] as String
-                            )
-                        }
-
-                        for (packageInfo in (license["projects"] as List<Map<String, String>>)) {
                             item {
-                                ProjectInfoElement(
-                                    packageName = packageInfo["projectNameVersion"]!!,
-                                    licenseInfo = packageInfo["projectInfo"]!!
+                                SectionTitle(text = stringResource(id = R.string.copyright_disclaimer))
+                            }
+                            item {
+                                Text(
+                                    text = stringResource(id = R.string.copyright_disclaimer_text),
+                                    color = colorResource(id = R.color.gray_text_color),
+                                    fontSize = 14.sp,
+                                    textAlign = TextAlign.Center
                                 )
                             }
-                        }
-                    }
+                            item {
+                                Line()
+                            }
 
-                    item {
-                        Spacer(Modifier.height(dimensionResource(id = R.dimen.inner_padding)))
+                            item {
+                                SectionTitle(text = stringResource(id = R.string.developers))
+                            }
+                            item {
+                                DevelopersImage()
+                            }
+                            item {
+                                Line()
+                            }
+
+                            item {
+                                SectionTitle(text = stringResource(id = R.string.licenses))
+                            }
+
+                            licenses.forEachIndexed { index, license ->
+                                item {
+                                    if (index != 0) {
+                                        Spacer(modifier = Modifier.height(8.dp))
+                                    }
+
+                                    LicenseName(
+                                        licenseName = license["licenseName"] as String,
+                                        licenseLink = license["licenseLink"] as String
+                                    )
+                                }
+
+                                for (packageInfo in (license["projects"] as List<Map<String, String>>)) {
+                                    item {
+                                        ProjectInfoElement(
+                                            packageName = packageInfo["projectNameVersion"]!!,
+                                            licenseInfo = packageInfo["projectInfo"]!!
+                                        )
+                                    }
+                                }
+                            }
+
+                            item {
+                                Spacer(Modifier.height(dimensionResource(id = R.dimen.inner_padding)))
+                            }
+                        }
                     }
                 }
             }
@@ -177,6 +192,11 @@ class DevelopersAndLicensesActivity : AppCompatActivity() {
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = rememberRipple(
+                        color = colorResource(id = R.color.license_title_ripple_color),
+                        bounded = true
+                    ),
                     onClick = {
                         uriHandler.openUri(licenseLink)
                     }
