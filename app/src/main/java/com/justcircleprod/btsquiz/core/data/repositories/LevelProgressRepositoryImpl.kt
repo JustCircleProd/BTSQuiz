@@ -2,21 +2,27 @@ package com.justcircleprod.btsquiz.core.data.repositories
 
 import com.justcircleprod.btsquiz.core.data.room.AppDatabase
 import com.justcircleprod.btsquiz.core.domain.repositories.LevelProgressRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class LevelProgressRepositoryImpl @Inject constructor(
     private val db: AppDatabase
 ) : LevelProgressRepository {
 
-    override fun getLevelProgressLiveData(levelId: Int) =
+    override fun getLevelProgressFlow(levelId: Int) =
         db.levelProgressDao().getFlow(levelId)
 
     override suspend fun addLevelProgress(levelId: Int, progressToAdd: Int) {
-        val currentProgress = db.levelProgressDao().getLevelProgress(levelId)
-        db.levelProgressDao().updateProgressField(levelId, currentProgress + progressToAdd)
+        withContext(Dispatchers.IO) {
+            val currentProgress = db.levelProgressDao().getLevelProgress(levelId)
+            db.levelProgressDao().updateProgressField(levelId, currentProgress + progressToAdd)
+        }
     }
 
     override suspend fun resetLevelProgress(levelId: Int) {
-        db.levelProgressDao().updateProgressField(levelId, 0)
+        withContext(Dispatchers.IO) {
+            db.levelProgressDao().updateProgressField(levelId, 0)
+        }
     }
 }

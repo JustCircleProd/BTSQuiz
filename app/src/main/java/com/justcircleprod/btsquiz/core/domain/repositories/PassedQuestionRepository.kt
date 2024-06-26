@@ -8,11 +8,11 @@ interface PassedQuestionRepository {
 
     suspend fun getRandomPassedQuestions(): List<Question>
 
-    suspend fun insertPassedQuestion(passedQuestion: PassedQuestion)
-
-    suspend fun deleteAllPassedQuestions(): Int
-
     suspend fun getPassedQuestionsCount(): Int
 
     fun getPassedQuestionsCountFlow(): Flow<Int>
+
+    suspend fun insertPassedQuestion(passedQuestion: PassedQuestion)
+
+    suspend fun deleteAllPassedQuestions()
 }

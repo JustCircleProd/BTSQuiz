@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface LockedLevelRepository {
 
-    fun getLockedLevelLiveData(levelId: Int): Flow<LockedLevel>
+    fun getLockedLevelFlow(levelId: Int): Flow<LockedLevel>
 
     suspend fun unlockLevel(levelId: Int)
 

@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.justcircleprod.btsquiz.core.domain.repositories.CoinRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
@@ -39,7 +38,7 @@ class QuizResultViewModel @Inject constructor(
     val earnedCoinsDoubled = MutableStateFlow(false)
 
     init {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             coinRepository.addUserCoins(earnedCoins.value)
             areCoinsCalculating.value = false
         }

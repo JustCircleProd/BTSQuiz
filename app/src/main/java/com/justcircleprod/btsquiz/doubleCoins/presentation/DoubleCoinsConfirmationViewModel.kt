@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import com.justcircleprod.btsquiz.core.domain.repositories.CoinRepository
 import com.justcircleprod.btsquiz.core.presentation.RewardedAdState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -24,7 +23,7 @@ class DoubleCoinsConfirmationViewModel @Inject constructor(
         state.get<Int>(DoubleCoinsConfirmationDialog.EARNED_COINS_NAME_ARGUMENT)!!
 
     fun doubleEarnedCoins() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             coinRepository.addUserCoins(earnedCoins)
         }
     }

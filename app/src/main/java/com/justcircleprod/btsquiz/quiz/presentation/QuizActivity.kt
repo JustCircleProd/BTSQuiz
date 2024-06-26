@@ -42,7 +42,6 @@ import com.yandex.mobile.ads.common.AdRequest
 import com.yandex.mobile.ads.common.AdRequestError
 import com.yandex.mobile.ads.common.ImpressionData
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -257,13 +256,11 @@ class QuizActivity : AppCompatActivity() {
             isRightAnswerPlayerPrepared = true
         }
 
-        lifecycleScope.launch(Dispatchers.IO) {
-            rightAnswerPlayer.setDataSource(
-                this@QuizActivity,
-                Uri.parse("android.resource://$packageName/raw/correct_answer")
-            )
-            rightAnswerPlayer.prepareAsync()
-        }
+        rightAnswerPlayer.setDataSource(
+            this,
+            Uri.parse("android.resource://$packageName/raw/correct_answer")
+        )
+        rightAnswerPlayer.prepareAsync()
 
         wrongAnswerPlayer = MediaPlayer()
 
@@ -271,13 +268,11 @@ class QuizActivity : AppCompatActivity() {
             isWrongAnswerPlayerPrepared = true
         }
 
-        lifecycleScope.launch(Dispatchers.IO) {
-            wrongAnswerPlayer.setDataSource(
-                this@QuizActivity,
-                Uri.parse("android.resource://$packageName/raw/incorrect_answer")
-            )
-            wrongAnswerPlayer.prepareAsync()
-        }
+        wrongAnswerPlayer.setDataSource(
+            this,
+            Uri.parse("android.resource://$packageName/raw/incorrect_answer")
+        )
+        wrongAnswerPlayer.prepareAsync()
     }
 
     private fun setLoadingCollector() {
@@ -321,7 +316,7 @@ class QuizActivity : AppCompatActivity() {
     }
 
     private fun startLevelsActivity() {
-        val intent = Intent(this@QuizActivity, LevelsActivity::class.java)
+        val intent = Intent(this, LevelsActivity::class.java)
         startActivity(intent)
         finish()
     }
@@ -450,13 +445,11 @@ class QuizActivity : AppCompatActivity() {
             hint5050PlayerPrepared = true
         }
 
-        lifecycleScope.launch(Dispatchers.IO) {
-            hint5050Player.setDataSource(
-                this@QuizActivity,
-                Uri.parse("android.resource://$packageName/raw/hint_50_50")
-            )
-            hint5050Player.prepareAsync()
-        }
+        hint5050Player.setDataSource(
+            this,
+            Uri.parse("android.resource://$packageName/raw/hint_50_50")
+        )
+        hint5050Player.prepareAsync()
     }
 
     private fun setHintPrices() {

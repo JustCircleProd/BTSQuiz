@@ -9,7 +9,6 @@ import com.justcircleprod.btsquiz.core.domain.repositories.LevelProgressReposito
 import com.justcircleprod.btsquiz.core.domain.repositories.LockedLevelRepository
 import com.justcircleprod.btsquiz.core.domain.repositories.PassedQuestionRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -25,7 +24,7 @@ class ResetProgressConfirmationViewModel @Inject constructor(
     val isProgressReset = MutableStateFlow(false)
 
     fun resetProgress() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             coinRepository.editUserCoinsQuantity(CoinConstants.INITIAL_COINS_QUANTITY)
 
             passedQuestionRepository.deleteAllPassedQuestions()

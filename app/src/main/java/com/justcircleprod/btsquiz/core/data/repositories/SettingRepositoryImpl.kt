@@ -4,6 +4,8 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import com.justcircleprod.btsquiz.core.data.dataStore.DataStoreConstants
 import com.justcircleprod.btsquiz.core.data.dataStore.DataStoreManager
 import com.justcircleprod.btsquiz.core.domain.repositories.SettingRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class SettingRepositoryImpl @Inject constructor(
@@ -14,19 +16,23 @@ class SettingRepositoryImpl @Inject constructor(
         dataStoreManager.collect(stringPreferencesKey(DataStoreConstants.INTRODUCTION_IS_SHOWN_KEY))
 
     override suspend fun setIntroductionShown() {
-        dataStoreManager.edit(
-            stringPreferencesKey(DataStoreConstants.INTRODUCTION_IS_SHOWN_KEY),
-            DataStoreConstants.INTRODUCTION_IS_SHOWN
-        )
+        withContext(Dispatchers.IO) {
+            dataStoreManager.edit(
+                stringPreferencesKey(DataStoreConstants.INTRODUCTION_IS_SHOWN_KEY),
+                DataStoreConstants.INTRODUCTION_IS_SHOWN
+            )
+        }
     }
 
     override fun getWithoutQuizHintsState() =
         dataStoreManager.collect(stringPreferencesKey(DataStoreConstants.WITHOUT_QUIZ_HINTS_KEY))
 
     override suspend fun editWithoutQuizHintsState(state: String) {
-        dataStoreManager.edit(
-            stringPreferencesKey(DataStoreConstants.WITHOUT_QUIZ_HINTS_KEY),
-            state
-        )
+        withContext(Dispatchers.IO) {
+            dataStoreManager.edit(
+                stringPreferencesKey(DataStoreConstants.WITHOUT_QUIZ_HINTS_KEY),
+                state
+            )
+        }
     }
 }

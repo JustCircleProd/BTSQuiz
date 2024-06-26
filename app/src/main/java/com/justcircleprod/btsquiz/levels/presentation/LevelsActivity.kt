@@ -31,7 +31,6 @@ import com.yandex.mobile.ads.common.AdRequest
 import com.yandex.mobile.ads.common.AdRequestError
 import com.yandex.mobile.ads.common.ImpressionData
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.takeWhile
@@ -616,13 +615,11 @@ class LevelsActivity : AppCompatActivity(), UnlockLevelConfirmationDialogCallbac
             }
         }
 
-        lifecycleScope.launch(Dispatchers.IO) {
-            levelUnlockedPlayer.setDataSource(
-                this@LevelsActivity,
-                Uri.parse("android.resource://$packageName/raw/level_unlocked")
-            )
-            levelUnlockedPlayer.prepareAsync()
-        }
+        levelUnlockedPlayer.setDataSource(
+            this,
+            Uri.parse("android.resource://$packageName/raw/level_unlocked")
+        )
+        levelUnlockedPlayer.prepareAsync()
     }
 
     private fun playLevelUnlockedAnimation(levelId: Int) {

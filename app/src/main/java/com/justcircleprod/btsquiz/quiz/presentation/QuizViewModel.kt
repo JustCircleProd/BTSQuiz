@@ -82,7 +82,7 @@ class QuizViewModel @Inject constructor(
     private val passedQuestions = mutableListOf<PassedQuestion>()
 
     init {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.Default) {
             when (levelId) {
                 LevelConstants.LEVEL_PASSED_QUESTIONS_ID -> {
                     questions.addAll(passedQuestionRepository.getRandomPassedQuestions())
@@ -238,14 +238,14 @@ class QuizViewModel @Inject constructor(
     }
 
     fun useHint5050() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             coinRepository.subtractUserCoins(CoinConstants.HINT_50_50_PRICE)
             hint5050Used.value = true
         }
     }
 
     fun useHintCorrectAnswer() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             coinRepository.subtractUserCoins(CoinConstants.HINT_CORRECT_ANSWER_PRICE)
             hintCorrectAnswerUsed.value = true
         }

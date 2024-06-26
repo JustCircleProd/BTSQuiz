@@ -12,6 +12,7 @@ import com.justcircleprod.btsquiz.introduction.presentation.IntroductionActivity
 import com.justcircleprod.btsquiz.levels.presentation.LevelsActivity
 import com.justcircleprod.btsquiz.settings.presentation.SettingsActivity
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.transformWhile
 import kotlinx.coroutines.launch
 
@@ -21,18 +22,20 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private val viewModel: MainViewModel by viewModels()
 
+    private var shouldStartIntroductionActivityCollectionJob: Job? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.Theme_NoActionBar)
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
 
         lifecycleScope.launch {
-            // DataStoreConstants.INTRODUCTION_IS_SHOW or null will be the last value
+            // DataStoreConstants.INTRODUCTION_IS_SHOWN or null will be the last value
             viewModel.isIntroductionShown.transformWhile {
                 emit(it)
                 it != DataStoreConstants.INTRODUCTION_IS_SHOWN && it != null
-            }.collect {
-                when (it) {
+            }.collect { isIntroductionShown ->
+                when (isIntroductionShown) {
                     DataStoreConstants.INTRODUCTION_IS_SHOWN -> {
                         setOnClickListeners()
                         setContentView(binding.root)
@@ -40,7 +43,16 @@ class MainActivity : AppCompatActivity() {
 
                     null -> {
                         viewModel.setIntroductionShown()
-                        startIntroductionActivity()
+
+                        if (shouldStartIntroductionActivityCollectionJob != null) return@collect
+
+                        shouldStartIntroductionActivityCollectionJob = lifecycleScope.launch {
+                            viewModel.shouldStartIntroductionActivity.collect {
+                                if (it) {
+                                    startIntroductionActivity()
+                                }
+                            }
+                        }
                     }
                 }
             }

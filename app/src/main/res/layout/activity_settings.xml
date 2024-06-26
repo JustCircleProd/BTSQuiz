@@ -11,13 +11,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clipChildren="false"
-        android:clipToPadding="false"
-        android:padding="@dimen/screen_content_space_size">
+        android:clipToPadding="false">
 
         <TextView
             android:id="@+id/brand_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/screen_content_space_size"
+            android:layout_marginTop="@dimen/screen_content_space_size"
             android:layout_marginBottom="@dimen/brand_margin_bottom"
             android:gravity="center"
             android:text="@string/app_name"
@@ -28,7 +29,6 @@
             app:layout_constraintEnd_toEndOf="@id/root_cardview"
             app:layout_constraintStart_toStartOf="@id/root_cardview"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.42"
             app:layout_constraintVertical_chainStyle="packed" />
 
         <ImageButton
@@ -48,6 +48,8 @@
             android:id="@+id/root_cardview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/screen_content_space_size"
+            android:layout_marginBottom="@dimen/screen_content_space_size"
             app:cardBackgroundColor="@color/card_background"
             app:cardCornerRadius="@dimen/card_corner_radius"
             app:cardElevation="@dimen/card_elevation"
@@ -56,11 +58,13 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/brand_label">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:clipChildren="false"
                 android:clipToPadding="false"
+                android:gravity="center"
+                android:orientation="vertical"
                 android:padding="@dimen/inner_padding">
 
                 <com.google.android.material.card.MaterialCardView
@@ -70,9 +74,6 @@
                     android:backgroundTint="@color/btn_background"
                     app:cardCornerRadius="@dimen/button_corner_radius"
                     app:cardElevation="@dimen/button_elevation"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
                     app:strokeColor="@color/btn_stroke_color"
                     app:strokeWidth="@dimen/button_stroke_width">
 
@@ -128,9 +129,6 @@
                     android:textColor="@color/black_text_color"
                     android:textSize="@dimen/button_text_size"
                     app:cornerRadius="@dimen/button_corner_radius"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/without_quiz_hints_card"
                     app:rippleColor="@color/btn_ripple_color"
                     app:strokeColor="@color/btn_stroke_color"
                     app:strokeWidth="@dimen/button_stroke_width" />
@@ -140,16 +138,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/line_height"
                     android:layout_marginTop="@dimen/line_top_margin"
-                    android:background="@color/line_color"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/reset_progress_btn" />
+                    android:layout_marginBottom="@dimen/line_bottom_margin"
+                    android:background="@color/line_color" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/rate_app_btn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/line_bottom_margin"
                     android:backgroundTint="@color/btn_background"
                     android:elevation="@dimen/button_elevation"
                     android:insetTop="0dp"
@@ -164,9 +159,6 @@
                     android:textColor="@color/black_text_color"
                     android:textSize="@dimen/button_text_size"
                     app:cornerRadius="@dimen/button_corner_radius"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/line"
                     app:rippleColor="@color/btn_ripple_color"
                     app:strokeColor="@color/btn_stroke_color"
                     app:strokeWidth="@dimen/button_stroke_width" />
@@ -190,9 +182,6 @@
                     android:textColor="@color/black_text_color"
                     android:textSize="@dimen/button_text_size"
                     app:cornerRadius="@dimen/button_corner_radius"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/rate_app_btn"
                     app:rippleColor="@color/btn_ripple_color"
                     app:strokeColor="@color/btn_stroke_color"
                     app:strokeWidth="@dimen/button_stroke_width" />
@@ -202,16 +191,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/line_height"
                     android:layout_marginTop="@dimen/line_top_margin"
-                    android:background="@color/line_color"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/share_app_btn" />
+                    android:layout_marginBottom="@dimen/line_bottom_margin"
+                    android:background="@color/line_color" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/developers_and_licenses_btn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/line_bottom_margin"
                     android:backgroundTint="@color/btn_background"
                     android:elevation="@dimen/button_elevation"
                     android:insetTop="0dp"
@@ -226,14 +212,11 @@
                     android:textColor="@color/black_text_color"
                     android:textSize="@dimen/button_text_size"
                     app:cornerRadius="@dimen/button_corner_radius"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/line2"
                     app:rippleColor="@color/btn_ripple_color"
                     app:strokeColor="@color/btn_stroke_color"
                     app:strokeWidth="@dimen/button_stroke_width" />
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
 
         </com.google.android.material.card.MaterialCardView>
 

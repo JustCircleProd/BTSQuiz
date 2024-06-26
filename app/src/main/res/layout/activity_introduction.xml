@@ -30,7 +30,6 @@
             app:layout_constraintEnd_toEndOf="@id/view_pager"
             app:layout_constraintStart_toStartOf="@id/view_pager"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.35"
             app:layout_constraintVertical_chainStyle="packed" />
 
         <androidx.viewpager2.widget.ViewPager2
@@ -50,6 +49,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/screen_content_space_size"
             android:layout_marginTop="@dimen/brand_margin_bottom"
+            android:layout_marginBottom="@dimen/screen_content_space_size"
             app:dotsColor="@color/white"
             app:dotsSize="@dimen/introduction_dots_size"
             app:dotsSpacing="@dimen/introduction_dots_spacing"

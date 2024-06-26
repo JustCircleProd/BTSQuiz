@@ -217,10 +217,10 @@ class QuizResultActivity : AppCompatActivity(), DoubleCoinsConfirmationDialogCal
             return
         }
 
-        (application as App).onTestPassed()
+        (application as App).onQuizPassed()
 
         val showAd =
-            (application as App).passedTestNum >= (application as App).passedTestNumForShowingAd
+            (application as App).passedQuizNum >= (application as App).passedQuizNumForShowingAd
 
         if (!showAd) {
             viewModel.isInterstitialAdLoading.value = false

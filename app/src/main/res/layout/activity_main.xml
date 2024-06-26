@@ -11,13 +11,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clipChildren="false"
-        android:clipToPadding="false"
-        android:padding="@dimen/screen_content_space_size">
+        android:clipToPadding="false">
 
         <TextView
             android:id="@+id/brand_label"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/screen_content_space_size"
+            android:layout_marginTop="@dimen/screen_content_space_size"
             android:layout_marginBottom="@dimen/main_brand_text_bottom_margin"
             android:gravity="center"
             android:text="@string/app_name"
@@ -34,6 +35,7 @@
             android:id="@+id/brand_image"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/screen_content_space_size"
             android:adjustViewBounds="true"
             android:importantForAccessibility="no"
             android:paddingHorizontal="@dimen/brand_image_padding_horizontal"
@@ -48,6 +50,8 @@
             android:id="@+id/root_cardview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/screen_content_space_size"
+            android:layout_marginBottom="@dimen/screen_content_space_size"
             app:cardBackgroundColor="@color/card_background"
             app:cardCornerRadius="@dimen/card_corner_radius"
             app:cardElevation="@dimen/card_elevation"
@@ -56,11 +60,13 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/brand_image">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:clipChildren="false"
                 android:clipToPadding="false"
+                android:gravity="center"
+                android:orientation="vertical"
                 android:padding="@dimen/inner_padding">
 
                 <com.google.android.material.button.MaterialButton
@@ -82,9 +88,6 @@
                     android:textColor="@color/black_text_color"
                     android:textSize="@dimen/button_text_size"
                     app:cornerRadius="@dimen/button_corner_radius"
-                    app:layout_constraintBottom_toTopOf="@id/settings_btn"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
                     app:rippleColor="@color/btn_ripple_color"
                     app:strokeColor="@color/btn_stroke_color"
                     app:strokeWidth="@dimen/button_stroke_width" />
@@ -107,14 +110,11 @@
                     android:textColor="@color/black_text_color"
                     android:textSize="@dimen/button_text_size"
                     app:cornerRadius="@dimen/button_corner_radius"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
                     app:rippleColor="@color/btn_ripple_color"
                     app:strokeColor="@color/btn_stroke_color"
                     app:strokeWidth="@dimen/button_stroke_width" />
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
 
         </com.google.android.material.card.MaterialCardView>
 

@@ -36,42 +36,42 @@ class LevelsViewModel @Inject constructor(
     val passedQuestionsCount = passedQuestionRepository.getPassedQuestionsCountFlow()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
 
-    val level1Progress = levelProgressRepository.getLevelProgressLiveData(LevelConstants.LEVEL_1_ID)
+    val level1Progress = levelProgressRepository.getLevelProgressFlow(LevelConstants.LEVEL_1_ID)
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
 
-    val level2Info = lockedLevelRepository.getLockedLevelLiveData(LevelConstants.LEVEL_2_ID)
+    val level2Info = lockedLevelRepository.getLockedLevelFlow(LevelConstants.LEVEL_2_ID)
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
-    val level2Progress = levelProgressRepository.getLevelProgressLiveData(LevelConstants.LEVEL_2_ID)
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
-
-    val level3Info = lockedLevelRepository.getLockedLevelLiveData(LevelConstants.LEVEL_3_ID)
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
-    val level3Progress = levelProgressRepository.getLevelProgressLiveData(LevelConstants.LEVEL_3_ID)
+    val level2Progress = levelProgressRepository.getLevelProgressFlow(LevelConstants.LEVEL_2_ID)
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
 
-    val level4Info = lockedLevelRepository.getLockedLevelLiveData(LevelConstants.LEVEL_4_ID)
+    val level3Info = lockedLevelRepository.getLockedLevelFlow(LevelConstants.LEVEL_3_ID)
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
-    val level4Progress = levelProgressRepository.getLevelProgressLiveData(LevelConstants.LEVEL_4_ID)
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
-
-    val level5Info = lockedLevelRepository.getLockedLevelLiveData(LevelConstants.LEVEL_5_ID)
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
-    val level5Progress = levelProgressRepository.getLevelProgressLiveData(LevelConstants.LEVEL_5_ID)
+    val level3Progress = levelProgressRepository.getLevelProgressFlow(LevelConstants.LEVEL_3_ID)
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
 
-    val level6Info = lockedLevelRepository.getLockedLevelLiveData(LevelConstants.LEVEL_6_ID)
+    val level4Info = lockedLevelRepository.getLockedLevelFlow(LevelConstants.LEVEL_4_ID)
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
-    val level6Progress = levelProgressRepository.getLevelProgressLiveData(LevelConstants.LEVEL_6_ID)
+    val level4Progress = levelProgressRepository.getLevelProgressFlow(LevelConstants.LEVEL_4_ID)
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
 
-    val level7Info = lockedLevelRepository.getLockedLevelLiveData(LevelConstants.LEVEL_7_ID)
+    val level5Info = lockedLevelRepository.getLockedLevelFlow(LevelConstants.LEVEL_5_ID)
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
-    val level7Progress = levelProgressRepository.getLevelProgressLiveData(LevelConstants.LEVEL_7_ID)
+    val level5Progress = levelProgressRepository.getLevelProgressFlow(LevelConstants.LEVEL_5_ID)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
+
+    val level6Info = lockedLevelRepository.getLockedLevelFlow(LevelConstants.LEVEL_6_ID)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
+    val level6Progress = levelProgressRepository.getLevelProgressFlow(LevelConstants.LEVEL_6_ID)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
+
+    val level7Info = lockedLevelRepository.getLockedLevelFlow(LevelConstants.LEVEL_7_ID)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
+    val level7Progress = levelProgressRepository.getLevelProgressFlow(LevelConstants.LEVEL_7_ID)
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
 
     // calculating initial coins quantity or compensation
     init {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.Default) {
             userCoinsQuantity.collect { coinsQuantity ->
                 if (coinsQuantity?.isDigitsOnly() == false || coinsQuantity != null) return@collect
 
@@ -134,7 +134,7 @@ class LevelsViewModel @Inject constructor(
     }
 
     fun unlockLevel(levelId: Int, levelPrice: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             coinRepository.subtractUserCoins(levelPrice)
             lockedLevelRepository.unlockLevel(levelId)
         }

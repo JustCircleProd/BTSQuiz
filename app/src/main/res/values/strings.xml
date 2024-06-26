@@ -7,6 +7,8 @@
 
     <string name="confirm">Подтвердить</string>
 
+    <string name="great">Отлично</string>
+
     <string name="back">Назад</string>
 
     <string name="icon_coins_content_description">Монеты</string>
@@ -59,10 +61,11 @@
     <string name="developers_content_description">JustCircle Prod.</string>
     <string name="licenses">Лицензии</string>
 
-    <!-- ResetProgressDialog -->
+    <!-- Reset Progress -->
 
     <string name="reset_progress_dialog_title">Сброс прогресса</string>
     <string name="reset_confirmation_question">Вы действительно хотите сбросить ваш прогресс?</string>
+    <string name="reset">Сбросить</string>
 
     <string name="progress_was_reset_dialog_title">Прогресс сброшен</string>
     <string name="progress_was_reset">Прогресс успешно сброшен</string>
@@ -83,6 +86,8 @@
 
     <string name="locked_level_icon_content_description">Закрытый уровень</string>
 
+    <string name="open_for_n_coins">Открыть за %1$d</string>
+
     <!-- Compensation received -->
 
     <string name="receiving_coins">Начисление монет</string>
@@ -91,12 +96,12 @@
 
     <!-- Unlock Level -->
 
-    <string name="unlock_level_dialog_title">Разблокировка уровня</string>
+    <string name="unlock_level_dialog_title">Открытие уровня</string>
 
-    <string name="open_for_n_coins">Открыть за %1$d</string>
-    <string name="unlock_level_confirmation">Вы уверены, что хотите разблокировать этот уровень?</string>
+    <string name="unlock_level_confirmation">Вы уверены, что хотите открыть этот уровень?</string>
+    <string name="unlock">Открыть</string>
 
-    <!-- WatchRewardedAd -->
+    <!-- Watch Rewarded Ad -->
 
     <string name="not_enough_coins_title">Недостаточно монет</string>
 
@@ -137,13 +142,6 @@
 
     <string name="you_got">Вы получили</string>
 
-    <string name="double_coins">Удвоить монеты</string>
-    <string name="do_you_want_to_watch_an_ad_to_double_coins">Хотите посмотреть рекламу, чтобы удвоить полученные монеты?</string>
-    <string name="double_coins_quantity_with_placeholder">%1$d x 2</string>
-
-    <string name="coins_doubled_title">Монеты удвоены</string>
-    <string name="coins_doubled">Полученные монеты были удвоены</string>
-
     <string-array name="texts_for_bad_result">
         <item>Мы в тебя верим!</item>
         <item>Ты сможешь!</item>
@@ -166,4 +164,13 @@
     </string-array>
 
     <string name="continue_quiz">Продолжить прохождение</string>
+
+    <!-- Double Coins  -->
+
+    <string name="double_coins">Удвоить монеты</string>
+    <string name="do_you_want_to_watch_an_ad_to_double_coins">Хотите посмотреть рекламу, чтобы удвоить полученные монеты?</string>
+    <string name="double_coins_quantity_with_placeholder">%1$d x 2</string>
+
+    <string name="coins_doubled_title">Монеты удвоены</string>
+    <string name="coins_doubled">Полученные монеты были удвоены</string>
 </resources>

@@ -42,7 +42,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/screen_content_space_size"
-                android:layout_marginBottom="@dimen/screen_content_space_size"
                 app:cardBackgroundColor="@color/card_background"
                 app:cardCornerRadius="@dimen/card_corner_radius"
                 app:cardElevation="@dimen/card_elevation"
@@ -152,10 +151,7 @@
                         android:layout_height="@dimen/line_height"
                         android:layout_marginTop="@dimen/line_top_margin"
                         android:layout_marginBottom="@dimen/line_bottom_margin"
-                        android:background="@color/line_color"
-                        app:layout_constraintBottom_toTopOf="@id/congratulation_text"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent" />
+                        android:background="@color/line_color" />
 
                     <TextView
                         android:id="@+id/congratulation_text"

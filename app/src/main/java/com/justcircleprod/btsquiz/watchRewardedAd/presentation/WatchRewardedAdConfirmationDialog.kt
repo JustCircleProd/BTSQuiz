@@ -29,7 +29,6 @@ import com.yandex.mobile.ads.rewarded.RewardedAdEventListener
 import com.yandex.mobile.ads.rewarded.RewardedAdLoadListener
 import com.yandex.mobile.ads.rewarded.RewardedAdLoader
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -214,6 +213,7 @@ class WatchRewardedAdConfirmationDialog : DialogFragment() {
                         binding.rewardResultQuantityLayout.visibility = View.GONE
 
                         binding.rewardResultTv.text = getString(R.string.failed_to_load_rewarded_ad)
+                        binding.submitRewardResultBtn.setText(R.string.confirm)
 
                         binding.rewardResultLayout.visibility = View.VISIBLE
                     }
@@ -224,6 +224,7 @@ class WatchRewardedAdConfirmationDialog : DialogFragment() {
                         binding.rewardResultTv.text = getString(R.string.reward_received)
                         binding.rewardResultQuantity.text =
                             CoinConstants.REWARDED_AD_WORTH.toString()
+                        binding.submitRewardResultBtn.setText(R.string.great)
 
                         binding.questionLayout.visibility = View.GONE
                         binding.loadingLayout.visibility = View.GONE
@@ -247,13 +248,11 @@ class WatchRewardedAdConfirmationDialog : DialogFragment() {
             rewardReceivedPlayer.start()
         }
 
-        lifecycleScope.launch(Dispatchers.IO) {
-            rewardReceivedPlayer.setDataSource(
-                requireContext(),
-                Uri.parse("android.resource://${requireActivity().packageName}/raw/reward_received")
-            )
-            rewardReceivedPlayer.prepareAsync()
-        }
+        rewardReceivedPlayer.setDataSource(
+            requireContext(),
+            Uri.parse("android.resource://${requireActivity().packageName}/raw/reward_received")
+        )
+        rewardReceivedPlayer.prepareAsync()
     }
 
     private fun destroyRewardedAd() {

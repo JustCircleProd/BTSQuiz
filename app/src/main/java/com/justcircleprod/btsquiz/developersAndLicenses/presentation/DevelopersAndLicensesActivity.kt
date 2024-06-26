@@ -101,7 +101,7 @@ class DevelopersAndLicensesActivity : AppCompatActivity() {
                                 SectionTitle(text = stringResource(id = R.string.licenses))
                             }
 
-                            licenses.forEachIndexed { index, license ->
+                            Licenses.forEachIndexed { index, license ->
                                 item {
                                     if (index != 0) {
                                         Spacer(modifier = Modifier.height(8.dp))
