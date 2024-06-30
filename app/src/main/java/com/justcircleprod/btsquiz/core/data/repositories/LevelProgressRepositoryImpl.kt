@@ -10,8 +10,7 @@ class LevelProgressRepositoryImpl @Inject constructor(
     private val db: AppDatabase
 ) : LevelProgressRepository {
 
-    override fun getLevelProgressFlow(levelId: Int) =
-        db.levelProgressDao().getFlow(levelId)
+    override fun getAll() = db.levelProgressDao().getAll()
 
     override suspend fun addLevelProgress(levelId: Int, progressToAdd: Int) {
         withContext(Dispatchers.IO) {

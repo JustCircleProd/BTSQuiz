@@ -8,8 +8,8 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface LevelProgressDao {
 
-    @Query("SELECT * FROM levels_progress WHERE id = :levelId")
-    fun getFlow(levelId: Int): Flow<LevelProgress>
+    @Query("SELECT * FROM levels_progress")
+    fun getAll(): Flow<List<LevelProgress>>
 
     @Query("SELECT progress FROM levels_progress WHERE id = :levelId")
     suspend fun getLevelProgress(levelId: Int): Int

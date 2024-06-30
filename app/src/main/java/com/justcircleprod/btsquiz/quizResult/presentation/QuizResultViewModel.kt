@@ -24,8 +24,8 @@ class QuizResultViewModel @Inject constructor(
     private val areCoinsCalculating = MutableStateFlow(true)
 
     val isLoading =
-        combine(areCoinsCalculating, isBannerAdLoading, isInterstitialAdLoading) { s1, s2, s3 ->
-            s1 || s2 || s3
+        combine(areCoinsCalculating, isBannerAdLoading, isInterstitialAdLoading) { p1, p2, p3 ->
+            p1 || p2 || p3
         }.stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(),

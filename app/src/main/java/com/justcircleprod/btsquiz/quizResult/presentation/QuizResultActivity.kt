@@ -69,6 +69,8 @@ class QuizResultActivity : AppCompatActivity(), DoubleCoinsConfirmationDialogCal
     private var interstitialAdLoader: InterstitialAdLoader? = null
 
     private lateinit var resultPlayer: MediaPlayer
+    private var isResultPlayerPrepared = false
+    private var isResultPlayerPlaying = false
 
     companion object {
         const val LEVEL_ARGUMENT_NAME = "LEVEL"
@@ -102,15 +104,24 @@ class QuizResultActivity : AppCompatActivity(), DoubleCoinsConfirmationDialogCal
 
     override fun onStart() {
         super.onStart()
+
         refreshAdTimer?.start()
+        if (isResultPlayerPlaying) {
+            resultPlayer.start()
+        }
     }
 
     override fun onPause() {
         super.onPause()
+
         refreshAdTimer?.cancel()
+        if (isResultPlayerPlaying) {
+            resultPlayer.pause()
+        }
     }
 
     private fun enableAnimations() {
+        binding.rootLayout.layoutTransition.enableTransitionType(LayoutTransition.CHANGING)
         binding.contentLayout.layoutTransition.enableTransitionType(LayoutTransition.CHANGING)
     }
 
@@ -204,7 +215,7 @@ class QuizResultActivity : AppCompatActivity(), DoubleCoinsConfirmationDialogCal
                 if (!isLoading) {
                     onBackPressedDispatcher.addCallback { startLevelsActivity() }
                     showResult()
-                    binding.loadLayout.visibility = View.GONE
+                    binding.loadingLayout.visibility = View.GONE
                     binding.contentLayout.visibility = View.VISIBLE
                 }
             }
@@ -382,9 +393,18 @@ class QuizResultActivity : AppCompatActivity(), DoubleCoinsConfirmationDialogCal
         resultPlayer = MediaPlayer()
 
         resultPlayer.setOnPreparedListener {
+            isResultPlayerPrepared = true
+
             resultPlayer.start()
+            isResultPlayerPlaying = true
+
+            resultPlayer.setOnPreparedListener(null)
         }
 
+        resultPlayer.setOnCompletionListener {
+            isResultPlayerPlaying = false
+            resultPlayer.setOnCompletionListener(null)
+        }
 
         resultPlayer.setDataSource(
             this@QuizResultActivity,
@@ -477,7 +497,7 @@ class QuizResultActivity : AppCompatActivity(), DoubleCoinsConfirmationDialogCal
         destroyBannerAd()
         destroyInterstitialAd()
 
-        if (::resultPlayer.isInitialized) {
+        if (isResultPlayerPrepared) {
             resultPlayer.release()
         }
     }

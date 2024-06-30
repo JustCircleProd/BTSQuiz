@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface LevelProgressRepository {
 
-    fun getLevelProgressFlow(levelId: Int): Flow<LevelProgress>
+    fun getAll(): Flow<List<LevelProgress>>
 
     suspend fun addLevelProgress(levelId: Int, progressToAdd: Int)
 

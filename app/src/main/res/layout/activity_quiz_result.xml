@@ -13,8 +13,10 @@
         android:orientation="vertical">
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/root_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:animateLayoutChanges="true"
             android:clipChildren="false"
             android:clipToPadding="false"
             android:paddingBottom="@dimen/screen_with_banner_ad_root_layout_bottom_margin">
@@ -51,10 +53,10 @@
                 app:layout_constraintTop_toBottomOf="@id/brand_label">
 
                 <LinearLayout
-                    android:id="@+id/load_layout"
+                    android:id="@+id/loading_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
+                    android:gravity="center"
                     android:layout_margin="@dimen/inner_padding"
                     android:orientation="vertical"
                     tools:ignore="UseCompoundDrawables">
@@ -91,7 +93,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center_horizontal"
+                        android:gravity="center"
                         android:text="@string/you_got"
                         android:textColor="@color/gray_text_color"
                         android:textSize="@dimen/quiz_result_earned_coins_label_text_size" />
@@ -108,7 +110,7 @@
                             android:id="@+id/earned_coins"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="center_horizontal"
+                            android:gravity="center"
                             android:textColor="@color/gray_text_color"
                             android:textSize="@dimen/quiz_result_earned_coins_text_size"
                             android:textStyle="bold"

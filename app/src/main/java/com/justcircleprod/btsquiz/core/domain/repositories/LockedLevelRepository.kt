@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface LockedLevelRepository {
 
-    fun getLockedLevelFlow(levelId: Int): Flow<LockedLevel>
+    fun getAll(): Flow<List<LockedLevel>>
 
     suspend fun unlockLevel(levelId: Int)
 

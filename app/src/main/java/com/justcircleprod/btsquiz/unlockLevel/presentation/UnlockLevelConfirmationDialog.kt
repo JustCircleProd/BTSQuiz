@@ -4,36 +4,19 @@ import android.animation.LayoutTransition
 import android.app.Dialog
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
+import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.setFragmentResult
 import com.justcircleprod.btsquiz.R
 import com.justcircleprod.btsquiz.databinding.DialogUnlockLevelConfirmationBinding
 
 class UnlockLevelConfirmationDialog : DialogFragment() {
-    companion object {
-        private const val LEVEL_ID_NAME_ARGUMENT = "LEVEL_ID"
-        private const val LEVEL_PRICE_NAME_ARGUMENT = "LEVEL_PRICE"
 
-        fun newInstance(levelId: Int, levelPrice: Int): UnlockLevelConfirmationDialog {
-            return UnlockLevelConfirmationDialog().apply {
-                arguments = Bundle().apply {
-                    putInt(LEVEL_ID_NAME_ARGUMENT, levelId)
-                    putInt(LEVEL_PRICE_NAME_ARGUMENT, levelPrice)
-                }
-            }
-        }
+    companion object {
+        const val SHOULD_UNLOCK_A_LEVEL_RESULT_KEY = "SHOULD_UNLOCK_A_LEVE"
     }
 
     private lateinit var binding: DialogUnlockLevelConfirmationBinding
-
-    private var levelId: Int? = null
-    private var levelPrice: Int? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        levelId = arguments?.getInt(LEVEL_ID_NAME_ARGUMENT)
-        levelPrice = arguments?.getInt(LEVEL_PRICE_NAME_ARGUMENT)
-    }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialogBuilder = AlertDialog.Builder(requireContext(), R.style.DialogRoundedCorner)
@@ -41,8 +24,8 @@ class UnlockLevelConfirmationDialog : DialogFragment() {
         binding = DialogUnlockLevelConfirmationBinding.inflate(layoutInflater)
 
         enableAnimations()
-        binding.cancelBtn.setOnClickListener { dismiss() }
-        binding.cancelBtn2.setOnClickListener { dismiss() }
+        binding.cancelBtn.setOnClickListener { dialog?.cancel() }
+        binding.cancelBtn2.setOnClickListener { dialog?.cancel() }
         setOnSubmitClickListeners()
 
         dialogBuilder.setView(binding.root).setCancelable(true)
@@ -55,12 +38,11 @@ class UnlockLevelConfirmationDialog : DialogFragment() {
 
     private fun setOnSubmitClickListeners() {
         binding.submitBtn.setOnClickListener {
-            if (levelId != null && levelPrice != null) {
-                (activity as UnlockLevelConfirmationDialogCallback).onUnlockButtonClicked(
-                    levelId!!,
-                    levelPrice!!
+            setFragmentResult(
+                SHOULD_UNLOCK_A_LEVEL_RESULT_KEY, bundleOf(
+                    SHOULD_UNLOCK_A_LEVEL_RESULT_KEY to true
                 )
-            }
+            )
 
             dismiss()
         }

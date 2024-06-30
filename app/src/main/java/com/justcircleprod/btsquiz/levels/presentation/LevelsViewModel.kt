@@ -10,11 +10,13 @@ import com.justcircleprod.btsquiz.core.domain.repositories.LevelProgressReposito
 import com.justcircleprod.btsquiz.core.domain.repositories.LockedLevelRepository
 import com.justcircleprod.btsquiz.core.domain.repositories.PassedQuestionRepository
 import com.justcircleprod.btsquiz.core.domain.repositories.ScoreRepository
+import com.justcircleprod.btsquiz.levels.presentation.levelAdapter.LevelItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -33,41 +35,62 @@ class LevelsViewModel @Inject constructor(
     val userCoinsQuantity = coinRepository.getUserCoinsQuantity()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), "NOT_INITIALIZED")
 
-    val passedQuestionsCount = passedQuestionRepository.getPassedQuestionsCountFlow()
+    private val passedQuestionsCount = passedQuestionRepository.getPassedQuestionsCountFlow()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
 
-    val level1Progress = levelProgressRepository.getLevelProgressFlow(LevelConstants.LEVEL_1_ID)
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
+    private val lockedLevels = lockedLevelRepository.getAll()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), listOf())
 
-    val level2Info = lockedLevelRepository.getLockedLevelFlow(LevelConstants.LEVEL_2_ID)
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
-    val level2Progress = levelProgressRepository.getLevelProgressFlow(LevelConstants.LEVEL_2_ID)
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
+    private val levelProgress = levelProgressRepository.getAll()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), listOf())
 
-    val level3Info = lockedLevelRepository.getLockedLevelFlow(LevelConstants.LEVEL_3_ID)
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
-    val level3Progress = levelProgressRepository.getLevelProgressFlow(LevelConstants.LEVEL_3_ID)
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
+    // conversion to LevelItem for RecyclerView in presentation
+    val levelItems = combine(
+        lockedLevels,
+        levelProgress,
+        passedQuestionsCount
+    ) { lockedLevels, levelProgress, passedQuestionsCount ->
 
-    val level4Info = lockedLevelRepository.getLockedLevelFlow(LevelConstants.LEVEL_4_ID)
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
-    val level4Progress = levelProgressRepository.getLevelProgressFlow(LevelConstants.LEVEL_4_ID)
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
+        if (lockedLevels.isEmpty() || levelProgress.isEmpty() || passedQuestionsCount == null) {
+            return@combine LevelItem.getPlaceholders()
+        }
 
-    val level5Info = lockedLevelRepository.getLockedLevelFlow(LevelConstants.LEVEL_5_ID)
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
-    val level5Progress = levelProgressRepository.getLevelProgressFlow(LevelConstants.LEVEL_5_ID)
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
+        val tempLevelItems = mutableListOf<LevelItem>()
 
-    val level6Info = lockedLevelRepository.getLockedLevelFlow(LevelConstants.LEVEL_6_ID)
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
-    val level6Progress = levelProgressRepository.getLevelProgressFlow(LevelConstants.LEVEL_6_ID)
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
+        if (passedQuestionsCount != 0) {
+            tempLevelItems.add(
+                LevelItem(
+                    levelId = LevelConstants.LEVEL_PASSED_QUESTIONS_ID,
+                    isOpened = null,
+                    price = 0,
+                    progress = 0,
+                    questionNumber = passedQuestionsCount
+                )
+            )
+        }
 
-    val level7Info = lockedLevelRepository.getLockedLevelFlow(LevelConstants.LEVEL_7_ID)
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
-    val level7Progress = levelProgressRepository.getLevelProgressFlow(LevelConstants.LEVEL_7_ID)
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
+        for (levelProgressItem in levelProgress) {
+            val levelId = levelProgressItem.id
+            val lockedLevel = lockedLevels.firstOrNull { levelProgressItem.id == it.id }
+
+            tempLevelItems.add(
+                LevelItem(
+                    levelId = levelId,
+                    isOpened = lockedLevel?.isOpened
+                        ?: true,
+                    price = lockedLevel?.price ?: 0,
+                    progress = levelProgressItem.progress,
+                    questionNumber = levelProgressItem.questionsQuantity
+                )
+            )
+        }
+
+        tempLevelItems.toList()
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(),
+        LevelItem.getPlaceholders()
+    )
 
     // calculating initial coins quantity or compensation
     init {

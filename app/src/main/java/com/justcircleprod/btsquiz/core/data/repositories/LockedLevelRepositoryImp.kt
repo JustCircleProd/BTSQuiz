@@ -10,8 +10,7 @@ class LockedLevelRepositoryImp @Inject constructor(
     private val db: AppDatabase
 ) : LockedLevelRepository {
 
-    override fun getLockedLevelFlow(levelId: Int) =
-        db.lockedLevelDao().getFlow(levelId)
+    override fun getAll() = db.lockedLevelDao().getAll()
 
     override suspend fun unlockLevel(levelId: Int) {
         withContext(Dispatchers.IO) {

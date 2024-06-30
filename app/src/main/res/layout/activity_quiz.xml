@@ -12,8 +12,10 @@
         android:fillViewport="true">
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/root_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:animateLayoutChanges="true"
             android:clipChildren="false"
             android:clipToPadding="false"
             android:paddingBottom="@dimen/screen_with_banner_ad_root_layout_bottom_margin">
@@ -50,38 +52,10 @@
                 app:layout_constraintTop_toBottomOf="@id/brand_label">
 
                 <LinearLayout
-                    android:id="@+id/load_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:orientation="vertical"
-                    android:padding="@dimen/inner_padding"
-                    tools:ignore="UseCompoundDrawables">
-
-                    <TextView
-                        android:id="@+id/load_hint"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="@string/tv_loading_quiz_text"
-                        android:textColor="@color/gray_text_color"
-                        android:textSize="@dimen/hint_text_size" />
-
-                    <ImageView
-                        android:id="@+id/loading_gif"
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/loading_gif_height"
-                        android:layout_marginTop="@dimen/loading_gif_top_margin"
-                        android:importantForAccessibility="no" />
-
-                </LinearLayout>
-
-
-                <LinearLayout
                     android:id="@+id/out_of_questions_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
+                    android:gravity="center"
                     android:clipChildren="false"
                     android:clipToPadding="false"
                     android:orientation="vertical"
@@ -451,7 +425,6 @@
                         <androidx.constraintlayout.widget.ConstraintLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="center"
                             android:orientation="horizontal"
                             android:padding="@dimen/quiz_hint_card_padding"
                             tools:ignore="UseCompoundDrawables">
@@ -524,7 +497,6 @@
                         <androidx.constraintlayout.widget.ConstraintLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="center"
                             android:orientation="horizontal"
                             android:padding="@dimen/quiz_hint_card_padding"
                             tools:ignore="UseCompoundDrawables">

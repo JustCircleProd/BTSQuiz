@@ -50,11 +50,13 @@ class DoubleCoinsConfirmationDialog : DialogFragment() {
 
     private var earnedCoins: Int? = null
 
+    private lateinit var rewardReceivedPlayer: MediaPlayer
+    private var isRewardReceivedPlayerPrepared = false
+    private var isRewardReceivedPlayerPlaying = false
+
     private var rewardedAd: RewardedAd? = null
     private var rewardedAdLoader: RewardedAdLoader? = null
     private var rewardedAdLoaded = false
-
-    private lateinit var rewardReceivedPlayer: MediaPlayer
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,6 +69,7 @@ class DoubleCoinsConfirmationDialog : DialogFragment() {
         binding = DialogDoubleCoinsConfirmationBinding.inflate(layoutInflater)
 
         enableAnimations()
+        initRewardReceivedPlayer()
         setLoadingGif()
         setOnButtonsClickListeners()
         setRewardedAdStateCollector()
@@ -83,8 +86,44 @@ class DoubleCoinsConfirmationDialog : DialogFragment() {
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+
+        if (isRewardReceivedPlayerPlaying) {
+            rewardReceivedPlayer.start()
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+
+        if (isRewardReceivedPlayerPlaying) {
+            rewardReceivedPlayer.pause()
+        }
+    }
+
     private fun enableAnimations() {
         binding.root.layoutTransition.enableTransitionType(LayoutTransition.CHANGING)
+    }
+
+    private fun initRewardReceivedPlayer() {
+        rewardReceivedPlayer = MediaPlayer()
+
+        rewardReceivedPlayer.setOnPreparedListener {
+            isRewardReceivedPlayerPrepared = true
+            rewardReceivedPlayer.setOnPreparedListener(null)
+        }
+
+        rewardReceivedPlayer.setOnCompletionListener {
+            isRewardReceivedPlayerPlaying = false
+            rewardReceivedPlayer.setOnCompletionListener(null)
+        }
+
+        rewardReceivedPlayer.setDataSource(
+            requireContext(),
+            Uri.parse("android.resource://${requireActivity().packageName}/raw/reward_received")
+        )
+        rewardReceivedPlayer.prepareAsync()
     }
 
     private fun setLoadingGif() {
@@ -248,27 +287,14 @@ class DoubleCoinsConfirmationDialog : DialogFragment() {
                         binding.rewardResultLayout.visibility = View.VISIBLE
                         binding.rewardResultQuantityLayout.visibility = View.VISIBLE
 
-                        playRewardReceivedSound()
+                        if (isRewardReceivedPlayerPrepared) {
+                            rewardReceivedPlayer.start()
+                            isRewardReceivedPlayerPlaying = true
+                        }
                     }
                 }
             }
         }
-    }
-
-    private fun playRewardReceivedSound() {
-        if (::rewardReceivedPlayer.isInitialized) return
-
-        rewardReceivedPlayer = MediaPlayer()
-
-        rewardReceivedPlayer.setOnPreparedListener {
-            rewardReceivedPlayer.start()
-        }
-
-        rewardReceivedPlayer.setDataSource(
-            requireContext(),
-            Uri.parse("android.resource://${requireActivity().packageName}/raw/reward_received")
-        )
-        rewardReceivedPlayer.prepareAsync()
     }
 
     private fun destroyRewardedAd() {
@@ -284,7 +310,7 @@ class DoubleCoinsConfirmationDialog : DialogFragment() {
 
         destroyRewardedAd()
 
-        if (::rewardReceivedPlayer.isInitialized) {
+        if (isRewardReceivedPlayerPrepared) {
             rewardReceivedPlayer.release()
         }
     }

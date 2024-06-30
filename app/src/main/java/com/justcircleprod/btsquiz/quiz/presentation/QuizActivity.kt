@@ -19,7 +19,6 @@ import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.google.android.material.button.MaterialButton
 import com.justcircleprod.btsquiz.R
 import com.justcircleprod.btsquiz.core.data.constants.CoinConstants
@@ -73,14 +72,17 @@ class QuizActivity : AppCompatActivity() {
 
     private lateinit var rightAnswerPlayer: MediaPlayer
     private var isRightAnswerPlayerPrepared = false
+    private var isRightAnswerPlayerPlaying = false
 
     private lateinit var wrongAnswerPlayer: MediaPlayer
     private var isWrongAnswerPlayerPrepared = false
+    private var isWrongAnswerPlayerPlaying = false
 
     private var audioQuestionPlayer: MediaPlayer? = null
 
     private lateinit var hint5050Player: MediaPlayer
-    private var hint5050PlayerPrepared = false
+    private var isHint5050PlayerPrepared = false
+    private var isHint5050PlayerPlaying = false
 
     private var positionOfVideoPlayer = 0
 
@@ -105,7 +107,6 @@ class QuizActivity : AppCompatActivity() {
         onBackPressedDispatcher.addCallback { startLevelsActivity() }
 
         enableAnimation()
-        setLoadingGif()
 
         initAd()
         initAnswerPlayers()
@@ -119,14 +120,16 @@ class QuizActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        resumePlayers()
+
         refreshAdTimer?.start()
+        resumePlayers()
     }
 
     override fun onPause() {
         super.onPause()
-        pausePlayers()
+
         refreshAdTimer?.cancel()
+        pausePlayers()
     }
 
     private fun resumePlayers() {
@@ -150,6 +153,18 @@ class QuizActivity : AppCompatActivity() {
                 setAudioQuestionData(viewModel.question.value!! as AudioQuestion)
             }
         }
+
+        if (isRightAnswerPlayerPlaying) {
+            rightAnswerPlayer.start()
+        }
+
+        if (isWrongAnswerPlayerPlaying) {
+            wrongAnswerPlayer.start()
+        }
+
+        if (isHint5050PlayerPlaying) {
+            hint5050Player.start()
+        }
     }
 
     private fun pausePlayers() {
@@ -168,19 +183,23 @@ class QuizActivity : AppCompatActivity() {
                 audioQuestionPlayer?.pause()
             }
         }
+
+        if (isRightAnswerPlayerPlaying) {
+            rightAnswerPlayer.pause()
+        }
+
+        if (isWrongAnswerPlayerPlaying) {
+            wrongAnswerPlayer.pause()
+        }
+
+        if (isHint5050PlayerPlaying) {
+            hint5050Player.pause()
+        }
     }
 
     private fun enableAnimation() {
+        binding.rootLayout.layoutTransition.enableTransitionType(LayoutTransition.CHANGING)
         binding.contentLayout.layoutTransition.enableTransitionType(LayoutTransition.CHANGING)
-    }
-
-    private fun setLoadingGif() {
-        Glide
-            .with(this)
-            .load(R.drawable.loading)
-            .transition(DrawableTransitionOptions.withCrossFade())
-            .diskCacheStrategy(DiskCacheStrategy.NONE)
-            .into(binding.loadingGif)
     }
 
     private fun initAd() {
@@ -254,23 +273,34 @@ class QuizActivity : AppCompatActivity() {
 
         rightAnswerPlayer.setOnPreparedListener {
             isRightAnswerPlayerPrepared = true
+            rightAnswerPlayer.setOnPreparedListener(null)
+        }
+
+        rightAnswerPlayer.setOnCompletionListener {
+            isRightAnswerPlayerPlaying = false
         }
 
         rightAnswerPlayer.setDataSource(
             this,
-            Uri.parse("android.resource://$packageName/raw/correct_answer")
+            Uri.parse("android.resource://$packageName/raw/right_answer")
         )
         rightAnswerPlayer.prepareAsync()
+
 
         wrongAnswerPlayer = MediaPlayer()
 
         wrongAnswerPlayer.setOnPreparedListener {
             isWrongAnswerPlayerPrepared = true
+            wrongAnswerPlayer.setOnPreparedListener(null)
+        }
+
+        wrongAnswerPlayer.setOnCompletionListener {
+            isWrongAnswerPlayerPlaying = false
         }
 
         wrongAnswerPlayer.setDataSource(
             this,
-            Uri.parse("android.resource://$packageName/raw/incorrect_answer")
+            Uri.parse("android.resource://$packageName/raw/wrong_answer")
         )
         wrongAnswerPlayer.prepareAsync()
     }
@@ -296,7 +326,6 @@ class QuizActivity : AppCompatActivity() {
 
                         binding.quizProgress.max = viewModel.questionsCount * 100
 
-                        binding.loadLayout.visibility = View.GONE
                         binding.contentLayout.visibility = View.VISIBLE
                     } else {
                         // if the loading was successful, but there are no questions left for the user
@@ -308,10 +337,7 @@ class QuizActivity : AppCompatActivity() {
     }
 
     private fun setOutOfQuestionsLayout() {
-        binding.loadLayout.visibility = View.GONE
-
         binding.toLevelsBtn.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
-
         binding.outOfQuestionsLayout.visibility = View.VISIBLE
     }
 
@@ -437,12 +463,17 @@ class QuizActivity : AppCompatActivity() {
     }
 
     private fun prepareHint5050Player() {
-        if (hint5050PlayerPrepared) return
+        if (isHint5050PlayerPrepared) return
 
         hint5050Player = MediaPlayer()
 
         hint5050Player.setOnPreparedListener {
-            hint5050PlayerPrepared = true
+            isHint5050PlayerPrepared = true
+            hint5050Player.setOnPreparedListener(null)
+        }
+
+        hint5050Player.setOnCompletionListener {
+            isHint5050PlayerPlaying = false
         }
 
         hint5050Player.setDataSource(
@@ -465,8 +496,9 @@ class QuizActivity : AppCompatActivity() {
 
                 if (userCoinsQuantity >= CoinConstants.HINT_50_50_PRICE) {
                     viewModel.useHint5050()
-                    if (hint5050PlayerPrepared) {
+                    if (isHint5050PlayerPrepared) {
                         hint5050Player.start()
+                        isHint5050PlayerPlaying = true
                     }
                 } else {
                     WatchRewardedAdConfirmationDialog.newInstance(CoinConstants.HINT_50_50_PRICE - userCoinsQuantity)
@@ -687,6 +719,7 @@ class QuizActivity : AppCompatActivity() {
     private fun onRightAnswer(btn: MaterialButton) {
         if (isRightAnswerPlayerPrepared) {
             rightAnswerPlayer.start()
+            isRightAnswerPlayerPlaying = true
         }
 
         btn.backgroundTintList = ColorStateList.valueOf(
@@ -705,6 +738,7 @@ class QuizActivity : AppCompatActivity() {
     private fun onWrongAnswer(btn: MaterialButton) {
         if (isWrongAnswerPlayerPrepared) {
             wrongAnswerPlayer.start()
+            isWrongAnswerPlayerPlaying = true
         }
 
         btn.backgroundTintList = ColorStateList.valueOf(
@@ -781,12 +815,17 @@ class QuizActivity : AppCompatActivity() {
 
         destroyBannerAdView()
 
-        rightAnswerPlayer.release()
-        wrongAnswerPlayer.release()
+        if (isRightAnswerPlayerPrepared) {
+            rightAnswerPlayer.release()
+        }
+
+        if (isWrongAnswerPlayerPrepared) {
+            wrongAnswerPlayer.release()
+        }
 
         audioQuestionPlayer?.release()
 
-        if (hint5050PlayerPrepared) {
+        if (isHint5050PlayerPrepared) {
             hint5050Player.release()
         }
     }
