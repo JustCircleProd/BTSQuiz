@@ -348,7 +348,7 @@ class QuizResultActivity : AppCompatActivity(), DoubleCoinsConfirmationDialogCal
             .diskCacheStrategy(DiskCacheStrategy.NONE)
             .into(binding.congratulationImage)
 
-        playResultSound("best_result")
+        startResultPlayer("best_result")
     }
 
     private fun onGoodResult() {
@@ -367,7 +367,7 @@ class QuizResultActivity : AppCompatActivity(), DoubleCoinsConfirmationDialogCal
             .diskCacheStrategy(DiskCacheStrategy.NONE)
             .into(binding.congratulationImage)
 
-        playResultSound("good_result")
+        startResultPlayer("good_result")
     }
 
     private fun onBadResult() {
@@ -386,24 +386,27 @@ class QuizResultActivity : AppCompatActivity(), DoubleCoinsConfirmationDialogCal
             .diskCacheStrategy(DiskCacheStrategy.NONE)
             .into(binding.congratulationImage)
 
-        playResultSound("bad_result")
+        startResultPlayer("bad_result")
     }
 
-    private fun playResultSound(audioName: String) {
+    private fun startResultPlayer(audioName: String) {
         resultPlayer = MediaPlayer()
 
         resultPlayer.setOnPreparedListener {
             isResultPlayerPrepared = true
 
-            resultPlayer.start()
+            it.start()
             isResultPlayerPlaying = true
 
-            resultPlayer.setOnPreparedListener(null)
+            it.setOnPreparedListener(null)
         }
 
         resultPlayer.setOnCompletionListener {
             isResultPlayerPlaying = false
-            resultPlayer.setOnCompletionListener(null)
+            isResultPlayerPrepared = false
+
+            it.setOnCompletionListener(null)
+            it.release()
         }
 
         resultPlayer.setDataSource(
@@ -496,9 +499,5 @@ class QuizResultActivity : AppCompatActivity(), DoubleCoinsConfirmationDialogCal
 
         destroyBannerAd()
         destroyInterstitialAd()
-
-        if (isResultPlayerPrepared) {
-            resultPlayer.release()
-        }
     }
 }

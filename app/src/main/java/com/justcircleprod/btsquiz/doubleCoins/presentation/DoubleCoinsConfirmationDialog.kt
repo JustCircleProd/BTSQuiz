@@ -111,12 +111,15 @@ class DoubleCoinsConfirmationDialog : DialogFragment() {
 
         rewardReceivedPlayer.setOnPreparedListener {
             isRewardReceivedPlayerPrepared = true
-            rewardReceivedPlayer.setOnPreparedListener(null)
+            it.setOnPreparedListener(null)
         }
 
         rewardReceivedPlayer.setOnCompletionListener {
             isRewardReceivedPlayerPlaying = false
-            rewardReceivedPlayer.setOnCompletionListener(null)
+            isRewardReceivedPlayerPrepared = false
+
+            it.setOnCompletionListener(null)
+            it.release()
         }
 
         rewardReceivedPlayer.setDataSource(
@@ -309,9 +312,5 @@ class DoubleCoinsConfirmationDialog : DialogFragment() {
         super.onDestroy()
 
         destroyRewardedAd()
-
-        if (isRewardReceivedPlayerPrepared) {
-            rewardReceivedPlayer.release()
-        }
     }
 }

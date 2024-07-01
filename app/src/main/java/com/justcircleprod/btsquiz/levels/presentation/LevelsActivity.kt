@@ -113,6 +113,25 @@ class LevelsActivity : AppCompatActivity(), LevelItemAdapterActions {
         binding.userCoinsQuantityLayout.layoutTransition.enableTransitionType(LayoutTransition.CHANGING)
     }
 
+    private fun initLevelUnlockedPlayer() {
+        levelUnlockedPlayer = MediaPlayer()
+
+        levelUnlockedPlayer.setOnPreparedListener {
+            isLevelUnlockedPlayerPrepared = true
+            it.setOnPreparedListener(null)
+        }
+
+        levelUnlockedPlayer.setOnCompletionListener {
+            isLevelUnlockedPlayerPlaying = false
+        }
+
+        levelUnlockedPlayer.setDataSource(
+            this,
+            Uri.parse("android.resource://$packageName/raw/level_unlocked")
+        )
+        levelUnlockedPlayer.prepareAsync()
+    }
+
     private fun initAd() {
         binding.bannerAdView.viewTreeObserver.addOnGlobalLayoutListener(object :
             ViewTreeObserver.OnGlobalLayoutListener {
@@ -195,25 +214,6 @@ class LevelsActivity : AppCompatActivity(), LevelItemAdapterActions {
         }
     }
 
-    private fun initLevelUnlockedPlayer() {
-        levelUnlockedPlayer = MediaPlayer()
-
-        levelUnlockedPlayer.setOnPreparedListener {
-            isLevelUnlockedPlayerPrepared = true
-            levelUnlockedPlayer.setOnPreparedListener(null)
-        }
-
-        levelUnlockedPlayer.setOnCompletionListener {
-            isLevelUnlockedPlayerPlaying = false
-        }
-
-        levelUnlockedPlayer.setDataSource(
-            this,
-            Uri.parse("android.resource://$packageName/raw/level_unlocked")
-        )
-        levelUnlockedPlayer.prepareAsync()
-    }
-
     private fun setCoinsQuantityCollector() {
         lifecycleScope.launch {
             viewModel.userCoinsQuantity.collect {
@@ -274,7 +274,7 @@ class LevelsActivity : AppCompatActivity(), LevelItemAdapterActions {
 
                     if (bundle.getBoolean(UnlockLevelConfirmationDialog.SHOULD_UNLOCK_A_LEVEL_RESULT_KEY)) {
                         viewModel.unlockLevel(levelId, levelPrice)
-                        playLevelUnlockedSoundAndAnimation(confettiAnimationView)
+                        startLevelUnlockedPlayerAndConfettiAnimation(confettiAnimationView)
                     }
                 }
 
@@ -299,7 +299,7 @@ class LevelsActivity : AppCompatActivity(), LevelItemAdapterActions {
         finish()
     }
 
-    private fun playLevelUnlockedSoundAndAnimation(confettiAnimationView: LottieAnimationView) {
+    private fun startLevelUnlockedPlayerAndConfettiAnimation(confettiAnimationView: LottieAnimationView) {
         confettiAnimationView.addAnimatorListener(object : Animator.AnimatorListener {
             override fun onAnimationStart(p0: Animator) {}
 

@@ -108,8 +108,6 @@
     <dimen name="quiz_coins_tv_text_size">14sp</dimen>
     <dimen name="quiz_coins_icon_size">14dp</dimen>
 
-    <dimen name="content_loading_progress_size">40dp</dimen>
-
     <dimen name="question_height">150dp</dimen>
 
     <dimen name="text_question_text_size">19sp</dimen>

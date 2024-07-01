@@ -4,8 +4,6 @@
 
     <dimen name="developers_licenses_content_height">540dp</dimen>
 
-    <dimen name="content_loading_progress_size">65dp</dimen>
-
     <dimen name="question_height">200dp</dimen>
 
     <dimen name="audio_question_size">110dp</dimen>

@@ -55,9 +55,9 @@
                     android:id="@+id/out_of_questions_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
                     android:clipChildren="false"
                     android:clipToPadding="false"
+                    android:gravity="center"
                     android:orientation="vertical"
                     android:padding="@dimen/inner_padding"
                     android:visibility="gone">
@@ -187,20 +187,6 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/coins_barrier" />
 
-                    <com.google.android.material.progressindicator.CircularProgressIndicator
-                        android:id="@+id/content_loading_progress"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:indeterminate="true"
-                        android:visibility="gone"
-                        app:indicatorColor="@color/progress_indicator_color"
-                        app:indicatorSize="@dimen/content_loading_progress_size"
-                        app:layout_constraintBottom_toTopOf="@id/quiz_progress"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/coins_barrier"
-                        app:trackColor="@color/progress_track_color" />
-
                     <ImageView
                         android:id="@+id/image_question"
                         android:layout_width="match_parent"
@@ -233,7 +219,7 @@
                             android:id="@+id/video_question"
                             android:layout_width="match_parent"
                             android:layout_height="@dimen/question_height"
-                            android:layout_gravity="center_horizontal"
+                            android:layout_gravity="center"
                             android:contentDescription="@string/video_for_question_description" />
 
                     </FrameLayout>

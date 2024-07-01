@@ -79,6 +79,9 @@ class QuizActivity : AppCompatActivity() {
     private var isWrongAnswerPlayerPlaying = false
 
     private var audioQuestionPlayer: MediaPlayer? = null
+    private var isAudioQuestionPlayerPlaying = false
+
+    private var isVideoQuestionPlayerPlaying = false
 
     private lateinit var hint5050Player: MediaPlayer
     private var isHint5050PlayerPrepared = false
@@ -107,12 +110,12 @@ class QuizActivity : AppCompatActivity() {
         onBackPressedDispatcher.addCallback { startLevelsActivity() }
 
         enableAnimation()
-
         initAd()
-        initAnswerPlayers()
+
+        initRightAnswerPlayer()
+        initWrongAnswerPlayer()
 
         setLoadingCollector()
-
         setOnOptionsClickListeners()
 
         setContentView(binding.root)
@@ -133,25 +136,18 @@ class QuizActivity : AppCompatActivity() {
     }
 
     private fun resumePlayers() {
-        when {
-            binding.videoQuestionLayout.visibility == View.VISIBLE -> {
-                binding.videoQuestion.seekTo(positionOfVideoPlayer)
-                binding.videoQuestion.start()
-            }
-            // if the application was minimized when downloading the video
-            viewModel.question.value is VideoQuestion &&
-                    binding.videoQuestionLayout.visibility == View.INVISIBLE -> {
-                setVideoQuestionData(viewModel.question.value!! as VideoQuestion)
-            }
+        // VideoView becomes black after minimizing the application
+        // if you don't set the position manually
+        if (isVideoQuestionPlayerPlaying) {
+            binding.videoQuestion.seekTo(positionOfVideoPlayer)
+            binding.videoQuestion.start()
+            // if VideoView has already finished playing, but is still on the screen
+        } else if (binding.videoQuestion.visibility == View.VISIBLE) {
+            binding.videoQuestion.seekTo(positionOfVideoPlayer)
+        }
 
-            audioQuestionPlayer != null && binding.audioQuestion.visibility == View.VISIBLE -> {
-                audioQuestionPlayer?.start()
-            }
-            // if the application was minimized when downloading the audio
-            viewModel.question.value is AudioQuestion &&
-                    binding.audioQuestion.visibility == View.INVISIBLE -> {
-                setAudioQuestionData(viewModel.question.value!! as AudioQuestion)
-            }
+        if (isAudioQuestionPlayerPlaying) {
+            audioQuestionPlayer?.start()
         }
 
         if (isRightAnswerPlayerPlaying) {
@@ -168,20 +164,13 @@ class QuizActivity : AppCompatActivity() {
     }
 
     private fun pausePlayers() {
-        when {
-            binding.videoQuestionLayout.visibility == View.VISIBLE -> {
-                binding.videoQuestion.pause()
-                positionOfVideoPlayer = binding.videoQuestion.currentPosition
-            }
-            // if the application was minimized when downloading the audio
-            viewModel.question.value is AudioQuestion &&
-                    binding.audioQuestion.visibility == View.INVISIBLE -> {
-                audioQuestionPlayer = null
-            }
+        if (isVideoQuestionPlayerPlaying) {
+            binding.videoQuestion.pause()
+            positionOfVideoPlayer = binding.videoQuestion.currentPosition
+        }
 
-            audioQuestionPlayer != null && binding.audioQuestion.visibility == View.VISIBLE -> {
-                audioQuestionPlayer?.pause()
-            }
+        if (isAudioQuestionPlayerPlaying) {
+            audioQuestionPlayer?.pause()
         }
 
         if (isRightAnswerPlayerPlaying) {
@@ -268,12 +257,12 @@ class QuizActivity : AppCompatActivity() {
         }
     }
 
-    private fun initAnswerPlayers() {
+    private fun initRightAnswerPlayer() {
         rightAnswerPlayer = MediaPlayer()
 
         rightAnswerPlayer.setOnPreparedListener {
             isRightAnswerPlayerPrepared = true
-            rightAnswerPlayer.setOnPreparedListener(null)
+            it.setOnPreparedListener(null)
         }
 
         rightAnswerPlayer.setOnCompletionListener {
@@ -285,13 +274,14 @@ class QuizActivity : AppCompatActivity() {
             Uri.parse("android.resource://$packageName/raw/right_answer")
         )
         rightAnswerPlayer.prepareAsync()
+    }
 
-
+    private fun initWrongAnswerPlayer() {
         wrongAnswerPlayer = MediaPlayer()
 
         wrongAnswerPlayer.setOnPreparedListener {
             isWrongAnswerPlayerPrepared = true
-            wrongAnswerPlayer.setOnPreparedListener(null)
+            it.setOnPreparedListener(null)
         }
 
         wrongAnswerPlayer.setOnCompletionListener {
@@ -356,7 +346,7 @@ class QuizActivity : AppCompatActivity() {
 
     private fun onOptionClicked(btn: MaterialButton) {
         disableButtons()
-        stopAndResetPlayers()
+        stopQuestionPlayers()
 
         if (viewModel.checkAnswer(btn.text.toString())) {
             onRightAnswer(btn)
@@ -404,7 +394,7 @@ class QuizActivity : AppCompatActivity() {
                     }
 
                     DataStoreConstants.WITH_QUIZ_HINTS, null -> {
-                        prepareHint5050Player()
+                        initHint5050Player()
                         setHintPrices()
                         setOnHintsClickListeners()
                         setHint5050UsedCollector()
@@ -437,8 +427,6 @@ class QuizActivity : AppCompatActivity() {
                     setTextQuestionData(question)
                     enableButtons()
                 } else {
-                    binding.contentLoadingProgress.visibility = View.VISIBLE
-
                     when (question) {
                         is ImageQuestion -> {
                             setImageQuestionData(question)
@@ -462,14 +450,14 @@ class QuizActivity : AppCompatActivity() {
         }
     }
 
-    private fun prepareHint5050Player() {
+    private fun initHint5050Player() {
         if (isHint5050PlayerPrepared) return
 
         hint5050Player = MediaPlayer()
 
         hint5050Player.setOnPreparedListener {
             isHint5050PlayerPrepared = true
-            hint5050Player.setOnPreparedListener(null)
+            it.setOnPreparedListener(null)
         }
 
         hint5050Player.setOnCompletionListener {
@@ -496,6 +484,7 @@ class QuizActivity : AppCompatActivity() {
 
                 if (userCoinsQuantity >= CoinConstants.HINT_50_50_PRICE) {
                     viewModel.useHint5050()
+
                     if (isHint5050PlayerPrepared) {
                         hint5050Player.start()
                         isHint5050PlayerPlaying = true
@@ -541,20 +530,20 @@ class QuizActivity : AppCompatActivity() {
                     options = options.shuffled().toMutableList().take(2).toMutableList()
 
                     options.forEach { option ->
-                        when (option) {
-                            binding.firstOption.text -> {
+                        when {
+                            option == binding.firstOption.text && binding.firstOption.isEnabled -> {
                                 binding.firstOption.disableWithTransparency()
                             }
 
-                            binding.secondOption.text -> {
+                            option == binding.secondOption.text && binding.secondOption.isEnabled -> {
                                 binding.secondOption.disableWithTransparency()
                             }
 
-                            binding.thirdOption.text -> {
+                            option == binding.thirdOption.text && binding.thirdOption.isEnabled -> {
                                 binding.thirdOption.disableWithTransparency()
                             }
 
-                            binding.fourthOption.text -> {
+                            option == binding.fourthOption.text && binding.fourthOption.isEnabled -> {
                                 binding.fourthOption.disableWithTransparency()
                             }
                         }
@@ -576,7 +565,7 @@ class QuizActivity : AppCompatActivity() {
                     binding.hintCorrectAnswer.disableWithTransparency()
 
                     disableButtons()
-                    stopAndResetPlayers()
+                    stopQuestionPlayers()
 
                     onRightAnswer(
                         btn = when (viewModel.rightAnswer) {
@@ -635,7 +624,6 @@ class QuizActivity : AppCompatActivity() {
             .transform(RoundedCorners(resources.getDimensionPixelSize(R.dimen.image_question_rounded_corner_size)))
             .into(binding.imageQuestion)
 
-        binding.contentLoadingProgress.visibility = View.GONE
         binding.imageQuestion.visibility = View.VISIBLE
         enableButtons()
     }
@@ -644,7 +632,7 @@ class QuizActivity : AppCompatActivity() {
         binding.videoQuestion.setOnPreparedListener {
             it.setOnInfoListener { _, info, _ ->
                 if (info == MediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START) {
-                    binding.contentLoadingProgress.visibility = View.GONE
+                    isVideoQuestionPlayerPlaying = true
                     binding.videoQuestionLayout.visibility = View.VISIBLE
                     enableButtons()
 
@@ -654,6 +642,11 @@ class QuizActivity : AppCompatActivity() {
             }
         }
 
+        binding.videoQuestion.setOnCompletionListener {
+            isVideoQuestionPlayerPlaying = false
+            positionOfVideoPlayer = binding.videoQuestion.duration
+        }
+
         binding.videoQuestion.setVideoURI(
             Uri.parse("android.resource://$packageName/raw/${question.videoEntryName}")
         )
@@ -661,14 +654,20 @@ class QuizActivity : AppCompatActivity() {
     }
 
     private fun setAudioQuestionData(question: AudioQuestion) {
-        audioQuestionPlayer = MediaPlayer()
+        if (audioQuestionPlayer == null) {
+            audioQuestionPlayer = MediaPlayer()
 
-        audioQuestionPlayer?.setOnPreparedListener {
-            if (audioQuestionPlayer != null) {
-                binding.contentLoadingProgress.visibility = View.GONE
+            audioQuestionPlayer?.setOnPreparedListener {
                 binding.audioQuestion.visibility = View.VISIBLE
-                audioQuestionPlayer!!.start()
+
+                it?.start()
+                isAudioQuestionPlayerPlaying = true
+
                 enableButtons()
+            }
+
+            audioQuestionPlayer?.setOnCompletionListener {
+                isAudioQuestionPlayerPlaying = false
             }
         }
 
@@ -699,19 +698,17 @@ class QuizActivity : AppCompatActivity() {
         binding.hintCorrectAnswer.disableWithTransparency()
     }
 
-    private fun stopAndResetPlayers() {
+    private fun stopQuestionPlayers() {
         when {
             binding.videoQuestionLayout.visibility == View.VISIBLE -> {
-                binding.videoQuestion.stopPlayback()
-                positionOfVideoPlayer = 0
-                binding.videoQuestion.setOnPreparedListener(null)
+                binding.videoQuestion.pause()
+                isVideoQuestionPlayerPlaying = false
+                positionOfVideoPlayer = binding.videoQuestion.currentPosition
             }
 
             binding.audioQuestion.visibility == View.VISIBLE -> {
-                audioQuestionPlayer?.stop()
-                audioQuestionPlayer?.release()
-                audioQuestionPlayer?.setOnPreparedListener(null)
-                audioQuestionPlayer = null
+                audioQuestionPlayer?.pause()
+                isAudioQuestionPlayerPlaying = false
             }
         }
     }
@@ -729,6 +726,7 @@ class QuizActivity : AppCompatActivity() {
         val timer = object : CountDownTimer(2000, 2000) {
             override fun onTick(millisUntilFinished: Long) {}
             override fun onFinish() {
+                resetQuestionPlayers()
                 viewModel.setQuestionOnNextPosition()
             }
         }
@@ -756,6 +754,7 @@ class QuizActivity : AppCompatActivity() {
             }
 
             override fun onFinish() {
+                resetQuestionPlayers()
                 viewModel.setQuestionOnNextPosition()
             }
         }
@@ -783,6 +782,22 @@ class QuizActivity : AppCompatActivity() {
                 binding.fourthOption.backgroundTintList = ColorStateList.valueOf(
                     ContextCompat.getColor(this, R.color.correct_answer_color)
                 )
+        }
+    }
+
+    private fun resetQuestionPlayers() {
+        when {
+            binding.videoQuestionLayout.visibility == View.VISIBLE -> {
+                binding.videoQuestion.stopPlayback()
+                positionOfVideoPlayer = 0
+                binding.videoQuestion.setOnPreparedListener(null)
+                binding.videoQuestion.setOnCompletionListener(null)
+            }
+
+            binding.audioQuestion.visibility == View.VISIBLE -> {
+                audioQuestionPlayer?.stop()
+                audioQuestionPlayer?.reset()
+            }
         }
     }
 
