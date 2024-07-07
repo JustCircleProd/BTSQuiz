@@ -7,7 +7,9 @@ import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.justcircleprod.btsquiz.R
 import com.justcircleprod.btsquiz.databinding.DialogResetProgressConfirmationBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -38,17 +40,19 @@ class ResetProgressConfirmationDialog : DialogFragment() {
 
     private fun setIsProgressResetCollector() {
         lifecycleScope.launch {
-            viewModel.isProgressReset.collect {
-                if (it) {
-                    binding.title.text = getString(R.string.progress_was_reset_dialog_title)
-                    binding.hint.text = getString(R.string.progress_was_reset)
-                    binding.resetProgressConfirmationButtons.visibility = View.GONE
-                    binding.submitProgressWasResetBtn.visibility = View.VISIBLE
-                } else {
-                    binding.title.text = getString(R.string.reset_progress_dialog_title)
-                    binding.hint.text = getString(R.string.reset_confirmation_question)
-                    binding.submitProgressWasResetBtn.visibility = View.GONE
-                    binding.resetProgressConfirmationButtons.visibility = View.VISIBLE
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.isProgressReset.collect {
+                    if (it) {
+                        binding.title.text = getString(R.string.progress_was_reset_dialog_title)
+                        binding.hint.text = getString(R.string.progress_was_reset)
+                        binding.resetProgressConfirmationButtons.visibility = View.GONE
+                        binding.submitProgressWasResetBtn.visibility = View.VISIBLE
+                    } else {
+                        binding.title.text = getString(R.string.reset_progress_dialog_title)
+                        binding.hint.text = getString(R.string.reset_confirmation_question)
+                        binding.submitProgressWasResetBtn.visibility = View.GONE
+                        binding.resetProgressConfirmationButtons.visibility = View.VISIBLE
+                    }
                 }
             }
         }

@@ -27,7 +27,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/screen_content_space_size"
                 android:layout_marginTop="@dimen/screen_content_space_size"
-                android:layout_marginBottom="@dimen/brand_margin_bottom"
+                android:layout_marginBottom="@dimen/brand_text_margin_bottom"
                 android:gravity="center"
                 android:text="@string/app_name"
                 android:textColor="@color/brand_text_color"
@@ -56,8 +56,8 @@
                     android:id="@+id/loading_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
                     android:layout_margin="@dimen/inner_padding"
+                    android:gravity="center"
                     android:orientation="vertical"
                     tools:ignore="UseCompoundDrawables">
 
@@ -72,8 +72,8 @@
                     <ImageView
                         android:id="@+id/loading_gif"
                         android:layout_width="match_parent"
-                        android:layout_height="@dimen/loading_gif_height"
-                        android:layout_marginTop="@dimen/loading_gif_top_margin"
+                        android:layout_height="@dimen/loading_animation_height"
+                        android:layout_marginTop="@dimen/loading_animation_top_margin"
                         android:importantForAccessibility="no" />
 
                 </LinearLayout>

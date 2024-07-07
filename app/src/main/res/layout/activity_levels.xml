@@ -25,31 +25,31 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/screen_content_space_size"
-                android:layout_marginTop="@dimen/screen_content_space_size"
-                android:layout_marginBottom="@dimen/brand_margin_bottom"
                 android:gravity="center"
                 android:text="@string/app_name"
                 android:textColor="@color/brand_text_color"
                 android:textSize="@dimen/brand_text_size"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toTopOf="@id/root_cardview"
+                app:layout_constraintBottom_toBottomOf="@id/back_btn"
                 app:layout_constraintEnd_toEndOf="@id/root_cardview"
                 app:layout_constraintStart_toStartOf="@id/root_cardview"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_chainStyle="packed" />
+                app:layout_constraintTop_toTopOf="@id/back_btn" />
 
             <ImageButton
                 android:id="@+id/back_btn"
                 android:layout_width="@dimen/back_icon_button_size"
                 android:layout_height="@dimen/back_icon_button_size"
+                android:layout_marginTop="@dimen/screen_content_space_size"
+                android:layout_marginBottom="@dimen/brand_text_with_back_button_margin_bottom"
                 android:background="@drawable/back_button_ripple_effect"
                 android:contentDescription="@string/back"
                 android:src="@drawable/icon_back"
-                app:layout_constraintBottom_toBottomOf="@id/brand_label"
+                app:layout_constraintBottom_toTopOf="@id/root_cardview"
                 app:layout_constraintEnd_toStartOf="@id/brand_label"
                 app:layout_constraintHorizontal_bias="0"
                 app:layout_constraintStart_toStartOf="@id/root_cardview"
-                app:layout_constraintTop_toTopOf="@id/brand_label" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_chainStyle="packed" />
 
 
             <com.google.android.material.card.MaterialCardView
@@ -63,7 +63,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/brand_label">
+                app:layout_constraintTop_toBottomOf="@id/back_btn">
 
                 <LinearLayout
                     android:id="@+id/content_layout"
@@ -108,7 +108,6 @@
                         android:id="@+id/line"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/line_height"
-                        android:layout_marginTop="@dimen/line_top_margin"
                         android:layout_marginBottom="@dimen/line_bottom_margin"
                         android:background="@color/line_color"
                         android:visibility="invisible" />

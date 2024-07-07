@@ -4,8 +4,9 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import com.justcircleprod.btsquiz.R
+import androidx.lifecycle.repeatOnLifecycle
 import com.justcircleprod.btsquiz.core.data.dataStore.DataStoreConstants
 import com.justcircleprod.btsquiz.databinding.ActivityMainBinding
 import com.justcircleprod.btsquiz.introduction.presentation.IntroductionActivity
@@ -25,31 +26,34 @@ class MainActivity : AppCompatActivity() {
     private var shouldStartIntroductionActivityCollectionJob: Job? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        setTheme(R.style.Theme_NoActionBar)
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
 
         lifecycleScope.launch {
-            // DataStoreConstants.INTRODUCTION_IS_SHOWN or null will be the last value
-            viewModel.isIntroductionShown.transformWhile {
-                emit(it)
-                it != DataStoreConstants.INTRODUCTION_IS_SHOWN && it != null
-            }.collect { isIntroductionShown ->
-                when (isIntroductionShown) {
-                    DataStoreConstants.INTRODUCTION_IS_SHOWN -> {
-                        setOnClickListeners()
-                        setContentView(binding.root)
-                    }
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                // DataStoreConstants.INTRODUCTION_IS_SHOWN or null will be the last value
+                viewModel.isIntroductionShown.transformWhile {
+                    emit(it)
+                    it != DataStoreConstants.INTRODUCTION_IS_SHOWN && it != null
+                }.collect { isIntroductionShown ->
+                    when (isIntroductionShown) {
+                        DataStoreConstants.INTRODUCTION_IS_SHOWN -> {
+                            setOnClickListeners()
+                            setContentView(binding.root)
+                        }
 
-                    null -> {
-                        viewModel.setIntroductionShown()
+                        null -> {
+                            viewModel.setIntroductionShown()
 
-                        if (shouldStartIntroductionActivityCollectionJob != null) return@collect
+                            if (shouldStartIntroductionActivityCollectionJob != null) return@collect
 
-                        shouldStartIntroductionActivityCollectionJob = lifecycleScope.launch {
-                            viewModel.shouldStartIntroductionActivity.collect {
-                                if (it) {
-                                    startIntroductionActivity()
+                            shouldStartIntroductionActivityCollectionJob = lifecycleScope.launch {
+                                repeatOnLifecycle(Lifecycle.State.STARTED) {
+                                    viewModel.shouldStartIntroductionActivity.collect {
+                                        if (it) {
+                                            startIntroductionActivity()
+                                        }
+                                    }
                                 }
                             }
                         }

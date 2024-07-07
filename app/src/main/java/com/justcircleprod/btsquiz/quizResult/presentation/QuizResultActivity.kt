@@ -8,13 +8,16 @@ import android.os.Bundle
 import android.os.CountDownTimer
 import android.util.Base64
 import android.view.View
+import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import androidx.activity.addCallback
 import androidx.activity.viewModels
+import androidx.annotation.RawRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.justcircleprod.btsquiz.App
 import com.justcircleprod.btsquiz.R
@@ -102,8 +105,8 @@ class QuizResultActivity : AppCompatActivity(), DoubleCoinsConfirmationDialogCal
         setContentView(binding.root)
     }
 
-    override fun onStart() {
-        super.onStart()
+    override fun onResume() {
+        super.onResume()
 
         refreshAdTimer?.start()
         if (isResultPlayerPlaying) {
@@ -128,9 +131,8 @@ class QuizResultActivity : AppCompatActivity(), DoubleCoinsConfirmationDialogCal
     private fun setLoadingGif() {
         Glide
             .with(this)
-            .load(R.drawable.loading)
+            .load(R.drawable.loading_animation)
             .transition(DrawableTransitionOptions.withCrossFade())
-            .diskCacheStrategy(DiskCacheStrategy.NONE)
             .into(binding.loadingGif)
     }
 
@@ -211,12 +213,14 @@ class QuizResultActivity : AppCompatActivity(), DoubleCoinsConfirmationDialogCal
 
     private fun setLoadingCollector() {
         lifecycleScope.launch {
-            viewModel.isLoading.collect { isLoading ->
-                if (!isLoading) {
-                    onBackPressedDispatcher.addCallback { startLevelsActivity() }
-                    showResult()
-                    binding.loadingLayout.visibility = View.GONE
-                    binding.contentLayout.visibility = View.VISIBLE
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.isLoading.collect { isLoading ->
+                    if (!isLoading) {
+                        onBackPressedDispatcher.addCallback { startLevelsActivity() }
+                        showResult()
+                        binding.loadingLayout.visibility = View.GONE
+                        binding.contentLayout.visibility = View.VISIBLE
+                    }
                 }
             }
         }
@@ -297,8 +301,10 @@ class QuizResultActivity : AppCompatActivity(), DoubleCoinsConfirmationDialogCal
 
     private fun setEarnedCoinsCollector() {
         lifecycleScope.launch {
-            viewModel.earnedCoins.collect {
-                binding.earnedCoins.text = it.toString()
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.earnedCoins.collect {
+                    binding.earnedCoins.text = it.toString()
+                }
             }
         }
     }
@@ -337,18 +343,17 @@ class QuizResultActivity : AppCompatActivity(), DoubleCoinsConfirmationDialogCal
             resources.getStringArray(R.array.texts_for_best_result).toList().shuffled()[0]
 
         val imageResource = listOf(
-            R.drawable.best_result,
-            R.drawable.best_result_2,
-            R.drawable.best_result_3
+            R.drawable.quiz_result_best_congratulation_image_1,
+            R.drawable.quiz_result_best_congratulation_image_2,
+            R.drawable.quiz_result_best_congratulation_image_3
         ).shuffled()[0]
 
         Glide
             .with(this)
             .load(imageResource)
-            .diskCacheStrategy(DiskCacheStrategy.NONE)
             .into(binding.congratulationImage)
 
-        startResultPlayer("best_result")
+        startResultPlayer(R.raw.quiz_result_best_sound)
     }
 
     private fun onGoodResult() {
@@ -356,18 +361,17 @@ class QuizResultActivity : AppCompatActivity(), DoubleCoinsConfirmationDialogCal
             resources.getStringArray(R.array.texts_for_good_result).toList().shuffled()[0]
 
         val imageResource = listOf(
-            R.drawable.good_result,
-            R.drawable.good_result_2,
-            R.drawable.good_result_3
+            R.drawable.quiz_result_good_congratulation_image_1,
+            R.drawable.quiz_result_good_congratulation_image_2,
+            R.drawable.quiz_result_good_congratulation_image_3
         ).shuffled()[0]
 
         Glide
             .with(this)
             .load(imageResource)
-            .diskCacheStrategy(DiskCacheStrategy.NONE)
             .into(binding.congratulationImage)
 
-        startResultPlayer("good_result")
+        startResultPlayer(R.raw.quiz_result_good_sound)
     }
 
     private fun onBadResult() {
@@ -375,21 +379,20 @@ class QuizResultActivity : AppCompatActivity(), DoubleCoinsConfirmationDialogCal
             resources.getStringArray(R.array.texts_for_bad_result).toList().shuffled()[0]
 
         val imageResource = listOf(
-            R.drawable.bad_result,
-            R.drawable.bad_result_2,
-            R.drawable.bad_result_3
+            R.drawable.quiz_result_bad_congratulation_image_1,
+            R.drawable.quiz_result_bad_congratulation_image_2,
+            R.drawable.quiz_result_bad_congratulation_image_3
         ).shuffled()[0]
 
         Glide
             .with(this)
             .load(imageResource)
-            .diskCacheStrategy(DiskCacheStrategy.NONE)
             .into(binding.congratulationImage)
 
-        startResultPlayer("bad_result")
+        startResultPlayer(R.raw.quiz_result_bad_sound)
     }
 
-    private fun startResultPlayer(audioName: String) {
+    private fun startResultPlayer(@RawRes audioResId: Int) {
         resultPlayer = MediaPlayer()
 
         resultPlayer.setOnPreparedListener {
@@ -411,21 +414,40 @@ class QuizResultActivity : AppCompatActivity(), DoubleCoinsConfirmationDialogCal
 
         resultPlayer.setDataSource(
             this@QuizResultActivity,
-            Uri.parse("android.resource://$packageName/raw/$audioName")
+            Uri.parse("android.resource://$packageName/raw/$audioResId")
         )
         resultPlayer.prepareAsync()
     }
 
     private fun setEarnedCoinsDoubledCollector() {
         lifecycleScope.launch {
-            viewModel.earnedCoinsDoubled.collect {
-                binding.doubleCoinsBtn.visibility =
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.areEarnedCoinsDoubled.collect {
                     if (it || viewModel.earnedCoins.value == 0) {
-                        View.GONE
+                        binding.doubleCoinsBtn.visibility = View.GONE
+                        changeLineTopMargin(removeTopMargin = true)
                     } else {
-                        View.VISIBLE
+                        binding.doubleCoinsBtn.visibility = View.VISIBLE
+                        changeLineTopMargin(removeTopMargin = false)
                     }
+                }
             }
+        }
+    }
+
+    private fun changeLineTopMargin(removeTopMargin: Boolean) {
+        if (binding.line.layoutParams is ViewGroup.MarginLayoutParams) {
+            val layoutParams = binding.line.layoutParams as ViewGroup.MarginLayoutParams
+            val bottomMargin = resources.getDimension(R.dimen.line_bottom_margin).roundToInt()
+
+            if (removeTopMargin) {
+                layoutParams.setMargins(0, 0, 0, bottomMargin)
+            } else {
+                val topMargin = resources.getDimension(R.dimen.line_top_margin).roundToInt()
+                layoutParams.setMargins(0, topMargin, 0, bottomMargin)
+            }
+
+            binding.line.requestLayout()
         }
     }
 
@@ -441,7 +463,7 @@ class QuizResultActivity : AppCompatActivity(), DoubleCoinsConfirmationDialogCal
     }
 
     override fun onCoinsDoublingConfirmed() {
-        viewModel.earnedCoinsDoubled.value = true
+        viewModel.areEarnedCoinsDoubled.value = true
         val earnedCoins = viewModel.earnedCoins.value
 
         viewModel.earnedCoins.value = earnedCoins * 2

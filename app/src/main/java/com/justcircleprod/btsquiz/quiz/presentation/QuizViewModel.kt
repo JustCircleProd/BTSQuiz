@@ -70,7 +70,7 @@ class QuizViewModel @Inject constructor(
 
     // the current question or a sign of the end of questions is placed here
     val question = MutableStateFlow<Question?>(null)
-    var rightAnswer = ""
+    var correctAnswer = ""
 
     val withoutQuizHints = settingRepository.getWithoutQuizHintsState()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), "NOT_INITIALIZED")
@@ -129,8 +129,8 @@ class QuizViewModel @Inject constructor(
         isLoading.value = false
     }
 
-    private fun setRightAnswer(question: Question) {
-        rightAnswer = listOf(
+    private fun setCorrectAnswer(question: Question) {
+        correctAnswer = listOf(
             question.firstOption,
             question.secondOption,
             question.thirdOption,
@@ -196,7 +196,7 @@ class QuizViewModel @Inject constructor(
                 question.value = getQuestionWithShuffledOptions(questions[questionPosition])
             }
 
-            setRightAnswer(questions[questionPosition])
+            setCorrectAnswer(questions[questionPosition])
         } else {
             question.value = null
         }
@@ -209,7 +209,7 @@ class QuizViewModel @Inject constructor(
             hintCorrectAnswerUsed.value = false
 
             if (questionPosition < questions.size) {
-                setRightAnswer(questions[questionPosition])
+                setCorrectAnswer(questions[questionPosition])
                 question.value = getQuestionWithShuffledOptions(questions[questionPosition])
             } else {
                 savePassedQuestions()
@@ -219,15 +219,15 @@ class QuizViewModel @Inject constructor(
     }
 
     fun checkAnswer(userAnswer: String): Boolean {
-        return if (userAnswer == rightAnswer) {
-            onRightAnswer()
+        return if (userAnswer == correctAnswer) {
+            onCorrectAnswer()
             true
         } else {
             false
         }
     }
 
-    fun onRightAnswer() {
+    fun onCorrectAnswer() {
         if (levelId != LevelConstants.LEVEL_PASSED_QUESTIONS_ID) {
             val passedQuestion = question.value!!.toPassedQuestion()
             passedQuestions.add(passedQuestion)

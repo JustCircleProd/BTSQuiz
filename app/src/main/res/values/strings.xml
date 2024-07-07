@@ -25,14 +25,18 @@
 
     <!-- Introduction -->
 
-    <string name="introduction_card_1_title">Уровни сложности</string>
-    <string name="introduction_card_1_text">Вопросы разделены на 7 уровней сложности.\nПройденные вопросы будут сохраняться в отдельном уровне.</string>
+    <string name="introduction_card_1_title">Добро пожаловать</string>
+    <string name="introduction_card_1_text">Приветствуем вас в нашей викторине о BTS!\nДавайте кратко пройдёмся по основным аспектам игры.</string>
 
-    <string name="introduction_card_2_title">Монеты</string>
-    <string name="introduction_card_2_text">За правильные ответы вы будете получать монеты, которые начисляются после окончания теста.\nС их помощью можно открывать уровни и использовать подсказки.</string>
+    <string name="introduction_card_2_title">Уровни сложности</string>
+    <string name="introduction_card_2_text">Вопросы разделены на 7 уровней сложности.\nПройденные вопросы будут сохраняться в отдельном уровне.</string>
 
-    <string name="introduction_card_3_title">Удобный формат</string>
-    <string name="introduction_card_3_text">Обычно тест состоит из 6 вопросов выбранного уровня сложности.\nИ не переживайте, если вы неправильно ответите на вопрос, то обязательно встретите его снова!</string>
+    <string name="introduction_card_3_title">Монеты</string>
+    <string name="introduction_card_3_text">За правильные ответы вы будете получать монеты, которые начисляются после окончания теста.\nС их помощью можно открывать уровни и использовать подсказки.</string>
+
+    <string name="introduction_card_4_title">Удобный формат</string>
+    <string name="introduction_card_4_text">Обычно тест состоит из 6 вопросов выбранного уровня сложности.\nИ не переживайте, если вы неправильно ответите на вопрос, то обязательно встретите его снова!</string>
+
     <string name="next">Далее</string>
 
     <!-- Settings -->

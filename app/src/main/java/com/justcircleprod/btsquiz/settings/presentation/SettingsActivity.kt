@@ -5,7 +5,9 @@ import android.os.Bundle
 import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.play.core.review.ReviewManager
 import com.google.android.play.core.review.ReviewManagerFactory
 import com.justcircleprod.btsquiz.R
@@ -46,20 +48,22 @@ class SettingsActivity : AppCompatActivity() {
 
     private fun setWithoutQuizHintsCollector() {
         lifecycleScope.launch {
-            viewModel.withoutQuizHints.collect {
-                binding.withoutQuizHintsSwitch.setOnCheckedChangeListener { _, _ -> }
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.withoutQuizHints.collect {
+                    binding.withoutQuizHintsSwitch.setOnCheckedChangeListener { _, _ -> }
 
-                when (it) {
-                    DataStoreConstants.WITHOUT_QUIZ_HINTS -> {
-                        binding.withoutQuizHintsSwitch.isChecked = true
+                    when (it) {
+                        DataStoreConstants.WITHOUT_QUIZ_HINTS -> {
+                            binding.withoutQuizHintsSwitch.isChecked = true
+                        }
+
+                        DataStoreConstants.WITH_QUIZ_HINTS, null -> {
+                            binding.withoutQuizHintsSwitch.isChecked = false
+                        }
                     }
 
-                    DataStoreConstants.WITH_QUIZ_HINTS, null -> {
-                        binding.withoutQuizHintsSwitch.isChecked = false
-                    }
+                    setOnWithoutQuizHintsSwitchCheckedChangeListener()
                 }
-
-                setOnWithoutQuizHintsSwitchCheckedChangeListener()
             }
         }
     }

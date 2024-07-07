@@ -176,8 +176,8 @@
         <ImageView
             android:id="@+id/loading_gif"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/loading_gif_height"
-            android:layout_marginTop="@dimen/loading_gif_top_margin"
+            android:layout_height="@dimen/loading_animation_height"
+            android:layout_marginTop="@dimen/loading_animation_top_margin"
             android:importantForAccessibility="no" />
 
     </LinearLayout>

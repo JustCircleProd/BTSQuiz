@@ -11,9 +11,10 @@ import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.justcircleprod.btsquiz.R
 import com.justcircleprod.btsquiz.core.data.constants.CoinConstants
@@ -78,8 +79,8 @@ class WatchRewardedAdConfirmationDialog : DialogFragment() {
         return dialogBuilder.create()
     }
 
-    override fun onStart() {
-        super.onStart()
+    override fun onResume() {
+        super.onResume()
 
         if (isRewardReceivedPlayerPlaying) {
             rewardReceivedPlayer.start()
@@ -116,7 +117,7 @@ class WatchRewardedAdConfirmationDialog : DialogFragment() {
 
         rewardReceivedPlayer.setDataSource(
             requireContext(),
-            Uri.parse("android.resource://${requireActivity().packageName}/raw/reward_received")
+            Uri.parse("android.resource://${requireActivity().packageName}/raw/${R.raw.reward_received_sound}")
         )
         rewardReceivedPlayer.prepareAsync()
     }
@@ -124,9 +125,8 @@ class WatchRewardedAdConfirmationDialog : DialogFragment() {
     private fun setLoadingGif() {
         Glide
             .with(this)
-            .load(R.drawable.loading)
+            .load(R.drawable.loading_animation)
             .transition(DrawableTransitionOptions.withCrossFade())
-            .diskCacheStrategy(DiskCacheStrategy.NONE)
             .into(binding.loadingGif)
     }
 
@@ -219,63 +219,68 @@ class WatchRewardedAdConfirmationDialog : DialogFragment() {
 
     private fun setRewardedAdStateCollector() {
         lifecycleScope.launch {
-            viewModel.rewardedAdState.collect {
-                when (it) {
-                    RewardedAdState.UserNotAgreedYet -> {
-                        binding.title.text = getString(R.string.not_enough_coins_title)
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.rewardedAdState.collect {
+                    when (it) {
+                        RewardedAdState.UserNotAgreedYet -> {
+                            binding.title.text = getString(R.string.not_enough_coins_title)
 
-                        binding.loadingLayout.visibility = View.GONE
-                        binding.rewardResultLayout.visibility = View.GONE
-                        binding.rewardResultQuantityLayout.visibility = View.GONE
+                            binding.loadingLayout.visibility = View.GONE
+                            binding.rewardResultLayout.visibility = View.GONE
+                            binding.rewardResultQuantityLayout.visibility = View.GONE
 
-                        if (missingCoinsQuantity != null) {
-                            binding.missingCoinsQuantity.text = missingCoinsQuantity.toString()
+                            if (missingCoinsQuantity != null) {
+                                binding.missingCoinsQuantity.text = missingCoinsQuantity.toString()
+                            }
+                            binding.rewardedAdWorth.text =
+                                CoinConstants.REWARDED_AD_WORTH.toString()
+
+                            binding.questionLayout.visibility = View.VISIBLE
                         }
-                        binding.rewardedAdWorth.text = CoinConstants.REWARDED_AD_WORTH.toString()
 
-                        binding.questionLayout.visibility = View.VISIBLE
-                    }
+                        RewardedAdState.Loading -> {
+                            binding.title.text = getString(R.string.loading_ad_title)
 
-                    RewardedAdState.Loading -> {
-                        binding.title.text = getString(R.string.loading_ad_title)
+                            binding.questionLayout.visibility = View.GONE
+                            binding.rewardResultLayout.visibility = View.GONE
+                            binding.rewardResultQuantityLayout.visibility = View.GONE
 
-                        binding.questionLayout.visibility = View.GONE
-                        binding.rewardResultLayout.visibility = View.GONE
-                        binding.rewardResultQuantityLayout.visibility = View.GONE
+                            binding.loadingLayout.visibility = View.VISIBLE
+                        }
 
-                        binding.loadingLayout.visibility = View.VISIBLE
-                    }
+                        RewardedAdState.FailedToLoad -> {
+                            binding.title.text =
+                                getString(R.string.failed_to_load_rewarded_ad_title)
 
-                    RewardedAdState.FailedToLoad -> {
-                        binding.title.text = getString(R.string.failed_to_load_rewarded_ad_title)
+                            binding.questionLayout.visibility = View.GONE
+                            binding.loadingLayout.visibility = View.GONE
+                            binding.rewardResultQuantityLayout.visibility = View.GONE
 
-                        binding.questionLayout.visibility = View.GONE
-                        binding.loadingLayout.visibility = View.GONE
-                        binding.rewardResultQuantityLayout.visibility = View.GONE
+                            binding.rewardResultTv.text =
+                                getString(R.string.failed_to_load_rewarded_ad)
+                            binding.submitRewardResultBtn.setText(R.string.confirm)
 
-                        binding.rewardResultTv.text = getString(R.string.failed_to_load_rewarded_ad)
-                        binding.submitRewardResultBtn.setText(R.string.confirm)
+                            binding.rewardResultLayout.visibility = View.VISIBLE
+                        }
 
-                        binding.rewardResultLayout.visibility = View.VISIBLE
-                    }
+                        RewardedAdState.RewardReceived -> {
+                            binding.title.text = getString(R.string.reward_received_title)
 
-                    RewardedAdState.RewardReceived -> {
-                        binding.title.text = getString(R.string.reward_received_title)
+                            binding.rewardResultTv.text = getString(R.string.reward_received)
+                            binding.rewardResultQuantity.text =
+                                CoinConstants.REWARDED_AD_WORTH.toString()
+                            binding.submitRewardResultBtn.setText(R.string.great)
 
-                        binding.rewardResultTv.text = getString(R.string.reward_received)
-                        binding.rewardResultQuantity.text =
-                            CoinConstants.REWARDED_AD_WORTH.toString()
-                        binding.submitRewardResultBtn.setText(R.string.great)
+                            binding.questionLayout.visibility = View.GONE
+                            binding.loadingLayout.visibility = View.GONE
 
-                        binding.questionLayout.visibility = View.GONE
-                        binding.loadingLayout.visibility = View.GONE
+                            binding.rewardResultLayout.visibility = View.VISIBLE
+                            binding.rewardResultQuantityLayout.visibility = View.VISIBLE
 
-                        binding.rewardResultLayout.visibility = View.VISIBLE
-                        binding.rewardResultQuantityLayout.visibility = View.VISIBLE
-
-                        if (isRewardReceivedPlayerPrepared) {
-                            rewardReceivedPlayer.start()
-                            isRewardReceivedPlayerPlaying = true
+                            if (isRewardReceivedPlayerPrepared) {
+                                rewardReceivedPlayer.start()
+                                isRewardReceivedPlayerPlaying = true
+                            }
                         }
                     }
                 }

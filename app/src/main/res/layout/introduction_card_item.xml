@@ -20,8 +20,8 @@
         <ImageView
             android:id="@+id/gif"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/introduction_gif_size"
-            android:layout_marginBottom="@dimen/introduction_gif_margin_bottom"
+            android:layout_height="@dimen/introduction_animation_size"
+            android:layout_marginBottom="@dimen/introduction_animation_margin_bottom"
             android:importantForAccessibility="no" />
 
         <LinearLayout

@@ -10,7 +10,7 @@ import com.justcircleprod.btsquiz.R
 import com.justcircleprod.btsquiz.databinding.ActivityIntroductionBinding
 import com.justcircleprod.btsquiz.introduction.presentation.introductionCardAdapter.HorizontalMarginItemDecoration
 import com.justcircleprod.btsquiz.introduction.presentation.introductionCardAdapter.IntroductionCardAdapter
-import com.justcircleprod.btsquiz.introduction.presentation.introductionCardAdapter.IntroductionCardResources
+import com.justcircleprod.btsquiz.introduction.presentation.introductionCardAdapter.IntroductionCardItem
 import com.justcircleprod.btsquiz.main.presentation.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlin.math.abs
@@ -28,26 +28,31 @@ class IntroductionActivity : AppCompatActivity() {
     }
 
     private fun setupViewPager() {
-        val cardResources = listOf(
-            IntroductionCardResources(
+        val introductionCardItems = listOf(
+            IntroductionCardItem(
                 R.string.introduction_card_1_title,
                 R.string.introduction_card_1_text,
-                R.drawable.introduction_card_1
+                R.drawable.introduction_card_item_animation_1
             ),
-            IntroductionCardResources(
+            IntroductionCardItem(
                 R.string.introduction_card_2_title,
                 R.string.introduction_card_2_text,
-                R.drawable.introduction_card_2
+                R.drawable.introduction_card_item_animation_2
             ),
-            IntroductionCardResources(
+            IntroductionCardItem(
                 R.string.introduction_card_3_title,
                 R.string.introduction_card_3_text,
-                R.drawable.introduction_card_3
+                R.drawable.introduction_card_item_animation_3
+            ),
+            IntroductionCardItem(
+                R.string.introduction_card_4_title,
+                R.string.introduction_card_4_text,
+                R.drawable.introduction_card_item_animation_4
             )
         )
 
         val adapter = IntroductionCardAdapter(
-            cardResources = cardResources,
+            introductionCardItems = introductionCardItems,
             onNextBtnClicked = { binding.viewPager.currentItem++ },
             onPlayBtnClicked = { startMainActivity() }
         )

@@ -17,8 +17,8 @@
         android:id="@+id/root_card_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:animateLayoutChanges="true">
+        android:animateLayoutChanges="true"
+        android:orientation="vertical">
 
         <LinearLayout
             android:id="@+id/name_layout"
@@ -116,7 +116,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:lottie_loop="true"
             app:lottie_rawRes="@raw/confetti_level_unlocked_animation"
             app:lottie_repeatCount="1"
             app:lottie_speed="0.45" />

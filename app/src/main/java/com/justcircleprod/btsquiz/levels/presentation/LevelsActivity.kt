@@ -15,7 +15,9 @@ import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.text.isDigitsOnly
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.airbnb.lottie.LottieAnimationView
 import com.google.android.material.divider.MaterialDividerItemDecoration
@@ -89,8 +91,8 @@ class LevelsActivity : AppCompatActivity(), LevelItemAdapterActions {
         setContentView(binding.root)
     }
 
-    override fun onStart() {
-        super.onStart()
+    override fun onResume() {
+        super.onResume()
 
         refreshAdTimer?.start()
         if (isLevelUnlockedPlayerPlaying) {
@@ -127,7 +129,7 @@ class LevelsActivity : AppCompatActivity(), LevelItemAdapterActions {
 
         levelUnlockedPlayer.setDataSource(
             this,
-            Uri.parse("android.resource://$packageName/raw/level_unlocked")
+            Uri.parse("android.resource://$packageName/raw/${R.raw.level_unlocked_sound}")
         )
         levelUnlockedPlayer.prepareAsync()
     }
@@ -200,15 +202,17 @@ class LevelsActivity : AppCompatActivity(), LevelItemAdapterActions {
 
     private fun setCompensationReceivedCollector() {
         lifecycleScope.launch {
-            // false never hit this
-            viewModel.compensationReceived.takeWhile { it }.collect {
-                val coinsQuantity = viewModel.userCoinsQuantity.first()?.toInt()
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                // false never hit this
+                viewModel.compensationReceived.takeWhile { it }.collect {
+                    val coinsQuantity = viewModel.userCoinsQuantity.first()?.toInt()
 
-                if (it && coinsQuantity != null) {
-                    CompensationReceivedDialog.newInstance(coinsQuantity)
-                        .show(supportFragmentManager, null)
+                    if (it && coinsQuantity != null) {
+                        CompensationReceivedDialog.newInstance(coinsQuantity)
+                            .show(supportFragmentManager, null)
 
-                    viewModel.compensationReceived.value = false
+                        viewModel.compensationReceived.value = false
+                    }
                 }
             }
         }
@@ -216,14 +220,16 @@ class LevelsActivity : AppCompatActivity(), LevelItemAdapterActions {
 
     private fun setCoinsQuantityCollector() {
         lifecycleScope.launch {
-            viewModel.userCoinsQuantity.collect {
-                if (it == null || !it.isDigitsOnly()) return@collect
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.userCoinsQuantity.collect {
+                    if (it == null || !it.isDigitsOnly()) return@collect
 
-                binding.userCoinsQuantity.text =
-                    getString(R.string.levels_users_coins_quantity, it.toInt())
-                binding.userCoinsQuantityLayout.visibility = View.VISIBLE
+                    binding.userCoinsQuantity.text =
+                        getString(R.string.levels_users_coins_quantity, it.toInt())
+                    binding.userCoinsQuantityLayout.visibility = View.VISIBLE
 
-                binding.line.visibility = View.VISIBLE
+                    binding.line.visibility = View.VISIBLE
+                }
             }
         }
     }
@@ -248,8 +254,10 @@ class LevelsActivity : AppCompatActivity(), LevelItemAdapterActions {
         binding.levelsRecyclerView.addItemDecoration(decoration)
 
         lifecycleScope.launch {
-            viewModel.levelItems.collect {
-                adapter.submitList(it)
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.levelItems.collect {
+                    adapter.submitList(it)
+                }
             }
         }
     }

@@ -8,14 +8,15 @@
     <dimen name="card_corner_radius">35dp</dimen>
     <dimen name="inner_padding">20dp</dimen>
 
-    <dimen name="brand_margin_bottom">5dp</dimen>
     <dimen name="brand_text_size">20sp</dimen>
+    <dimen name="brand_text_margin_bottom">13dp</dimen>
+    <dimen name="brand_text_with_back_button_margin_bottom">5dp</dimen>
 
     <dimen name="hint_text_size">17sp</dimen>
 
     <dimen name="line_height">1dp</dimen>
 
-    <dimen name="line_top_margin">5dp</dimen>
+    <dimen name="line_top_margin">6dp</dimen>
     <dimen name="line_bottom_margin">7dp</dimen>
 
     <dimen name="back_icon_button_size">48dp</dimen>
@@ -30,8 +31,8 @@
 
     <dimen name="raw_buttons_horizontal_margin">4dp</dimen>
 
-    <dimen name="loading_gif_height">150dp</dimen>
-    <dimen name="loading_gif_top_margin">10dp</dimen>
+    <dimen name="loading_animation_height">150dp</dimen>
+    <dimen name="loading_animation_top_margin">10dp</dimen>
 
     <dimen name="icon_coins_margin_start">1dp</dimen>
 
@@ -65,13 +66,13 @@
     <dimen name="introduction_dots_size">12dp</dimen>
     <dimen name="introduction_dots_spacing">3dp</dimen>
 
+    <dimen name="introduction_animation_size">180dp</dimen>
+    <dimen name="introduction_animation_margin_bottom">10dp</dimen>
     <dimen name="introduction_card_text_size">18sp</dimen>
     <dimen name="introduction_card_text_text_size">16sp</dimen>
     <dimen name="introduction_card_title_margin_bottom">10dp</dimen>
     <dimen name="introduction_card_title_icon_coins_size">17dp</dimen>
     <dimen name="introduction_button_margin_top">20dp</dimen>
-    <dimen name="introduction_gif_size">180dp</dimen>
-    <dimen name="introduction_gif_margin_bottom">10dp</dimen>
 
     <!-- Main -->
 

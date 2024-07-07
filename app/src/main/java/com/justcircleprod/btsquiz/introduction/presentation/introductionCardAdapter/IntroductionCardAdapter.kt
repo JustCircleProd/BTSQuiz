@@ -9,7 +9,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.justcircleprod.btsquiz.databinding.IntroductionCardItemBinding
 
 class IntroductionCardAdapter(
-    private val cardResources: List<IntroductionCardResources>,
+    private val introductionCardItems: List<IntroductionCardItem>,
     private val onNextBtnClicked: () -> Unit,
     private val onPlayBtnClicked: () -> Unit
 ) :
@@ -20,7 +20,7 @@ class IntroductionCardAdapter(
         return PagerViewHolder(binding)
     }
 
-    override fun getItemCount(): Int = cardResources.size
+    override fun getItemCount(): Int = introductionCardItems.size
 
     override fun onBindViewHolder(holder: PagerViewHolder, position: Int) {
         holder.bind(position)
@@ -29,25 +29,27 @@ class IntroductionCardAdapter(
     inner class PagerViewHolder(private val binding: IntroductionCardItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(position: Int) {
+            val introductionCardItem = introductionCardItems[position]
+
             val context = binding.root.context
 
-            binding.title.text = context.getString(cardResources[position].title)
+            Glide
+                .with(binding.root.context)
+                .load(introductionCardItem.animationDrawableResId)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .into(binding.gif)
 
-            if (absoluteAdapterPosition == 1) {
+            binding.title.text = context.getString(introductionCardItem.titleStringResId)
+
+            if (absoluteAdapterPosition == 2) {
                 binding.titleIconCoins.visibility = View.VISIBLE
             } else {
                 binding.titleIconCoins.visibility = View.GONE
             }
 
-            binding.text.text = context.getString(cardResources[position].text)
+            binding.text.text = context.getString(introductionCardItem.textStringResId)
 
-            Glide
-                .with(binding.root.context)
-                .load(cardResources[position].gif)
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                .into(binding.gif)
-
-            if (absoluteAdapterPosition == 2) {
+            if (absoluteAdapterPosition == introductionCardItems.size - 1) {
                 binding.nextBtn.visibility = View.GONE
                 binding.playBtn.visibility = View.VISIBLE
             } else {
