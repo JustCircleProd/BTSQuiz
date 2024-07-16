@@ -21,6 +21,9 @@ class ResetProgressConfirmationDialog : DialogFragment() {
     private lateinit var binding: DialogResetProgressConfirmationBinding
     private val viewModel by viewModels<ResetProgressConfirmationViewModel>()
 
+    // to set up the collectors again, but not to execute code in them
+    private var isProgressResetCollectorStopped: Boolean = false
+
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialogBuilder = AlertDialog.Builder(requireContext(), R.style.DialogRoundedCorner)
 
@@ -34,6 +37,12 @@ class ResetProgressConfirmationDialog : DialogFragment() {
         return dialogBuilder.create()
     }
 
+    override fun onStop() {
+        super.onStop()
+
+        isProgressResetCollectorStopped = true
+    }
+
     private fun enableAnimations() {
         binding.root.layoutTransition.enableTransitionType(LayoutTransition.CHANGING)
     }
@@ -42,6 +51,11 @@ class ResetProgressConfirmationDialog : DialogFragment() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.isProgressReset.collect {
+                    if (isProgressResetCollectorStopped) {
+                        isProgressResetCollectorStopped = false
+                        return@collect
+                    }
+
                     if (it) {
                         binding.title.text = getString(R.string.progress_was_reset_dialog_title)
                         binding.hint.text = getString(R.string.progress_was_reset)

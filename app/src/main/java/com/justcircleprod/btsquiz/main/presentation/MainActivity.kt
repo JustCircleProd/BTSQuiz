@@ -25,6 +25,17 @@ class MainActivity : AppCompatActivity() {
 
     private var shouldStartIntroductionActivityCollectionJob: Job? = null
 
+    // to set up the collectors again, but not to execute code in them
+    private var isIntroductionShownCollectorStopped = false
+    private var isShouldStartIntroductionActivityCollectorStopped = false
+
+    override fun onStop() {
+        super.onStop()
+
+        isIntroductionShownCollectorStopped = true
+        isShouldStartIntroductionActivityCollectorStopped = true
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -36,6 +47,11 @@ class MainActivity : AppCompatActivity() {
                     emit(it)
                     it != DataStoreConstants.INTRODUCTION_IS_SHOWN && it != null
                 }.collect { isIntroductionShown ->
+                    if (isIntroductionShownCollectorStopped) {
+                        isIntroductionShownCollectorStopped = false
+                        return@collect
+                    }
+
                     when (isIntroductionShown) {
                         DataStoreConstants.INTRODUCTION_IS_SHOWN -> {
                             setOnClickListeners()
@@ -49,7 +65,12 @@ class MainActivity : AppCompatActivity() {
 
                             shouldStartIntroductionActivityCollectionJob = lifecycleScope.launch {
                                 repeatOnLifecycle(Lifecycle.State.STARTED) {
-                                    viewModel.shouldStartIntroductionActivity.collect {
+                                    viewModel.shouldStartIntroductionActivity.collect collect2@ {
+                                        if (isShouldStartIntroductionActivityCollectorStopped) {
+                                            isShouldStartIntroductionActivityCollectorStopped = false
+                                            return@collect2
+                                        }
+
                                         if (it) {
                                             startIntroductionActivity()
                                         }

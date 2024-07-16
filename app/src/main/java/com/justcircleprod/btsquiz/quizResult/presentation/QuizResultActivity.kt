@@ -75,6 +75,11 @@ class QuizResultActivity : AppCompatActivity(), DoubleCoinsConfirmationDialogCal
     private var isResultPlayerPrepared = false
     private var isResultPlayerPlaying = false
 
+    // to set up the collectors again, but not to execute code in them
+    private var isLoadingCollectorStopped: Boolean = false
+    private var isEarnedCoinsCollectorStopped: Boolean = false
+    private var areEarnedCoinsDoubledCollectorStopped: Boolean = false
+
     companion object {
         const val LEVEL_ARGUMENT_NAME = "LEVEL"
         const val EARNED_COINS_ARGUMENT_NAME = "EARNED_COINS"
@@ -121,6 +126,14 @@ class QuizResultActivity : AppCompatActivity(), DoubleCoinsConfirmationDialogCal
         if (isResultPlayerPlaying) {
             resultPlayer.pause()
         }
+    }
+
+    override fun onStop() {
+        super.onStop()
+
+        isLoadingCollectorStopped = true
+        isEarnedCoinsCollectorStopped = true
+        areEarnedCoinsDoubledCollectorStopped = true
     }
 
     private fun enableAnimations() {
@@ -215,6 +228,11 @@ class QuizResultActivity : AppCompatActivity(), DoubleCoinsConfirmationDialogCal
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.isLoading.collect { isLoading ->
+                    if (isLoadingCollectorStopped) {
+                        isLoadingCollectorStopped = false
+                        return@collect
+                    }
+
                     if (!isLoading) {
                         onBackPressedDispatcher.addCallback { startLevelsActivity() }
                         showResult()
@@ -303,6 +321,11 @@ class QuizResultActivity : AppCompatActivity(), DoubleCoinsConfirmationDialogCal
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.earnedCoins.collect {
+                    if (isEarnedCoinsCollectorStopped) {
+                        isEarnedCoinsCollectorStopped = false
+                        return@collect
+                    }
+
                     binding.earnedCoins.text = it.toString()
                 }
             }
@@ -423,6 +446,11 @@ class QuizResultActivity : AppCompatActivity(), DoubleCoinsConfirmationDialogCal
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.areEarnedCoinsDoubled.collect {
+                    if (areEarnedCoinsDoubledCollectorStopped) {
+                        areEarnedCoinsDoubledCollectorStopped = false
+                        return@collect
+                    }
+
                     if (it || viewModel.earnedCoins.value == 0) {
                         binding.doubleCoinsBtn.visibility = View.GONE
                         changeLineTopMargin(removeTopMargin = true)

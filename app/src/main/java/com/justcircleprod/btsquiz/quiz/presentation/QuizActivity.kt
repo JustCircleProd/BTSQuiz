@@ -91,8 +91,8 @@ class QuizActivity : AppCompatActivity() {
 
     private var positionOfVideoPlayer = 0
 
-    private var userCoinsQuantityCollectionJob: Job? = null
     private var questionWorthCollectionJob: Job? = null
+    private var userCoinsQuantityCollectionJob: Job? = null
 
     private var questionCollectionJob: Job? = null
 
@@ -100,6 +100,15 @@ class QuizActivity : AppCompatActivity() {
 
     private var hint5050UsedCollectionJob: Job? = null
     private var hintCorrectAnswerUsedCollectionJob: Job? = null
+
+    // to set up the collectors again, but not to execute code in them
+    private var isLoadingCollectorStopped: Boolean = false
+    private var isQuestionWorthCollectorStopped: Boolean = false
+    private var isUserCoinsQuantityCollectorStopped: Boolean = false
+    private var isQuestionCollectorStopped: Boolean = false
+    private var isWithoutQuizHintsCollectorStopped: Boolean = false
+    private var isHint5050UsedCollectorStopped: Boolean = false
+    private var isHintCorrectAnswerUsedCollectorStopped: Boolean = false
 
     companion object {
         const val LEVEL_ARGUMENT_NAME = "LEVEL"
@@ -112,6 +121,7 @@ class QuizActivity : AppCompatActivity() {
         onBackPressedDispatcher.addCallback { startLevelsActivity() }
 
         enableAnimation()
+        binding.videoQuestionLayout.clipToOutline = true
         initAd()
 
         initCorrectAnswerPlayer()
@@ -135,6 +145,18 @@ class QuizActivity : AppCompatActivity() {
 
         refreshAdTimer?.cancel()
         pausePlayers()
+    }
+
+    override fun onStop() {
+        super.onStop()
+
+        isLoadingCollectorStopped = true
+        isQuestionWorthCollectorStopped = true
+        isUserCoinsQuantityCollectorStopped = true
+        isQuestionCollectorStopped = true
+        isWithoutQuizHintsCollectorStopped = true
+        isHint5050UsedCollectorStopped = true
+        isHintCorrectAnswerUsedCollectorStopped = true
     }
 
     private fun resumePlayers() {
@@ -302,8 +324,8 @@ class QuizActivity : AppCompatActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.isLoading.collect { isLoading ->
-                    if (viewModel.isFirstStart) {
-                        viewModel.isFirstStart = false
+                    if (isLoadingCollectorStopped) {
+                        isLoadingCollectorStopped = false
                         return@collect
                     }
 
@@ -311,12 +333,10 @@ class QuizActivity : AppCompatActivity() {
                         if (viewModel.questionsCount != 0) {
                             viewModel.setQuestionOnCurrentPosition()
 
-                            setQuestionWorthCollectors()
+                            setQuestionWorthCollector()
                             setUserCoinsQuantityCollector()
                             setWithoutQuizHintsCollector()
-                            setQuestionsCollector()
-
-                            binding.videoQuestionLayout.clipToOutline = true
+                            setQuestionCollector()
 
                             binding.quizProgress.max = viewModel.questionsCount * 100
 
@@ -360,12 +380,17 @@ class QuizActivity : AppCompatActivity() {
         }
     }
 
-    private fun setQuestionWorthCollectors() {
+    private fun setQuestionWorthCollector() {
         if (questionWorthCollectionJob != null) return
 
         questionWorthCollectionJob = lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.questionWorth.collect {
+                    if (isQuestionWorthCollectorStopped) {
+                        isQuestionWorthCollectorStopped = false
+                        return@collect
+                    }
+
                     binding.questionWorth.text = getString(R.string.quiz_question_worth_label, it)
                     binding.questionWorthLayout.visibility = View.VISIBLE
                 }
@@ -379,6 +404,11 @@ class QuizActivity : AppCompatActivity() {
         userCoinsQuantityCollectionJob = lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.userCoinsQuantity.collect {
+                    if (isUserCoinsQuantityCollectorStopped) {
+                        isUserCoinsQuantityCollectorStopped = false
+                        return@collect
+                    }
+
                     if (it == null || !it.isDigitsOnly()) return@collect
 
                     binding.userCoinsQuantity.text =
@@ -396,6 +426,11 @@ class QuizActivity : AppCompatActivity() {
         withoutQuizHintsCollectionJob = lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.withoutQuizHints.collect {
+                    if (isWithoutQuizHintsCollectorStopped) {
+                        isWithoutQuizHintsCollectorStopped = false
+                        return@collect
+                    }
+
                     when (it) {
                         DataStoreConstants.WITHOUT_QUIZ_HINTS -> {
                             binding.hintDivider.visibility = View.GONE
@@ -406,9 +441,9 @@ class QuizActivity : AppCompatActivity() {
                         DataStoreConstants.WITH_QUIZ_HINTS, null -> {
                             initHint5050Player()
                             setHintPrices()
-                            setOnHintsClickListeners()
                             setHint5050UsedCollector()
                             setHintCorrectAnswerUsedCollector()
+                            setOnHintsClickListeners()
 
                             binding.hintDivider.visibility = View.VISIBLE
                             binding.hint5050.visibility = View.VISIBLE
@@ -420,12 +455,17 @@ class QuizActivity : AppCompatActivity() {
         }
     }
 
-    private fun setQuestionsCollector() {
+    private fun setQuestionCollector() {
         if (questionCollectionJob != null) return
 
         questionCollectionJob = lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.question.collect { question ->
+                    if (isQuestionCollectorStopped) {
+                        isQuestionCollectorStopped = false
+                        return@collect
+                    }
+
                     if (question == null) {
                         startResultActivity()
                         return@collect
@@ -530,6 +570,11 @@ class QuizActivity : AppCompatActivity() {
         hint5050UsedCollectionJob = lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.hint5050Used.collect { hint5050Used ->
+                    if (isHint5050UsedCollectorStopped) {
+                        isHint5050UsedCollectorStopped = false
+                        return@collect
+                    }
+
                     if (hint5050Used) {
                         binding.hint5050.disableWithTransparency()
                         binding.hintCorrectAnswer.disableWithTransparency()
@@ -574,6 +619,11 @@ class QuizActivity : AppCompatActivity() {
         hintCorrectAnswerUsedCollectionJob = lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.hintCorrectAnswerUsed.collect { hintCorrectAnswerUsed ->
+                    if (isHintCorrectAnswerUsedCollectorStopped) {
+                        isHintCorrectAnswerUsedCollectorStopped = false
+                        return@collect
+                    }
+
                     if (hintCorrectAnswerUsed) {
                         viewModel.onCorrectAnswer()
 
@@ -648,16 +698,19 @@ class QuizActivity : AppCompatActivity() {
 
     private fun setVideoQuestionData(question: VideoQuestion) {
         binding.videoQuestion.setOnPreparedListener {
-            it.setOnInfoListener { _, info, _ ->
-                if (info == MediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START) {
-                    isVideoQuestionPlayerPlaying = true
-                    binding.videoQuestionLayout.visibility = View.VISIBLE
-                    enableButtons()
+            it.start()
+            isVideoQuestionPlayerPlaying = true
+        }
 
-                    return@setOnInfoListener true
-                }
-                return@setOnInfoListener false
+        binding.videoQuestion.setOnInfoListener { _, info, _ ->
+            if (info == MediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START) {
+                binding.videoQuestionLayout.visibility = View.VISIBLE
+                enableButtons()
+
+                return@setOnInfoListener true
             }
+
+            return@setOnInfoListener false
         }
 
         binding.videoQuestion.setOnCompletionListener {
@@ -668,7 +721,6 @@ class QuizActivity : AppCompatActivity() {
         binding.videoQuestion.setVideoURI(
             Uri.parse("android.resource://$packageName/raw/${question.videoEntryName}")
         )
-        binding.videoQuestion.start()
     }
 
     private fun setAudioQuestionData(question: AudioQuestion) {
@@ -678,7 +730,7 @@ class QuizActivity : AppCompatActivity() {
             audioQuestionPlayer?.setOnPreparedListener {
                 binding.audioQuestion.visibility = View.VISIBLE
 
-                it?.start()
+                it.start()
                 isAudioQuestionPlayerPlaying = true
 
                 enableButtons()

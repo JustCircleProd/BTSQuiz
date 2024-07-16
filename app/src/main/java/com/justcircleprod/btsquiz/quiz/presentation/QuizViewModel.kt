@@ -38,9 +38,6 @@ class QuizViewModel @Inject constructor(
 
     val isLoading = MutableStateFlow(true)
 
-    // value to prevent the observer from triggering when setting the default value
-    var isFirstStart = true
-
     val userCoinsQuantity = coinRepository.getUserCoinsQuantity()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
 

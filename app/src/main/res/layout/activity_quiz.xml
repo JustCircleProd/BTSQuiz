@@ -201,16 +201,17 @@
                         app:layout_constraintTop_toBottomOf="@id/coins_barrier"
                         tools:src="@tools:sample/avatars" />
 
-                    <FrameLayout
+                    <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/video_question_layout"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="0dp"
                         android:layout_marginTop="@dimen/question_top_margin"
                         android:layout_marginBottom="@dimen/question_bottom_margin"
                         android:background="@drawable/video_question_rounded_corners"
                         android:outlineProvider="background"
                         android:visibility="invisible"
                         app:layout_constraintBottom_toTopOf="@id/quiz_progress"
+                        app:layout_constraintDimensionRatio="16:9"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/coins_barrier">
@@ -218,11 +219,12 @@
                         <VideoView
                             android:id="@+id/video_question"
                             android:layout_width="match_parent"
-                            android:layout_height="@dimen/question_height"
+                            android:layout_height="match_parent"
                             android:layout_gravity="center"
-                            android:contentDescription="@string/video_for_question_description" />
+                            android:contentDescription="@string/video_for_question_description"
+                            app:layout_constraintHeight_max="@dimen/question_height" />
 
-                    </FrameLayout>
+                    </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <ImageView
                         android:id="@+id/audio_question"

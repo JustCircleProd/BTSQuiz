@@ -70,6 +70,10 @@ class LevelsActivity : AppCompatActivity(), LevelItemAdapterActions {
         }
     private var refreshAdTimer: CountDownTimer? = null
 
+    // to set up the collectors again, but not to execute code in them
+    private var isCompensationReceivedCollectorStopped = false
+    private var isUserCoinsQuantityCollectorStopped = false
+    private var isLevelItemsCollectorStopped = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -107,6 +111,14 @@ class LevelsActivity : AppCompatActivity(), LevelItemAdapterActions {
         if (isLevelUnlockedPlayerPlaying) {
             levelUnlockedPlayer.pause()
         }
+    }
+
+    override fun onStop() {
+        super.onStop()
+
+        isCompensationReceivedCollectorStopped = true
+        isUserCoinsQuantityCollectorStopped = true
+        isLevelItemsCollectorStopped = true
     }
 
     private fun enableAnimations() {
@@ -205,6 +217,11 @@ class LevelsActivity : AppCompatActivity(), LevelItemAdapterActions {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 // false never hit this
                 viewModel.compensationReceived.takeWhile { it }.collect {
+                    if (isCompensationReceivedCollectorStopped) {
+                        isCompensationReceivedCollectorStopped = false
+                        return@collect
+                    }
+
                     val coinsQuantity = viewModel.userCoinsQuantity.first()?.toInt()
 
                     if (it && coinsQuantity != null) {
@@ -222,6 +239,11 @@ class LevelsActivity : AppCompatActivity(), LevelItemAdapterActions {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.userCoinsQuantity.collect {
+                    if (isUserCoinsQuantityCollectorStopped) {
+                        isUserCoinsQuantityCollectorStopped = false
+                        return@collect
+                    }
+
                     if (it == null || !it.isDigitsOnly()) return@collect
 
                     binding.userCoinsQuantity.text =
@@ -256,6 +278,11 @@ class LevelsActivity : AppCompatActivity(), LevelItemAdapterActions {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.levelItems.collect {
+                    if (isLevelItemsCollectorStopped) {
+                        isLevelItemsCollectorStopped = false
+                        return@collect
+                    }
+
                     adapter.submitList(it)
                 }
             }
@@ -323,6 +350,12 @@ class LevelsActivity : AppCompatActivity(), LevelItemAdapterActions {
         })
 
         if (isLevelUnlockedPlayerPrepared) {
+            if (isLevelUnlockedPlayerPlaying) {
+                levelUnlockedPlayer.pause()
+                isLevelUnlockedPlayerPlaying = false
+                levelUnlockedPlayer.seekTo(0)
+            }
+
             levelUnlockedPlayer.start()
             isLevelUnlockedPlayerPlaying = true
 

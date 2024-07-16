@@ -46,7 +46,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/screen_content_space_size"
-            android:layout_marginTop="@dimen/brand_text_margin_bottom"
+            android:layout_marginTop="@dimen/introduction_dots_margin_top"
             android:layout_marginBottom="@dimen/screen_content_space_size"
             app:dotsColor="@color/white"
             app:dotsSize="@dimen/introduction_dots_size"

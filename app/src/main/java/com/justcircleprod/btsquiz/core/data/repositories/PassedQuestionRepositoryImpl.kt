@@ -47,8 +47,11 @@ class PassedQuestionRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getPassedQuestionsCount() =
-        db.passedQuestionDao().getCount()
+    override suspend fun getPassedQuestionsCount(): Int {
+        return withContext(Dispatchers.IO) {
+            db.passedQuestionDao().getCount()
+        }
+    }
 
     override fun getPassedQuestionsCountFlow() =
         db.passedQuestionDao().getCountFlow()

@@ -112,7 +112,7 @@
     <string name="watch_ad">Посмотреть</string>
 
     <string name="you_dont_have_enough_coins">Вам не хватает</string>
-    <string name="do_you_want_to_watch_an_ad_to_get_coins">Хотите посмотреть рекламу, чтобы получить</string>
+    <string name="do_you_want_to_watch_an_ad_to_get_coins">Хотите посмотреть рекламу, чтобы получить награду?</string>
 
     <string name="loading_ad_title">Загрузка</string>
     <string name="loading_ad">Загружаем рекламу…\nПожалуйста, не закрывайте диалог</string>
@@ -124,8 +124,6 @@
     <string name="reward_received">Вам начислено</string>
 
     <!-- Quiz -->
-
-    <string name="tv_loading_quiz_text">Подготавливаем самые интересные вопросы</string>
 
     <string name="tv_out_of_questions_hint_text">Похоже, что вы ответили на все вопросы этого уровня!\nВы можете снова ответить на них на уровне \"Пройденные вопросы\".</string>
 

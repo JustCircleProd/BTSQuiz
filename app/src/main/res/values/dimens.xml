@@ -64,6 +64,7 @@
     <dimen name="introduction_viewpager_next_item_visible">20dp</dimen>
     <dimen name="introduction_viewpager_current_item_horizontal_margin">40dp</dimen>
     <dimen name="introduction_dots_size">12dp</dimen>
+    <dimen name="introduction_dots_margin_top">19dp</dimen>
     <dimen name="introduction_dots_spacing">3dp</dimen>
 
     <dimen name="introduction_animation_size">180dp</dimen>

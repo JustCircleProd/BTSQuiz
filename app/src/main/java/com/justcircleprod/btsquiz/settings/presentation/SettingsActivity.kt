@@ -17,9 +17,7 @@ import com.justcircleprod.btsquiz.developersAndLicenses.presentation.DevelopersA
 import com.justcircleprod.btsquiz.main.presentation.MainActivity
 import com.justcircleprod.btsquiz.resetProgress.presentation.ResetProgressConfirmationDialog
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
 class SettingsActivity : AppCompatActivity() {
@@ -27,6 +25,9 @@ class SettingsActivity : AppCompatActivity() {
     private val viewModel: SettingsViewModel by viewModels()
 
     private lateinit var reviewManager: ReviewManager
+
+    // to set up the collectors again, but not to execute code in them
+    private var isWithoutQuizHintsCollectorStopped: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,10 +47,21 @@ class SettingsActivity : AppCompatActivity() {
         setContentView(binding.root)
     }
 
+    override fun onStop() {
+        super.onStop()
+
+        isWithoutQuizHintsCollectorStopped = true
+    }
+
     private fun setWithoutQuizHintsCollector() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.withoutQuizHints.collect {
+                    if (isWithoutQuizHintsCollectorStopped) {
+                        isWithoutQuizHintsCollectorStopped = false
+                        return@collect
+                    }
+
                     binding.withoutQuizHintsSwitch.setOnCheckedChangeListener { _, _ -> }
 
                     when (it) {
@@ -102,9 +114,7 @@ class SettingsActivity : AppCompatActivity() {
     private fun setOnShareAppBtnClickListener() {
         binding.shareAppBtn.setOnClickListener {
             lifecycleScope.launch {
-                val passedQuestionCount = withContext(Dispatchers.IO) {
-                    viewModel.getPassedQuestionCount()
-                }
+                val passedQuestionCount = viewModel.getPassedQuestionCount()
 
                 val resultStr =
                     getString(

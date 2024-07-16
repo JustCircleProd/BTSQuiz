@@ -59,6 +59,9 @@ class DoubleCoinsConfirmationDialog : DialogFragment() {
     private var rewardedAdLoader: RewardedAdLoader? = null
     private var rewardedAdLoaded = false
 
+    // to set up the collectors again, but not to execute code in them
+    private var isRewardedAdStateCollectorStopped = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         earnedCoins = arguments?.getInt(EARNED_COINS_NAME_ARGUMENT)
@@ -103,6 +106,12 @@ class DoubleCoinsConfirmationDialog : DialogFragment() {
         }
     }
 
+    override fun onStop() {
+        super.onStop()
+
+        isRewardedAdStateCollectorStopped = true
+    }
+
     private fun enableAnimations() {
         binding.root.layoutTransition.enableTransitionType(LayoutTransition.CHANGING)
     }
@@ -125,7 +134,7 @@ class DoubleCoinsConfirmationDialog : DialogFragment() {
 
         rewardReceivedPlayer.setDataSource(
             requireContext(),
-            Uri.parse("android.resource://${requireActivity().packageName}/raw/${R.raw.reward_received_sound}")
+            Uri.parse("android.resource://${requireActivity().packageName}/raw/${R.raw.ad_reward_received_sound}")
         )
         rewardReceivedPlayer.prepareAsync()
     }
@@ -234,6 +243,11 @@ class DoubleCoinsConfirmationDialog : DialogFragment() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.rewardedAdState.collect {
+                    if (isRewardedAdStateCollectorStopped) {
+                        isRewardedAdStateCollectorStopped = false
+                        return@collect
+                    }
+
                     when (it) {
                         RewardedAdState.UserNotAgreedYet -> {
                             binding.title.text = getString(R.string.double_coins)
