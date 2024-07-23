@@ -6,6 +6,8 @@
 
     <dimen name="audio_question_size">130dp</dimen>
 
+    <dimen name="video_question_width">533dp</dimen>
+
     <dimen name="question_top_margin">15dp</dimen>
     <dimen name="question_bottom_margin">19dp</dimen>
 

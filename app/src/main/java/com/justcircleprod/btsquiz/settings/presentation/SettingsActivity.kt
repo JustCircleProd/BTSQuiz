@@ -5,9 +5,7 @@ import android.os.Bundle
 import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.play.core.review.ReviewManager
 import com.google.android.play.core.review.ReviewManagerFactory
 import com.justcircleprod.btsquiz.R
@@ -21,13 +19,11 @@ import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class SettingsActivity : AppCompatActivity() {
+
     private lateinit var binding: ActivitySettingsBinding
     private val viewModel: SettingsViewModel by viewModels()
 
     private lateinit var reviewManager: ReviewManager
-
-    // to set up the collectors again, but not to execute code in them
-    private var isWithoutQuizHintsCollectorStopped: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,7 +32,7 @@ class SettingsActivity : AppCompatActivity() {
         onBackPressedDispatcher.addCallback { startMainActivity() }
         binding.backBtn.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
 
-        setWithoutQuizHintsCollector()
+        setWithoutQuizHintsObserver()
         setOnResetProgressClickListener()
 
         setOnShareAppBtnClickListener()
@@ -47,36 +43,21 @@ class SettingsActivity : AppCompatActivity() {
         setContentView(binding.root)
     }
 
-    override fun onStop() {
-        super.onStop()
+    private fun setWithoutQuizHintsObserver() {
+        viewModel.withoutQuizHints.observe(this) {
+            binding.withoutQuizHintsSwitch.setOnCheckedChangeListener { _, _ -> }
 
-        isWithoutQuizHintsCollectorStopped = true
-    }
+            when (it) {
+                DataStoreConstants.WITHOUT_QUIZ_HINTS -> {
+                    binding.withoutQuizHintsSwitch.isChecked = true
+                }
 
-    private fun setWithoutQuizHintsCollector() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.withoutQuizHints.collect {
-                    if (isWithoutQuizHintsCollectorStopped) {
-                        isWithoutQuizHintsCollectorStopped = false
-                        return@collect
-                    }
-
-                    binding.withoutQuizHintsSwitch.setOnCheckedChangeListener { _, _ -> }
-
-                    when (it) {
-                        DataStoreConstants.WITHOUT_QUIZ_HINTS -> {
-                            binding.withoutQuizHintsSwitch.isChecked = true
-                        }
-
-                        DataStoreConstants.WITH_QUIZ_HINTS, null -> {
-                            binding.withoutQuizHintsSwitch.isChecked = false
-                        }
-                    }
-
-                    setOnWithoutQuizHintsSwitchCheckedChangeListener()
+                DataStoreConstants.WITH_QUIZ_HINTS, null -> {
+                    binding.withoutQuizHintsSwitch.isChecked = false
                 }
             }
+
+            setOnWithoutQuizHintsSwitchCheckedChangeListener()
         }
     }
 

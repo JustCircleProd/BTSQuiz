@@ -17,6 +17,7 @@ import kotlin.math.abs
 
 @AndroidEntryPoint
 class IntroductionActivity : AppCompatActivity() {
+
     private lateinit var binding: ActivityIntroductionBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {

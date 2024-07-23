@@ -1,12 +1,11 @@
 package com.justcircleprod.btsquiz.settings.presentation
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.justcircleprod.btsquiz.core.domain.repositories.PassedQuestionRepository
 import com.justcircleprod.btsquiz.core.domain.repositories.SettingRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -16,8 +15,7 @@ class SettingsViewModel @Inject constructor(
     private val passedQuestionRepository: PassedQuestionRepository
 ) : ViewModel() {
 
-    val withoutQuizHints = settingRepository.getWithoutQuizHintsState()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), "NOT_INITIALIZED")
+    val withoutQuizHints = settingRepository.getWithoutQuizHintsState().asLiveData()
 
     fun updateWithoutQuizHintsState(state: String) {
         viewModelScope.launch {

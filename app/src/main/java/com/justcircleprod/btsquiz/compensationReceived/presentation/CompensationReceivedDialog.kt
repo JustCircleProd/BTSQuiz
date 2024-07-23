@@ -9,6 +9,7 @@ import com.justcircleprod.btsquiz.R
 import com.justcircleprod.btsquiz.databinding.DialogCompensationReceivedBinding
 
 class CompensationReceivedDialog : DialogFragment() {
+
     companion object {
         private const val COMPENSATION_NAME_ARGUMENT = "COMPENSATION"
 

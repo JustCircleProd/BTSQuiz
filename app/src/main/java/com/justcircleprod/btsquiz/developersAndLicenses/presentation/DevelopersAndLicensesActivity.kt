@@ -43,6 +43,7 @@ import com.justcircleprod.btsquiz.developersAndLicenses.presentation.components.
 import com.justcircleprod.btsquiz.settings.presentation.SettingsActivity
 
 class DevelopersAndLicensesActivity : AppCompatActivity() {
+
     private lateinit var binding: ActivityDevelopersAndLicensesBinding
 
     @Suppress("UNCHECKED_CAST")

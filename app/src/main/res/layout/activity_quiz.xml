@@ -201,7 +201,7 @@
                         app:layout_constraintTop_toBottomOf="@id/coins_barrier"
                         tools:src="@tools:sample/avatars" />
 
-                    <androidx.constraintlayout.widget.ConstraintLayout
+                    <FrameLayout
                         android:id="@+id/video_question_layout"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
@@ -210,21 +210,24 @@
                         android:background="@drawable/video_question_rounded_corners"
                         android:outlineProvider="background"
                         android:visibility="invisible"
+                        app:layout_constrainedHeight="true"
+                        app:layout_constrainedWidth="true"
                         app:layout_constraintBottom_toTopOf="@id/quiz_progress"
                         app:layout_constraintDimensionRatio="16:9"
                         app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHeight_max="@dimen/question_height"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/coins_barrier">
+                        app:layout_constraintTop_toBottomOf="@id/coins_barrier"
+                        app:layout_constraintWidth_max="@dimen/video_question_width">
 
                         <VideoView
                             android:id="@+id/video_question"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_gravity="center"
-                            android:contentDescription="@string/video_for_question_description"
-                            app:layout_constraintHeight_max="@dimen/question_height" />
+                            android:contentDescription="@string/video_for_question_description" />
 
-                    </androidx.constraintlayout.widget.ConstraintLayout>
+                    </FrameLayout>
 
                     <ImageView
                         android:id="@+id/audio_question"

@@ -1,12 +1,12 @@
 package com.justcircleprod.btsquiz.doubleCoins.presentation
 
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.justcircleprod.btsquiz.core.domain.repositories.CoinRepository
 import com.justcircleprod.btsquiz.core.presentation.RewardedAdState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -17,10 +17,9 @@ class DoubleCoinsConfirmationViewModel @Inject constructor(
 ) : ViewModel() {
 
     var rewardReceived = false
-    val rewardedAdState = MutableStateFlow<RewardedAdState>(RewardedAdState.UserNotAgreedYet)
+    val rewardedAdState = MutableLiveData<RewardedAdState>(RewardedAdState.UserNotAgreedYet)
 
-    private val earnedCoins =
-        state.get<Int>(DoubleCoinsConfirmationDialog.EARNED_COINS_NAME_ARGUMENT)!!
+    val earnedCoins = state.get<Int>(DoubleCoinsConfirmationDialog.EARNED_COINS_NAME_ARGUMENT)!!
 
     fun doubleEarnedCoins() {
         viewModelScope.launch {

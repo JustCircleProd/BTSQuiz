@@ -14,9 +14,6 @@ import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.annotation.RawRes
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.justcircleprod.btsquiz.App
@@ -39,11 +36,19 @@ import com.yandex.mobile.ads.interstitial.InterstitialAdEventListener
 import com.yandex.mobile.ads.interstitial.InterstitialAdLoadListener
 import com.yandex.mobile.ads.interstitial.InterstitialAdLoader
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 @AndroidEntryPoint
 class QuizResultActivity : AppCompatActivity(), DoubleCoinsConfirmationDialogCallback {
+
+    companion object {
+        const val LEVEL_ARGUMENT_NAME = "LEVEL"
+        const val EARNED_COINS_ARGUMENT_NAME = "EARNED_COINS"
+        const val CORRECTLY_ANSWERED_QUESTIONS_COUNT_ARGUMENT_NAME =
+            "CORRECTLY_ANSWERED_QUESTIONS_COUNT"
+        const val QUESTIONS_COUNT_ARGUMENT_NAME = "QUESTIONS_COUNT"
+    }
+
     private lateinit var binding: ActivityQuizResultBinding
     private val viewModel: QuizResultViewModel by viewModels()
 
@@ -64,29 +69,16 @@ class QuizResultActivity : AppCompatActivity(), DoubleCoinsConfirmationDialogCal
             return BannerAdSize.inlineSize(this, adWidth, maxAdHeight)
         }
 
-    private var bannerAdLoadingTimer: CountDownTimer? = null
+    private var bannerAdLoadTimer: CountDownTimer? = null
     private var refreshAdTimer: CountDownTimer? = null
 
     private var interstitialAd: InterstitialAd? = null
-    private var interstitialAdLoadingTimer: CountDownTimer? = null
     private var interstitialAdLoader: InterstitialAdLoader? = null
+    private var interstitialAdLoadTimer: CountDownTimer? = null
 
     private lateinit var resultPlayer: MediaPlayer
     private var isResultPlayerPrepared = false
     private var isResultPlayerPlaying = false
-
-    // to set up the collectors again, but not to execute code in them
-    private var isLoadingCollectorStopped: Boolean = false
-    private var isEarnedCoinsCollectorStopped: Boolean = false
-    private var areEarnedCoinsDoubledCollectorStopped: Boolean = false
-
-    companion object {
-        const val LEVEL_ARGUMENT_NAME = "LEVEL"
-        const val EARNED_COINS_ARGUMENT_NAME = "EARNED_COINS"
-        const val CORRECTLY_ANSWERED_QUESTIONS_COUNT_ARGUMENT_NAME =
-            "CORRECTLY_ANSWERED_QUESTIONS_COUNT"
-        const val QUESTIONS_COUNT_ARGUMENT_NAME = "QUESTIONS_COUNT"
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -95,13 +87,13 @@ class QuizResultActivity : AppCompatActivity(), DoubleCoinsConfirmationDialogCal
         enableAnimations()
         setLoadingGif()
 
-        setLoadingCollector()
+        setLoadingObserver()
 
         initBannerAd()
         workWithInterstitialAd()
 
-        setEarnedCoinsCollector()
-        setEarnedCoinsDoubledCollector()
+        setEarnedCoinsObserver()
+        setEarnedCoinsDoubledObserver()
         setOnDoubleCoinsBtnClickListener()
 
         setOnRepeatQuizBtnClickListener()
@@ -126,14 +118,6 @@ class QuizResultActivity : AppCompatActivity(), DoubleCoinsConfirmationDialogCal
         if (isResultPlayerPlaying) {
             resultPlayer.pause()
         }
-    }
-
-    override fun onStop() {
-        super.onStop()
-
-        isLoadingCollectorStopped = true
-        isEarnedCoinsCollectorStopped = true
-        areEarnedCoinsDoubledCollectorStopped = true
     }
 
     private fun enableAnimations() {
@@ -169,7 +153,7 @@ class QuizResultActivity : AppCompatActivity(), DoubleCoinsConfirmationDialogCal
                 bannerAdView = loadBannerAd()
 
                 // to limit the time for first loading of an ad
-                bannerAdLoadingTimer = object : CountDownTimer(1750, 1750) {
+                bannerAdLoadTimer = object : CountDownTimer(1750, 1750) {
                     override fun onTick(mills: Long) {}
 
                     override fun onFinish() {
@@ -193,10 +177,6 @@ class QuizResultActivity : AppCompatActivity(), DoubleCoinsConfirmationDialogCal
                     }
 
                     // to update ad every n seconds
-                    refreshAdTimer?.start()?.also {
-                        return
-                    }
-
                     refreshAdTimer = object : CountDownTimer(30000, 30000) {
                         override fun onTick(mills: Long) {}
 
@@ -224,22 +204,13 @@ class QuizResultActivity : AppCompatActivity(), DoubleCoinsConfirmationDialogCal
         }
     }
 
-    private fun setLoadingCollector() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.isLoading.collect { isLoading ->
-                    if (isLoadingCollectorStopped) {
-                        isLoadingCollectorStopped = false
-                        return@collect
-                    }
-
-                    if (!isLoading) {
-                        onBackPressedDispatcher.addCallback { startLevelsActivity() }
-                        showResult()
-                        binding.loadingLayout.visibility = View.GONE
-                        binding.contentLayout.visibility = View.VISIBLE
-                    }
-                }
+    private fun setLoadingObserver() {
+        viewModel.isLoading.observe(this) { isLoading ->
+            if (!isLoading) {
+                onBackPressedDispatcher.addCallback { startLevelsActivity() }
+                showResult()
+                binding.loadingLayout.visibility = View.GONE
+                binding.contentLayout.visibility = View.VISIBLE
             }
         }
     }
@@ -263,12 +234,13 @@ class QuizResultActivity : AppCompatActivity(), DoubleCoinsConfirmationDialogCal
         interstitialAdLoader = InterstitialAdLoader(this).apply {
             setAdLoadListener(object : InterstitialAdLoadListener {
                 override fun onAdLoaded(interstitialAd: InterstitialAd) {
+                    interstitialAdLoadTimer?.cancel()
                     this@QuizResultActivity.interstitialAd = interstitialAd
-                    interstitialAdLoadingTimer?.cancel()
                     showAd()
                 }
 
                 override fun onAdFailedToLoad(error: AdRequestError) {
+                    interstitialAdLoadTimer?.cancel()
                     viewModel.isInterstitialAdLoading.value = false
                     destroyInterstitialAd()
                 }
@@ -282,7 +254,7 @@ class QuizResultActivity : AppCompatActivity(), DoubleCoinsConfirmationDialogCal
         interstitialAdLoader?.loadAd(adRequestConfiguration)
 
         // to limit the time to load an ad
-        interstitialAdLoadingTimer = object : CountDownTimer(5000, 5000) {
+        interstitialAdLoadTimer = object : CountDownTimer(5000, 5000) {
             override fun onTick(mills: Long) {}
 
             override fun onFinish() {
@@ -317,18 +289,9 @@ class QuizResultActivity : AppCompatActivity(), DoubleCoinsConfirmationDialogCal
         }
     }
 
-    private fun setEarnedCoinsCollector() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.earnedCoins.collect {
-                    if (isEarnedCoinsCollectorStopped) {
-                        isEarnedCoinsCollectorStopped = false
-                        return@collect
-                    }
-
-                    binding.earnedCoins.text = it.toString()
-                }
-            }
+    private fun setEarnedCoinsObserver() {
+        viewModel.earnedCoins.observe(this) {
+            binding.earnedCoins.text = it.toString()
         }
     }
 
@@ -442,23 +405,14 @@ class QuizResultActivity : AppCompatActivity(), DoubleCoinsConfirmationDialogCal
         resultPlayer.prepareAsync()
     }
 
-    private fun setEarnedCoinsDoubledCollector() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.areEarnedCoinsDoubled.collect {
-                    if (areEarnedCoinsDoubledCollectorStopped) {
-                        areEarnedCoinsDoubledCollectorStopped = false
-                        return@collect
-                    }
-
-                    if (it || viewModel.earnedCoins.value == 0) {
-                        binding.doubleCoinsBtn.visibility = View.GONE
-                        changeLineTopMargin(removeTopMargin = true)
-                    } else {
-                        binding.doubleCoinsBtn.visibility = View.VISIBLE
-                        changeLineTopMargin(removeTopMargin = false)
-                    }
-                }
+    private fun setEarnedCoinsDoubledObserver() {
+        viewModel.areEarnedCoinsDoubled.observe(this) {
+            if (it || viewModel.earnedCoins.value == 0) {
+                binding.doubleCoinsBtn.visibility = View.GONE
+                changeLineTopMargin(removeTopMargin = true)
+            } else {
+                binding.doubleCoinsBtn.visibility = View.VISIBLE
+                changeLineTopMargin(removeTopMargin = false)
             }
         }
     }
@@ -492,7 +446,7 @@ class QuizResultActivity : AppCompatActivity(), DoubleCoinsConfirmationDialogCal
 
     override fun onCoinsDoublingConfirmed() {
         viewModel.areEarnedCoinsDoubled.value = true
-        val earnedCoins = viewModel.earnedCoins.value
+        val earnedCoins = viewModel.earnedCoins.value!!
 
         viewModel.earnedCoins.value = earnedCoins * 2
     }
@@ -523,7 +477,7 @@ class QuizResultActivity : AppCompatActivity(), DoubleCoinsConfirmationDialogCal
     }
 
     private fun destroyBannerAd() {
-        bannerAdLoadingTimer?.cancel()
+        bannerAdLoadTimer?.cancel()
         bannerAdView = null
 
         refreshAdTimer?.cancel()
@@ -534,8 +488,8 @@ class QuizResultActivity : AppCompatActivity(), DoubleCoinsConfirmationDialogCal
     }
 
     private fun destroyInterstitialAd() {
-        interstitialAdLoadingTimer?.cancel()
-        interstitialAdLoadingTimer = null
+        interstitialAdLoadTimer?.cancel()
+        interstitialAdLoadTimer = null
 
         interstitialAdLoader?.setAdLoadListener(null)
         interstitialAdLoader = null

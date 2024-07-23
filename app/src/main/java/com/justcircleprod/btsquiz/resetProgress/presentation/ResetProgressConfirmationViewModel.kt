@@ -1,5 +1,6 @@
 package com.justcircleprod.btsquiz.resetProgress.presentation
 
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.justcircleprod.btsquiz.core.data.constants.CoinConstants
@@ -9,7 +10,6 @@ import com.justcircleprod.btsquiz.core.domain.repositories.LevelProgressReposito
 import com.justcircleprod.btsquiz.core.domain.repositories.LockedLevelRepository
 import com.justcircleprod.btsquiz.core.domain.repositories.PassedQuestionRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,7 +21,7 @@ class ResetProgressConfirmationViewModel @Inject constructor(
     private val levelProgressRepository: LevelProgressRepository
 ) : ViewModel() {
 
-    val isProgressReset = MutableStateFlow(false)
+    val isProgressReset = MutableLiveData(false)
 
     fun resetProgress() {
         viewModelScope.launch {
@@ -44,7 +44,7 @@ class ResetProgressConfirmationViewModel @Inject constructor(
             levelProgressRepository.resetLevelProgress(LevelConstants.LEVEL_6_ID)
             levelProgressRepository.resetLevelProgress(LevelConstants.LEVEL_7_ID)
 
-            isProgressReset.value = true
+            isProgressReset.postValue(true)
         }
     }
 }

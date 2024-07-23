@@ -1,7 +1,9 @@
 package com.justcircleprod.btsquiz.levels.presentation
 
 import androidx.core.text.isDigitsOnly
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.justcircleprod.btsquiz.core.data.constants.CoinConstants
 import com.justcircleprod.btsquiz.core.data.constants.LevelConstants
@@ -14,7 +16,6 @@ import com.justcircleprod.btsquiz.levels.presentation.levelAdapter.LevelItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
@@ -30,10 +31,12 @@ class LevelsViewModel @Inject constructor(
     private val scoreRepository: ScoreRepository
 ) : ViewModel() {
 
-    val compensationReceived = MutableStateFlow(false)
+    val compensationReceived = MutableLiveData(false)
 
-    val userCoinsQuantity = coinRepository.getUserCoinsQuantity()
+    private val userCoinsQuantity = coinRepository.getUserCoinsQuantity()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), "NOT_INITIALIZED")
+
+    val userCoinsQuantityLiveData = coinRepository.getUserCoinsQuantity().asLiveData()
 
     private val passedQuestionsCount = passedQuestionRepository.getPassedQuestionsCountFlow()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
@@ -86,11 +89,8 @@ class LevelsViewModel @Inject constructor(
         }
 
         tempLevelItems.toList()
-    }.stateIn(
-        viewModelScope,
-        SharingStarted.WhileSubscribed(),
-        LevelItem.getPlaceholders()
-    )
+    }.asLiveData()
+
 
     // calculating initial coins quantity or compensation
     init {
@@ -110,7 +110,7 @@ class LevelsViewModel @Inject constructor(
                     )
                     passedQuestionRepository.deleteAllPassedQuestions()
 
-                    compensationReceived.value = true
+                    compensationReceived.postValue(true)
 
                     cancel()
                     return@collect
@@ -142,7 +142,7 @@ class LevelsViewModel @Inject constructor(
                     coinRepository.editUserCoinsQuantity(initialCoins)
                     passedQuestionRepository.deleteAllPassedQuestions()
 
-                    compensationReceived.value = true
+                    compensationReceived.postValue(true)
 
                     cancel()
                     return@collect

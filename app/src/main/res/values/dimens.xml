@@ -122,6 +122,8 @@
 
     <dimen name="audio_question_size">85dp</dimen>
 
+    <dimen name="video_question_width">267dp</dimen>
+
     <dimen name="quiz_progress_indicator_thickness">5dp</dimen>
     <dimen name="quiz_progress_indicator_corner_radius">15dp</dimen>
     <dimen name="quiz_progress_indicator_margin_bottom">8dp</dimen>

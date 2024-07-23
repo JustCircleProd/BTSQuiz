@@ -15,9 +15,6 @@ import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.text.isDigitsOnly
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.airbnb.lottie.LottieAnimationView
 import com.google.android.material.divider.MaterialDividerItemDecoration
@@ -37,14 +34,12 @@ import com.yandex.mobile.ads.common.AdRequest
 import com.yandex.mobile.ads.common.AdRequestError
 import com.yandex.mobile.ads.common.ImpressionData
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.takeWhile
-import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 
 @AndroidEntryPoint
 class LevelsActivity : AppCompatActivity(), LevelItemAdapterActions {
+
     private lateinit var binding: ActivityLevelsBinding
     private val viewModel: LevelsViewModel by viewModels()
 
@@ -70,11 +65,6 @@ class LevelsActivity : AppCompatActivity(), LevelItemAdapterActions {
         }
     private var refreshAdTimer: CountDownTimer? = null
 
-    // to set up the collectors again, but not to execute code in them
-    private var isCompensationReceivedCollectorStopped = false
-    private var isUserCoinsQuantityCollectorStopped = false
-    private var isLevelItemsCollectorStopped = false
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLevelsBinding.inflate(layoutInflater)
@@ -87,10 +77,10 @@ class LevelsActivity : AppCompatActivity(), LevelItemAdapterActions {
         onBackPressedDispatcher.addCallback { startMainActivity() }
         binding.backBtn.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
 
-        setCoinsQuantityCollector()
-        setupRecyclerView()
+        setCoinsQuantityObserver()
+        setupLevelsRecyclerView()
 
-        setCompensationReceivedCollector()
+        setCompensationReceivedObserver()
 
         setContentView(binding.root)
     }
@@ -111,14 +101,6 @@ class LevelsActivity : AppCompatActivity(), LevelItemAdapterActions {
         if (isLevelUnlockedPlayerPlaying) {
             levelUnlockedPlayer.pause()
         }
-    }
-
-    override fun onStop() {
-        super.onStop()
-
-        isCompensationReceivedCollectorStopped = true
-        isUserCoinsQuantityCollectorStopped = true
-        isLevelItemsCollectorStopped = true
     }
 
     private fun enableAnimations() {
@@ -181,11 +163,6 @@ class LevelsActivity : AppCompatActivity(), LevelItemAdapterActions {
                     }
 
                     // to update ad every n seconds
-                    if (refreshAdTimer != null) {
-                        refreshAdTimer?.start()
-                        return
-                    }
-
                     refreshAdTimer = object : CountDownTimer(30000, 30000) {
                         override fun onTick(mills: Long) {}
 
@@ -212,51 +189,32 @@ class LevelsActivity : AppCompatActivity(), LevelItemAdapterActions {
         }
     }
 
-    private fun setCompensationReceivedCollector() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                // false never hit this
-                viewModel.compensationReceived.takeWhile { it }.collect {
-                    if (isCompensationReceivedCollectorStopped) {
-                        isCompensationReceivedCollectorStopped = false
-                        return@collect
-                    }
+    private fun setCompensationReceivedObserver() {
+        viewModel.compensationReceived.observe(this) {
+            if (!it) return@observe
 
-                    val coinsQuantity = viewModel.userCoinsQuantity.first()?.toInt()
+            val coinsQuantity = viewModel.userCoinsQuantityLiveData.value?.toInt() ?: return@observe
 
-                    if (it && coinsQuantity != null) {
-                        CompensationReceivedDialog.newInstance(coinsQuantity)
-                            .show(supportFragmentManager, null)
+            CompensationReceivedDialog.newInstance(coinsQuantity)
+                .show(supportFragmentManager, null)
 
-                        viewModel.compensationReceived.value = false
-                    }
-                }
-            }
+            viewModel.compensationReceived.value = false
         }
     }
 
-    private fun setCoinsQuantityCollector() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.userCoinsQuantity.collect {
-                    if (isUserCoinsQuantityCollectorStopped) {
-                        isUserCoinsQuantityCollectorStopped = false
-                        return@collect
-                    }
+    private fun setCoinsQuantityObserver() {
+        viewModel.userCoinsQuantityLiveData.observe(this) {
+            if (it == null || !it.isDigitsOnly()) return@observe
 
-                    if (it == null || !it.isDigitsOnly()) return@collect
+            binding.userCoinsQuantity.text =
+                getString(R.string.levels_users_coins_quantity, it.toInt())
+            binding.userCoinsQuantityLayout.visibility = View.VISIBLE
 
-                    binding.userCoinsQuantity.text =
-                        getString(R.string.levels_users_coins_quantity, it.toInt())
-                    binding.userCoinsQuantityLayout.visibility = View.VISIBLE
-
-                    binding.line.visibility = View.VISIBLE
-                }
-            }
+            binding.line.visibility = View.VISIBLE
         }
     }
 
-    private fun setupRecyclerView() {
+    private fun setupLevelsRecyclerView() {
         val adapter = LevelItemAdapter(
             levelItems = listOf(),
             levelItemAdapterActions = this
@@ -275,17 +233,8 @@ class LevelsActivity : AppCompatActivity(), LevelItemAdapterActions {
 
         binding.levelsRecyclerView.addItemDecoration(decoration)
 
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.levelItems.collect {
-                    if (isLevelItemsCollectorStopped) {
-                        isLevelItemsCollectorStopped = false
-                        return@collect
-                    }
-
-                    adapter.submitList(it)
-                }
-            }
+        viewModel.levelItems.observe(this) {
+            adapter.submitList(it)
         }
     }
 
@@ -294,30 +243,29 @@ class LevelsActivity : AppCompatActivity(), LevelItemAdapterActions {
         levelPrice: Int,
         confettiAnimationView: LottieAnimationView
     ) {
-        lifecycleScope.launch {
-            val userCoinsQuantity = viewModel.userCoinsQuantity.first()?.toInt() ?: return@launch
+        val userCoinsQuantity =
+            viewModel.userCoinsQuantityLiveData.value?.toInt() ?: return
 
-            if (userCoinsQuantity >= levelPrice) {
-                supportFragmentManager.setFragmentResultListener(
-                    UnlockLevelConfirmationDialog.SHOULD_UNLOCK_A_LEVEL_RESULT_KEY,
-                    this@LevelsActivity
-                ) { _, bundle ->
+        if (userCoinsQuantity >= levelPrice) {
+            supportFragmentManager.setFragmentResultListener(
+                UnlockLevelConfirmationDialog.SHOULD_UNLOCK_A_LEVEL_RESULT_KEY,
+                this@LevelsActivity
+            ) { _, bundle ->
 
-                    supportFragmentManager.clearFragmentResultListener(
-                        UnlockLevelConfirmationDialog.SHOULD_UNLOCK_A_LEVEL_RESULT_KEY
-                    )
+                supportFragmentManager.clearFragmentResultListener(
+                    UnlockLevelConfirmationDialog.SHOULD_UNLOCK_A_LEVEL_RESULT_KEY
+                )
 
-                    if (bundle.getBoolean(UnlockLevelConfirmationDialog.SHOULD_UNLOCK_A_LEVEL_RESULT_KEY)) {
-                        viewModel.unlockLevel(levelId, levelPrice)
-                        startLevelUnlockedPlayerAndConfettiAnimation(confettiAnimationView)
-                    }
+                if (bundle.getBoolean(UnlockLevelConfirmationDialog.SHOULD_UNLOCK_A_LEVEL_RESULT_KEY)) {
+                    viewModel.unlockLevel(levelId, levelPrice)
+                    startLevelUnlockedPlayerAndConfettiAnimation(confettiAnimationView)
                 }
-
-                UnlockLevelConfirmationDialog().show(supportFragmentManager, null)
-            } else {
-                WatchRewardedAdConfirmationDialog.newInstance(levelPrice - userCoinsQuantity)
-                    .show(supportFragmentManager, null)
             }
+
+            UnlockLevelConfirmationDialog().show(supportFragmentManager, null)
+        } else {
+            WatchRewardedAdConfirmationDialog.newInstance(levelPrice - userCoinsQuantity)
+                .show(supportFragmentManager, null)
         }
     }
 
