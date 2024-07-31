@@ -4,7 +4,7 @@
 
     <dimen name="question_height">300dp</dimen>
 
-    <dimen name="audio_question_size">130dp</dimen>
+    <dimen name="audio_question_size">165dp</dimen>
 
     <dimen name="video_question_width">533dp</dimen>
 

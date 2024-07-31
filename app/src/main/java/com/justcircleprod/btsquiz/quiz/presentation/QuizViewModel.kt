@@ -36,6 +36,8 @@ class QuizViewModel @Inject constructor(
 ) : ViewModel() {
 
     val isLoading = MutableLiveData(true)
+    // to show loading layout only when the activity is first created (not recreated)
+    var isFirstLoadResultShown = false
 
     val userCoinsQuantity = coinRepository.getUserCoinsQuantity().asLiveData()
 
@@ -73,6 +75,11 @@ class QuizViewModel @Inject constructor(
     val hint5050UsedWithOptionsToShow =
         MutableLiveData<Pair<Boolean, List<String>>>(Pair(false, listOf()))
     val hintCorrectAnswerUsed = MutableLiveData(false)
+
+    // to save a question that has been answered,
+    // but the question has not yet had time to change to the next
+    // (helps to avoid cheating when changing the orientation of the phone)
+    var questionForWhichAnswerWasShown: Question? = null
 
     private val passedQuestions = mutableListOf<PassedQuestion>()
 
@@ -256,5 +263,13 @@ class QuizViewModel @Inject constructor(
         withContext(Dispatchers.IO) {
             levelProgressRepository.addLevelProgress(levelId, passedQuestions.size)
         }
+    }
+
+    fun setQuestionForWhichAnswerWasShown() {
+        questionForWhichAnswerWasShown = question.value!!
+    }
+
+    fun clearQuestionForWhichAnswerWasShown() {
+        questionForWhichAnswerWasShown = null
     }
 }

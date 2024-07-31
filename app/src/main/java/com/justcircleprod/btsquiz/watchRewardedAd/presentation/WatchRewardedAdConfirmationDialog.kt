@@ -88,6 +88,11 @@ class WatchRewardedAdConfirmationDialog : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // if the dialog was recreated when loading the ad, you must reload the ad
+        if (viewModel.rewardedAdState.value == RewardedAdState.Loading) {
+            viewModel.rewardedAdState.value = RewardedAdState.UserNotAgreedYet
+        }
+
         setRewardedAdStateObserver()
     }
 
@@ -210,7 +215,7 @@ class WatchRewardedAdConfirmationDialog : DialogFragment() {
                     if (viewModel.rewardReceived) {
                         viewModel.rewardedAdState.value = RewardedAdState.RewardReceived
                     } else {
-                        dialog?.cancel()
+                        viewModel.rewardedAdState.value = RewardedAdState.UserNotAgreedYet
                     }
                 }
 

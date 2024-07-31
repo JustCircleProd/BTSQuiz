@@ -21,6 +21,7 @@ import com.google.android.material.divider.MaterialDividerItemDecoration
 import com.justcircleprod.btsquiz.R
 import com.justcircleprod.btsquiz.compensationReceived.presentation.CompensationReceivedDialog
 import com.justcircleprod.btsquiz.databinding.ActivityLevelsBinding
+import com.justcircleprod.btsquiz.levels.presentation.levelAdapter.LevelItem
 import com.justcircleprod.btsquiz.levels.presentation.levelAdapter.LevelItemAdapter
 import com.justcircleprod.btsquiz.levels.presentation.levelAdapter.LevelItemAdapterActions
 import com.justcircleprod.btsquiz.main.presentation.MainActivity
@@ -216,7 +217,7 @@ class LevelsActivity : AppCompatActivity(), LevelItemAdapterActions {
 
     private fun setupLevelsRecyclerView() {
         val adapter = LevelItemAdapter(
-            levelItems = listOf(),
+            levelItems = LevelItem.getPlaceholders(),
             levelItemAdapterActions = this
         )
 

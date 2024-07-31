@@ -1,6 +1,7 @@
 package com.justcircleprod.btsquiz.core.presentation
 
 import android.animation.ObjectAnimator
+import android.view.View
 import android.view.animation.DecelerateInterpolator
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.card.MaterialCardView
@@ -35,4 +36,14 @@ fun LinearProgressIndicator.animateProgress(currentProgress: Int, newProgress: I
     ).apply {
         interpolator = DecelerateInterpolator()
     }.start()
+}
+
+fun View.hideWithAnimation(onComplete: () -> Unit) {
+    this.animate()
+        .alpha(0f)
+        .withEndAction {
+            this.visibility = View.GONE
+            onComplete()
+        }
+        .start()
 }

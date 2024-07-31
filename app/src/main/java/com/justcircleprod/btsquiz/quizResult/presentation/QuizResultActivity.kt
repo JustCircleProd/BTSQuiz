@@ -18,6 +18,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.justcircleprod.btsquiz.App
 import com.justcircleprod.btsquiz.R
+import com.justcircleprod.btsquiz.core.presentation.hideWithAnimation
 import com.justcircleprod.btsquiz.databinding.ActivityQuizResultBinding
 import com.justcircleprod.btsquiz.doubleCoins.presentation.DoubleCoinsConfirmationDialog
 import com.justcircleprod.btsquiz.doubleCoins.presentation.DoubleCoinsConfirmationDialogCallback
@@ -206,12 +207,23 @@ class QuizResultActivity : AppCompatActivity(), DoubleCoinsConfirmationDialogCal
 
     private fun setLoadingObserver() {
         viewModel.isLoading.observe(this) { isLoading ->
-            if (!isLoading) {
-                onBackPressedDispatcher.addCallback { startLevelsActivity() }
-                showResult()
-                binding.loadingLayout.visibility = View.GONE
+            if (isLoading && !viewModel.isFirstLoadResultShown) {
+                binding.loadingLayout.visibility = View.VISIBLE
+                return@observe
+            }
+            
+            if (!viewModel.isFirstLoadResultShown) {
+                binding.loadingLayout.hideWithAnimation(
+                    onComplete = {
+                        binding.contentLayout.visibility = View.VISIBLE
+                    }
+                )
+            } else {
                 binding.contentLayout.visibility = View.VISIBLE
             }
+
+            onBackPressedDispatcher.addCallback { startLevelsActivity() }
+            showResult()
         }
     }
 

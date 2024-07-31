@@ -32,6 +32,9 @@ class QuizResultViewModel @Inject constructor(
             areCoinsCalculating || isBannerAdLoading || isInterstitialAdLoading
         }.asLiveData()
 
+    // to show loading layout only when the activity is first created (not recreated)
+    var isFirstLoadResultShown = false
+
     val earnedCoins =
         MutableLiveData(state.get<Int>(QuizResultActivity.EARNED_COINS_ARGUMENT_NAME)!!)
 

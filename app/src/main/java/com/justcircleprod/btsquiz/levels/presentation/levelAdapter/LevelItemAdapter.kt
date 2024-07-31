@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.justcircleprod.btsquiz.R
-import com.justcircleprod.btsquiz.core.data.constants.LevelConstants
 import com.justcircleprod.btsquiz.core.presentation.animateProgress
 import com.justcircleprod.btsquiz.databinding.LevelItemBinding
 
@@ -34,10 +33,9 @@ class LevelItemAdapter(
     }
 
     fun submitList(newLevelItems: List<LevelItem>) {
-        val oldLevelItems = levelItems
-        val diffResult = DiffUtil.calculateDiff(
-            LevelItemDiffCallback(oldLevelItems, newLevelItems)
-        )
+        val diffCallback = LevelItemDiffCallback(levelItems, newLevelItems)
+        val diffResult = DiffUtil.calculateDiff(diffCallback)
+
         levelItems = newLevelItems
         diffResult.dispatchUpdatesTo(this)
     }
@@ -57,7 +55,7 @@ class LevelItemAdapter(
             if (levelItem.isPlaceholder) {
                 binding.iconLock.visibility = View.GONE
 
-                binding.nameTv.text = ""
+                binding.nameTv.text = context.getString(levelItem.nameStringResId)
 
                 binding.progressIndicator.progress = 0
                 binding.progressIndicator.max = 0
@@ -70,17 +68,7 @@ class LevelItemAdapter(
                 return
             }
 
-            binding.nameTv.text = when (levelItem.levelId) {
-                LevelConstants.LEVEL_PASSED_QUESTIONS_ID -> context.getString(R.string.passed_questions_level_name)
-                LevelConstants.LEVEL_1_ID -> context.getString(R.string.level_1_name)
-                LevelConstants.LEVEL_2_ID -> context.getString(R.string.level_2_name)
-                LevelConstants.LEVEL_3_ID -> context.getString(R.string.level_3_name)
-                LevelConstants.LEVEL_4_ID -> context.getString(R.string.level_4_name)
-                LevelConstants.LEVEL_5_ID -> context.getString(R.string.level_5_name)
-                LevelConstants.LEVEL_6_ID -> context.getString(R.string.level_6_name)
-                LevelConstants.LEVEL_7_ID -> context.getString(R.string.level_7_name)
-                else -> context.getString(R.string.passed_questions_level_name)
-            }
+            binding.nameTv.text = context.getString(levelItem.nameStringResId)
 
             when (levelItem.isOpened) {
                 true -> {

@@ -82,7 +82,7 @@
                         android:animateLayoutChanges="true"
                         android:gravity="center"
                         android:orientation="horizontal"
-                        android:visibility="invisible"
+                        android:visibility="gone"
                         tools:ignore="UseCompoundDrawables">
 
                         <TextView
@@ -110,7 +110,7 @@
                         android:layout_height="@dimen/line_height"
                         android:layout_marginBottom="@dimen/line_bottom_margin"
                         android:background="@color/line_color"
-                        android:visibility="invisible" />
+                        android:visibility="gone" />
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/levels_recycler_view"

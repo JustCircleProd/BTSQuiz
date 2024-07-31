@@ -19,6 +19,12 @@
 
     <string name="to_level_selection">К выбору уровня</string>
 
+    <string name="loading_ad_title">Загрузка</string>
+    <string name="loading_ad">Загружаем рекламу…\nПожалуйста, не закрывайте диалог</string>
+
+    <string name="failed_to_load_rewarded_ad_title">Ошибка</string>
+    <string name="failed_to_load_rewarded_ad">Не удалось загрузить рекламу</string>
+
     <!-- MainActivity -->
 
     <string name="settings">Настройки</string>
@@ -76,6 +82,8 @@
 
     <!-- Levels -->
 
+    <string name="loading_levels">Загрузка…</string>
+
     <string name="levels_users_coins_quantity">У вас %1$d</string>
 
     <string name="passed_questions_level_name">Пройденные вопросы</string>
@@ -114,16 +122,12 @@
     <string name="you_dont_have_enough_coins">Вам не хватает</string>
     <string name="do_you_want_to_watch_an_ad_to_get_coins">Хотите посмотреть рекламу, чтобы получить награду?</string>
 
-    <string name="loading_ad_title">Загрузка</string>
-    <string name="loading_ad">Загружаем рекламу…\nПожалуйста, не закрывайте диалог</string>
-
-    <string name="failed_to_load_rewarded_ad_title">Ошибка</string>
-    <string name="failed_to_load_rewarded_ad">Не удалось загрузить рекламу</string>
-
     <string name="reward_received_title">Награда начислена</string>
     <string name="reward_received">Вам начислено</string>
 
     <!-- Quiz -->
+
+    <string name="tv_loading_questions_text">Подготавливаем самые интересные вопросы…</string>
 
     <string name="tv_out_of_questions_hint_text">Похоже, что вы ответили на все вопросы этого уровня!\nВы можете снова ответить на них на уровне \"Пройденные вопросы\".</string>
 
@@ -140,7 +144,7 @@
 
     <!-- Quiz Result -->
 
-    <string name="tv_loading_result_text">Подсчитываем монеты</string>
+    <string name="tv_loading_result_text">Подсчитываем монеты…</string>
 
     <string name="you_got">Вы получили</string>
 

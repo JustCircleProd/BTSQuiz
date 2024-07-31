@@ -64,6 +64,7 @@ class LevelsViewModel @Inject constructor(
             tempLevelItems.add(
                 LevelItem(
                     levelId = LevelConstants.LEVEL_PASSED_QUESTIONS_ID,
+                    nameStringResId = LevelItem.getNameStringResId(LevelConstants.LEVEL_PASSED_QUESTIONS_ID),
                     isOpened = null,
                     price = 0,
                     progress = 0,
@@ -79,8 +80,8 @@ class LevelsViewModel @Inject constructor(
             tempLevelItems.add(
                 LevelItem(
                     levelId = levelId,
-                    isOpened = lockedLevel?.isOpened
-                        ?: true,
+                    nameStringResId = LevelItem.getNameStringResId(levelId),
+                    isOpened = lockedLevel?.isOpened ?: true,
                     price = lockedLevel?.price ?: 0,
                     progress = levelProgressItem.progress,
                     questionNumber = levelProgressItem.questionsQuantity

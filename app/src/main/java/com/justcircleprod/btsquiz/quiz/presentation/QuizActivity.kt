@@ -18,6 +18,7 @@ import androidx.core.text.isDigitsOnly
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.google.android.material.button.MaterialButton
 import com.justcircleprod.btsquiz.R
 import com.justcircleprod.btsquiz.core.data.constants.CoinConstants
@@ -29,6 +30,7 @@ import com.justcircleprod.btsquiz.core.data.models.questions.VideoQuestion
 import com.justcircleprod.btsquiz.core.presentation.animateProgress
 import com.justcircleprod.btsquiz.core.presentation.disableWithTransparency
 import com.justcircleprod.btsquiz.core.presentation.enable
+import com.justcircleprod.btsquiz.core.presentation.hideWithAnimation
 import com.justcircleprod.btsquiz.databinding.ActivityQuizBinding
 import com.justcircleprod.btsquiz.levels.presentation.LevelsActivity
 import com.justcircleprod.btsquiz.quizResult.presentation.QuizResultActivity
@@ -100,6 +102,7 @@ class QuizActivity : AppCompatActivity() {
         onBackPressedDispatcher.addCallback { startLevelsActivity() }
 
         enableAnimation()
+        setLoadingGif()
         binding.videoQuestionLayout.clipToOutline = true
         initAd()
 
@@ -181,6 +184,14 @@ class QuizActivity : AppCompatActivity() {
         binding.rootLayout.layoutTransition.enableTransitionType(LayoutTransition.CHANGING)
         binding.contentLayout.layoutTransition.enableTransitionType(LayoutTransition.CHANGING)
         binding.optionButtonsLayout.layoutTransition.enableTransitionType(LayoutTransition.CHANGING)
+    }
+
+    private fun setLoadingGif() {
+        Glide
+            .with(this)
+            .load(R.drawable.loading_animation)
+            .transition(DrawableTransitionOptions.withCrossFade())
+            .into(binding.loadingGif)
     }
 
     private fun initAd() {
@@ -284,20 +295,45 @@ class QuizActivity : AppCompatActivity() {
 
     private fun setLoadingObserver() {
         viewModel.isLoading.observe(this) { isLoading ->
-            if (!isLoading) {
-                if (viewModel.questionsCount != 0) {
+            if (isLoading && !viewModel.isFirstLoadResultShown) {
+                binding.loadingLayout.visibility = View.VISIBLE
+                return@observe
+            }
+
+            if (viewModel.questionsCount != 0) {
+                if (viewModel.questionForWhichAnswerWasShown == null) {
                     viewModel.setQuestionOnCurrentPosition()
-
-                    setQuestionWorthObserver()
-                    setUserCoinsQuantityObserver()
-                    setWithoutQuizHintsObserver()
-                    setQuestionObserver()
-
-                    binding.quizProgress.max = viewModel.questionsCount * 100
-
-                    binding.contentLayout.visibility = View.VISIBLE
                 } else {
-                    // if the loading was successful, but there are no questions left for the user
+                    viewModel.setQuestionOnNextPosition()
+                }
+
+                setQuestionWorthObserver()
+                setUserCoinsQuantityObserver()
+                setWithoutQuizHintsObserver()
+                setQuestionObserver()
+
+                binding.quizProgress.max = viewModel.questionsCount * 100
+
+                if (!viewModel.isFirstLoadResultShown) {
+                    binding.loadingLayout.hideWithAnimation(
+                        onComplete = {
+                            viewModel.isFirstLoadResultShown = true
+                            binding.contentLayout.visibility = View.VISIBLE
+                        }
+                    )
+                } else {
+                    binding.contentLayout.visibility = View.VISIBLE
+                }
+            } else {
+                // if the loading was successful, but there are no questions left for the user
+                if (!viewModel.isFirstLoadResultShown) {
+                    binding.loadingLayout.hideWithAnimation(
+                        onComplete = {
+                            viewModel.isFirstLoadResultShown = true
+                            setOutOfQuestionsLayout()
+                        }
+                    )
+                } else {
                     setOutOfQuestionsLayout()
                 }
             }
@@ -384,10 +420,20 @@ class QuizActivity : AppCompatActivity() {
 
         viewModel.question.observe(this) { question ->
             if (question == null) {
+                // if the orientation of the device was changed when the last question was displayed
+                if (viewModel.questionForWhichAnswerWasShown != null) {
+                    binding.rootLayout.layoutTransition.disableTransitionType(LayoutTransition.CHANGING)
+                    binding.contentLayout.visibility = View.GONE
+                }
                 startResultActivity()
                 return@observe
             }
 
+            if (viewModel.questionForWhichAnswerWasShown == question) {
+                return@observe
+            }
+
+            viewModel.clearQuestionForWhichAnswerWasShown()
             hidePreviousQuestion()
             animateQuizProgress()
             setDefaultButtonColors()
@@ -695,11 +741,14 @@ class QuizActivity : AppCompatActivity() {
             ContextCompat.getColor(this, R.color.correct_answer_color)
         )
 
+        viewModel.setQuestionForWhichAnswerWasShown()
+
         correctAnswerTimer = object : CountDownTimer(2000, 2000) {
             override fun onTick(millisUntilFinished: Long) {}
             override fun onFinish() {
                 resetQuestionPlayers()
                 viewModel.setQuestionOnNextPosition()
+                viewModel.clearQuestionForWhichAnswerWasShown()
             }
         }.start()
     }
@@ -714,6 +763,8 @@ class QuizActivity : AppCompatActivity() {
             ContextCompat.getColor(this, R.color.incorrect_answer_color)
         )
 
+        viewModel.setQuestionForWhichAnswerWasShown()
+
         var isCorrectAnswerShown = false
 
         wrongAnswerTimer = object : CountDownTimer(2000, 250) {
@@ -727,6 +778,7 @@ class QuizActivity : AppCompatActivity() {
             override fun onFinish() {
                 resetQuestionPlayers()
                 viewModel.setQuestionOnNextPosition()
+                viewModel.clearQuestionForWhichAnswerWasShown()
             }
         }.start()
     }
@@ -809,6 +861,7 @@ class QuizActivity : AppCompatActivity() {
         }
 
         audioQuestionPlayer?.release()
+        audioQuestionPlayer = null
 
         if (isHint5050PlayerPrepared) {
             hint5050Player.release()
