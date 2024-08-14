@@ -16,7 +16,6 @@ import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.justcircleprod.btsquiz.R
-import com.justcircleprod.btsquiz.core.data.constants.CoinConstants
 import com.justcircleprod.btsquiz.core.presentation.RewardedAdState
 import com.justcircleprod.btsquiz.databinding.DialogWatchRewardedAdConfirmationBinding
 import com.yandex.mobile.ads.common.AdError
@@ -235,6 +234,8 @@ class WatchRewardedAdConfirmationDialog : DialogFragment() {
 
     private fun setRewardedAdStateObserver() {
         viewModel.rewardedAdState.observe(viewLifecycleOwner) {
+            viewModel.rewardedAdWorth.removeObservers(viewLifecycleOwner)
+
             when (it) {
                 RewardedAdState.UserNotAgreedYet -> {
                     binding.title.text = getString(R.string.not_enough_coins_title)
@@ -246,8 +247,10 @@ class WatchRewardedAdConfirmationDialog : DialogFragment() {
                     if (missingCoinsQuantity != null) {
                         binding.missingCoinsQuantity.text = missingCoinsQuantity.toString()
                     }
-                    binding.rewardedAdWorth.text =
-                        CoinConstants.REWARDED_AD_WORTH.toString()
+
+                    viewModel.rewardedAdWorth.observe(viewLifecycleOwner) { rewardedAdWorth ->
+                        binding.rewardedAdWorth.text = rewardedAdWorth.toString()
+                    }
 
                     binding.questionLayout.visibility = View.VISIBLE
                 }
@@ -281,8 +284,11 @@ class WatchRewardedAdConfirmationDialog : DialogFragment() {
                     binding.title.text = getString(R.string.reward_received_title)
 
                     binding.rewardResultTv.text = getString(R.string.reward_received)
-                    binding.rewardResultQuantity.text =
-                        CoinConstants.REWARDED_AD_WORTH.toString()
+
+                    viewModel.rewardedAdWorth.observe(viewLifecycleOwner) { rewardedAdWorth ->
+                        binding.rewardResultQuantity.text = rewardedAdWorth.toString()
+                    }
+
                     binding.submitRewardResultBtn.setText(R.string.great)
 
                     binding.questionLayout.visibility = View.GONE

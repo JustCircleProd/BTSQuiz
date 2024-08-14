@@ -36,6 +36,7 @@ class QuizViewModel @Inject constructor(
 ) : ViewModel() {
 
     val isLoading = MutableLiveData(true)
+
     // to show loading layout only when the activity is first created (not recreated)
     var isFirstLoadResultShown = false
 
@@ -43,19 +44,11 @@ class QuizViewModel @Inject constructor(
 
     val levelId = state.get<Int>(QuizActivity.LEVEL_ARGUMENT_NAME)!!
 
-    val questionWorth = MutableLiveData(
-        when (levelId) {
-            LevelConstants.LEVEL_PASSED_QUESTIONS_ID -> LevelConstants.LEVEL_PASSED_QUESTIONS_QUESTION_WORTH
-            LevelConstants.LEVEL_1_ID -> LevelConstants.LEVEL_1_QUESTION_WORTH
-            LevelConstants.LEVEL_2_ID -> LevelConstants.LEVEL_2_QUESTION_WORTH
-            LevelConstants.LEVEL_3_ID -> LevelConstants.LEVEL_3_QUESTION_WORTH
-            LevelConstants.LEVEL_4_ID -> LevelConstants.LEVEL_4_QUESTION_WORTH
-            LevelConstants.LEVEL_5_ID -> LevelConstants.LEVEL_5_QUESTION_WORTH
-            LevelConstants.LEVEL_6_ID -> LevelConstants.LEVEL_6_QUESTION_WORTH
-            LevelConstants.LEVEL_7_ID -> LevelConstants.LEVEL_7_QUESTION_WORTH
-            else -> LevelConstants.LEVEL_PASSED_QUESTIONS_QUESTION_WORTH
-        }
-    )
+    val questionWorth = MutableLiveData(LevelConstants.getQuestionWorth(levelId))
+
+    val hint5050Price = CoinConstants.getHint5050Price(levelId)
+
+    val hintCorrectAnswerPrice = CoinConstants.getHintCorrectAnswerPrice(levelId)
 
     var earnedCoins = 0
     var correctlyAnsweredQuestionsCount = 0
@@ -239,14 +232,14 @@ class QuizViewModel @Inject constructor(
             optionsToShow.remove(correctAnswer)
             optionsToShow = optionsToShow.shuffled().toMutableList().take(2).toMutableList()
 
-            coinRepository.subtractUserCoins(CoinConstants.HINT_50_50_PRICE)
+            coinRepository.subtractUserCoins(hint5050Price)
             hint5050UsedWithOptionsToShow.postValue(Pair(true, optionsToShow))
         }
     }
 
     fun useHintCorrectAnswer() {
         viewModelScope.launch {
-            coinRepository.subtractUserCoins(CoinConstants.HINT_CORRECT_ANSWER_PRICE)
+            coinRepository.subtractUserCoins(hintCorrectAnswerPrice)
             hintCorrectAnswerUsed.postValue(true)
         }
     }

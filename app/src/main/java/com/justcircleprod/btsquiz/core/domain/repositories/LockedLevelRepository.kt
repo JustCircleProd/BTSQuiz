@@ -7,6 +7,8 @@ interface LockedLevelRepository {
 
     fun getAll(): Flow<List<LockedLevel>>
 
+    suspend fun getMostExpensiveUnlockedLevelId(): Int?
+
     suspend fun unlockLevel(levelId: Int)
 
     suspend fun lockLevel(levelId: Int)

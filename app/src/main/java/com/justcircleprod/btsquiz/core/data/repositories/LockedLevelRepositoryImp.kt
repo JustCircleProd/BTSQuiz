@@ -12,6 +12,12 @@ class LockedLevelRepositoryImp @Inject constructor(
 
     override fun getAll() = db.lockedLevelDao().getAll()
 
+    override suspend fun getMostExpensiveUnlockedLevelId(): Int? {
+        return withContext(Dispatchers.IO) {
+            db.lockedLevelDao().getMostExpensiveUnlockedLevelId()
+        }
+    }
+
     override suspend fun unlockLevel(levelId: Int) {
         withContext(Dispatchers.IO) {
             db.lockedLevelDao().updateIsOpenedField(levelId, true)

@@ -265,8 +265,9 @@ class LevelsActivity : AppCompatActivity(), LevelItemAdapterActions {
 
             UnlockLevelConfirmationDialog().show(supportFragmentManager, null)
         } else {
-            WatchRewardedAdConfirmationDialog.newInstance(levelPrice - userCoinsQuantity)
-                .show(supportFragmentManager, null)
+            WatchRewardedAdConfirmationDialog.newInstance(
+                missingCoinsQuantity = levelPrice - userCoinsQuantity
+            ).show(supportFragmentManager, null)
         }
     }
 

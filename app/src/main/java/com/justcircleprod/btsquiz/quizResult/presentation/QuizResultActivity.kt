@@ -211,7 +211,7 @@ class QuizResultActivity : AppCompatActivity(), DoubleCoinsConfirmationDialogCal
                 binding.loadingLayout.visibility = View.VISIBLE
                 return@observe
             }
-            
+
             if (!viewModel.isFirstLoadResultShown) {
                 binding.loadingLayout.hideWithAnimation(
                     onComplete = {

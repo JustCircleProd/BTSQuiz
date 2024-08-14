@@ -21,7 +21,6 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.google.android.material.button.MaterialButton
 import com.justcircleprod.btsquiz.R
-import com.justcircleprod.btsquiz.core.data.constants.CoinConstants
 import com.justcircleprod.btsquiz.core.data.dataStore.DataStoreConstants
 import com.justcircleprod.btsquiz.core.data.models.questions.AudioQuestion
 import com.justcircleprod.btsquiz.core.data.models.questions.ImageQuestion
@@ -485,8 +484,8 @@ class QuizActivity : AppCompatActivity() {
     }
 
     private fun setHintPrices() {
-        binding.hint5050Price.text = CoinConstants.HINT_50_50_PRICE.toString()
-        binding.hintCorrectAnswerPrice.text = CoinConstants.HINT_CORRECT_ANSWER_PRICE.toString()
+        binding.hint5050Price.text = viewModel.hint5050Price.toString()
+        binding.hintCorrectAnswerPrice.text = viewModel.hintCorrectAnswerPrice.toString()
     }
 
     private fun setOnHintsClickListeners() {
@@ -494,7 +493,7 @@ class QuizActivity : AppCompatActivity() {
             val userCoinsQuantity =
                 viewModel.userCoinsQuantity.value?.toInt() ?: return@setOnClickListener
 
-            if (userCoinsQuantity >= CoinConstants.HINT_50_50_PRICE) {
+            if (userCoinsQuantity >= viewModel.hint5050Price) {
                 val options = listOf(
                     binding.firstOption.text.toString(),
                     binding.secondOption.text.toString(),
@@ -509,8 +508,9 @@ class QuizActivity : AppCompatActivity() {
                     isHint5050PlayerPlaying = true
                 }
             } else {
-                WatchRewardedAdConfirmationDialog.newInstance(CoinConstants.HINT_50_50_PRICE - userCoinsQuantity)
-                    .show(supportFragmentManager, null)
+                WatchRewardedAdConfirmationDialog.newInstance(
+                    missingCoinsQuantity = viewModel.hint5050Price - userCoinsQuantity
+                ).show(supportFragmentManager, null)
             }
         }
 
@@ -518,11 +518,12 @@ class QuizActivity : AppCompatActivity() {
             val userCoinsQuantity =
                 viewModel.userCoinsQuantity.value?.toInt() ?: return@setOnClickListener
 
-            if (userCoinsQuantity >= CoinConstants.HINT_CORRECT_ANSWER_PRICE) {
+            if (userCoinsQuantity >= viewModel.hintCorrectAnswerPrice) {
                 viewModel.useHintCorrectAnswer()
             } else {
-                WatchRewardedAdConfirmationDialog.newInstance(CoinConstants.HINT_CORRECT_ANSWER_PRICE - userCoinsQuantity)
-                    .show(supportFragmentManager, null)
+                WatchRewardedAdConfirmationDialog.newInstance(
+                    missingCoinsQuantity = viewModel.hintCorrectAnswerPrice - userCoinsQuantity
+                ).show(supportFragmentManager, null)
             }
         }
     }
