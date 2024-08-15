@@ -162,7 +162,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="@dimen/congratulation_tv_bottom_margin"
                         android:gravity="center"
-                        android:textColor="@color/btn_stroke_color"
+                        android:textColor="@color/accent_text_color"
                         android:textSize="@dimen/congratulation_text_size"
                         android:textStyle="bold" />
 

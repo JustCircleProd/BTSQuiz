@@ -3,6 +3,7 @@ package com.justcircleprod.btsquiz.introduction.presentation
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
@@ -19,6 +20,7 @@ import kotlin.math.abs
 class IntroductionActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityIntroductionBinding
+    private val viewModel: IntroductionViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,7 +57,10 @@ class IntroductionActivity : AppCompatActivity() {
         val adapter = IntroductionCardAdapter(
             introductionCardItems = introductionCardItems,
             onNextBtnClicked = { binding.viewPager.currentItem++ },
-            onPlayBtnClicked = { startMainActivity() }
+            onPlayBtnClicked = {
+                viewModel.setIntroductionShown()
+                startMainActivity()
+            }
         )
 
         binding.viewPager.offscreenPageLimit = 1
@@ -112,8 +117,15 @@ class IntroductionActivity : AppCompatActivity() {
     }
 
     private fun startMainActivity() {
-        val intent = Intent(this, MainActivity::class.java)
-        startActivity(intent)
-        finish()
+        if (viewModel.shouldStartMainActivity.hasActiveObservers()) return
+
+        viewModel.shouldStartMainActivity.observe(this) {
+            if (it) {
+                val intent = Intent(this, MainActivity::class.java)
+                startActivity(intent)
+                finish()
+                viewModel.shouldStartMainActivity.removeObservers(this)
+            }
+        }
     }
 }

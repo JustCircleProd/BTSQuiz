@@ -106,7 +106,7 @@ class SettingsActivity : AppCompatActivity() {
                 val playStoreLink = getString(R.string.play_store_link)
 
                 val shareContentBuilder = StringBuilder()
-                shareContentBuilder.append(resultStr, '\n', playStoreLink)
+                shareContentBuilder.append(resultStr, "\n\n", playStoreLink)
 
                 val sendIntent = Intent().apply {
                     action = Intent.ACTION_SEND

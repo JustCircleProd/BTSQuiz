@@ -36,18 +36,7 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 null -> {
-                    viewModel.setIntroductionShown()
-
-                    if (viewModel.shouldStartIntroductionActivity.hasActiveObservers()) return@observe
-
-                    viewModel.shouldStartIntroductionActivity.observe(this) {
-                        if (it) {
-                            startIntroductionActivity()
-                            viewModel.shouldStartIntroductionActivity.removeObservers(this)
-                        }
-                    }
-
-                    viewModel.isIntroductionShown.removeObservers(this)
+                    startIntroductionActivity()
                 }
             }
         }

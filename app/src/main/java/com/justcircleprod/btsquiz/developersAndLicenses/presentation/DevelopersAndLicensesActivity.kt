@@ -60,7 +60,7 @@ class DevelopersAndLicensesActivity : AppCompatActivity() {
 
             setContent {
                 CompositionLocalProvider(
-                    LocalRippleTheme provides MyRippleTheme(color = colorResource(id = R.color.license_title_ripple_color))
+                    LocalRippleTheme provides MyRippleTheme(color = colorResource(id = R.color.accent_text_color))
                 ) {
                     Surface(
                         color = colorResource(id = R.color.card_background)
@@ -188,14 +188,14 @@ class DevelopersAndLicensesActivity : AppCompatActivity() {
         Text(
             text = licenseName,
             fontSize = 17.sp,
-            color = colorResource(id = R.color.license_title_color),
+            color = colorResource(id = R.color.accent_text_color),
             fontWeight = FontWeight.Bold,
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = rememberRipple(
-                        color = colorResource(id = R.color.license_title_ripple_color),
+                        color = colorResource(id = R.color.accent_text_color),
                         bounded = true
                     ),
                     onClick = {

@@ -20,6 +20,7 @@
 
     <color name="black_text_color">@color/black</color>
     <color name="gray_text_color">#707070</color>
+    <color name="accent_text_color">#B681CE</color>
 
     <color name="progress_indicator_color">#D4B0F6</color>
     <color name="progress_track_color">#EEE3FD</color>
@@ -43,7 +44,4 @@
 
     <color name="correct_answer_color">#A6F0B8</color>
     <color name="incorrect_answer_color">#F3A7B2</color>
-
-    <color name="license_title_color">#BB86FC</color>
-    <color name="license_title_ripple_color">#B681CE</color>
 </resources>
