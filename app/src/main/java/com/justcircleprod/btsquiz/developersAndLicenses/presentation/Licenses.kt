@@ -200,6 +200,10 @@ object Licenses : List<Map<String, Any>> by listOf(
                 "projectInfo" to "Copyright © 2019 The Android Open Source Project"
             ),
             mapOf(
+                "projectNameVersion" to "Clear Sans",
+                "projectInfo" to "Font software Copyright © 2012 Intel Corporation"
+            ),
+            mapOf(
                 "projectNameVersion" to "collections",
                 "projectInfo" to "Copyright © 2018 The Android Open Source Project"
             ),
@@ -734,6 +738,16 @@ object Licenses : List<Map<String, Any>> by listOf(
             mapOf(
                 "projectNameVersion" to "review-ktx",
                 "projectInfo" to "Copyright © 20xx"
+            ),
+        ),
+    ),
+    mapOf(
+        "licenseName" to "SIL OFL 1.1",
+        "licenseLink" to "https://openfontlicense.org/open-font-license-official-text/",
+        "projects" to listOf(
+            mapOf(
+                "projectNameVersion" to "VDS",
+                "projectInfo" to "Copyright © 2009 by artmaker. All rights reserved."
             ),
         ),
     ),
