@@ -204,150 +204,6 @@ object Licenses : List<Map<String, Any>> by listOf(
                 "projectInfo" to "Font software Copyright © 2012 Intel Corporation"
             ),
             mapOf(
-                "projectNameVersion" to "collections",
-                "projectInfo" to "Copyright © 2018 The Android Open Source Project"
-            ),
-            mapOf(
-                "projectNameVersion" to "Collections Kotlin Extensions",
-                "projectInfo" to "Copyright © 2018 The Android Open Source Project"
-            ),
-            mapOf(
-                "projectNameVersion" to "Compose Animation",
-                "projectInfo" to "Copyright © 2019 The Android Open Source Project"
-            ),
-            mapOf(
-                "projectNameVersion" to "Compose Animation",
-                "projectInfo" to "Copyright © 2019 The Android Open Source Project"
-            ),
-            mapOf(
-                "projectNameVersion" to "Compose Animation Core",
-                "projectInfo" to "Copyright © 2019 The Android Open Source Project"
-            ),
-            mapOf(
-                "projectNameVersion" to "Compose Animation Core",
-                "projectInfo" to "Copyright © 2019 The Android Open Source Project"
-            ),
-            mapOf(
-                "projectNameVersion" to "Compose Foundation",
-                "projectInfo" to "Copyright © 2018 The Android Open Source Project"
-            ),
-            mapOf(
-                "projectNameVersion" to "Compose Foundation",
-                "projectInfo" to "Copyright © 2018 The Android Open Source Project"
-            ),
-            mapOf(
-                "projectNameVersion" to "Compose Geometry",
-                "projectInfo" to "Copyright © 2020 The Android Open Source Project"
-            ),
-            mapOf(
-                "projectNameVersion" to "Compose Geometry",
-                "projectInfo" to "Copyright © 2020 The Android Open Source Project"
-            ),
-            mapOf(
-                "projectNameVersion" to "Compose Graphics",
-                "projectInfo" to "Copyright © 2020 The Android Open Source Project"
-            ),
-            mapOf(
-                "projectNameVersion" to "Compose Graphics",
-                "projectInfo" to "Copyright © 2020 The Android Open Source Project"
-            ),
-            mapOf(
-                "projectNameVersion" to "Compose Layouts",
-                "projectInfo" to "Copyright © 2019 The Android Open Source Project"
-            ),
-            mapOf(
-                "projectNameVersion" to "Compose Layouts",
-                "projectInfo" to "Copyright © 2019 The Android Open Source Project"
-            ),
-            mapOf(
-                "projectNameVersion" to "Compose Material Components",
-                "projectInfo" to "Copyright © 2018 The Android Open Source Project"
-            ),
-            mapOf(
-                "projectNameVersion" to "Compose Material Components",
-                "projectInfo" to "Copyright © 2018 The Android Open Source Project"
-            ),
-            mapOf(
-                "projectNameVersion" to "Compose Material Icons Core",
-                "projectInfo" to "Copyright © 2020 The Android Open Source Project"
-            ),
-            mapOf(
-                "projectNameVersion" to "Compose Material Icons Core",
-                "projectInfo" to "Copyright © 2020 The Android Open Source Project"
-            ),
-            mapOf(
-                "projectNameVersion" to "Compose Material Ripple",
-                "projectInfo" to "Copyright © 2020 The Android Open Source Project"
-            ),
-            mapOf(
-                "projectNameVersion" to "Compose Material Ripple",
-                "projectInfo" to "Copyright © 2020 The Android Open Source Project"
-            ),
-            mapOf(
-                "projectNameVersion" to "Compose Runtime",
-                "projectInfo" to "Copyright © 2019 The Android Open Source Project"
-            ),
-            mapOf(
-                "projectNameVersion" to "Compose Runtime",
-                "projectInfo" to "Copyright © 2019 The Android Open Source Project"
-            ),
-            mapOf(
-                "projectNameVersion" to "Compose Saveable",
-                "projectInfo" to "Copyright © 2020 The Android Open Source Project"
-            ),
-            mapOf(
-                "projectNameVersion" to "Compose Saveable",
-                "projectInfo" to "Copyright © 2020 The Android Open Source Project"
-            ),
-            mapOf(
-                "projectNameVersion" to "Compose Tooling",
-                "projectInfo" to "Copyright © 2019 The Android Open Source Project"
-            ),
-            mapOf(
-                "projectNameVersion" to "Compose Tooling Data",
-                "projectInfo" to "Copyright © 2021 The Android Open Source Project"
-            ),
-            mapOf(
-                "projectNameVersion" to "Compose UI",
-                "projectInfo" to "Copyright © 2019 The Android Open Source Project"
-            ),
-            mapOf(
-                "projectNameVersion" to "Compose UI",
-                "projectInfo" to "Copyright © 2019 The Android Open Source Project"
-            ),
-            mapOf(
-                "projectNameVersion" to "Compose UI Preview Tooling",
-                "projectInfo" to "Copyright © 2021 The Android Open Source Project"
-            ),
-            mapOf(
-                "projectNameVersion" to "Compose UI Preview Tooling",
-                "projectInfo" to "Copyright © 2021 The Android Open Source Project"
-            ),
-            mapOf(
-                "projectNameVersion" to "Compose UI Text",
-                "projectInfo" to "Copyright © 2019 The Android Open Source Project"
-            ),
-            mapOf(
-                "projectNameVersion" to "Compose UI Text",
-                "projectInfo" to "Copyright © 2019 The Android Open Source Project"
-            ),
-            mapOf(
-                "projectNameVersion" to "Compose Unit",
-                "projectInfo" to "Copyright © 2020 The Android Open Source Project"
-            ),
-            mapOf(
-                "projectNameVersion" to "Compose Unit",
-                "projectInfo" to "Copyright © 2020 The Android Open Source Project"
-            ),
-            mapOf(
-                "projectNameVersion" to "Compose Util",
-                "projectInfo" to "Copyright © 2020 The Android Open Source Project"
-            ),
-            mapOf(
-                "projectNameVersion" to "Compose Util",
-                "projectInfo" to "Copyright © 2020 The Android Open Source Project"
-            ),
-            mapOf(
                 "projectNameVersion" to "Core",
                 "projectInfo" to "Copyright © 2015 The Android Open Source Project"
             ),
@@ -365,14 +221,6 @@ object Licenses : List<Map<String, Any>> by listOf(
             ),
             mapOf(
                 "projectNameVersion" to "DataStore",
-                "projectInfo" to "Copyright © 2020 The Android Open Source Project"
-            ),
-            mapOf(
-                "projectNameVersion" to "DataStore",
-                "projectInfo" to "Copyright © 2020 The Android Open Source Project"
-            ),
-            mapOf(
-                "projectNameVersion" to "DataStore Core",
                 "projectInfo" to "Copyright © 2020 The Android Open Source Project"
             ),
             mapOf(
@@ -456,10 +304,6 @@ object Licenses : List<Map<String, Any>> by listOf(
                 "projectInfo" to "Copyright © 20xx JetBrains Team"
             ),
             mapOf(
-                "projectNameVersion" to "kotlinx-coroutines-swing",
-                "projectInfo" to "Copyright © 20xx JetBrains Team"
-            ),
-            mapOf(
                 "projectNameVersion" to "kotlinx-serialization-core",
                 "projectInfo" to "Copyright © 20xx JetBrains Team"
             ),
@@ -488,24 +332,8 @@ object Licenses : List<Map<String, Any>> by listOf(
                 "projectInfo" to "Copyright © 2017 The Android Open Source Project"
             ),
             mapOf(
-                "projectNameVersion" to "Lifecycle Runtime",
-                "projectInfo" to "Copyright © 2017 The Android Open Source Project"
-            ),
-            mapOf(
-                "projectNameVersion" to "Lifecycle Runtime",
-                "projectInfo" to "Copyright © 2017 The Android Open Source Project"
-            ),
-            mapOf(
                 "projectNameVersion" to "Lifecycle Service",
                 "projectInfo" to "Copyright © 2018 The Android Open Source Project"
-            ),
-            mapOf(
-                "projectNameVersion" to "Lifecycle ViewModel",
-                "projectInfo" to "Copyright © 2017 The Android Open Source Project"
-            ),
-            mapOf(
-                "projectNameVersion" to "Lifecycle ViewModel",
-                "projectInfo" to "Copyright © 2017 The Android Open Source Project"
             ),
             mapOf(
                 "projectNameVersion" to "Lifecycle ViewModel",
@@ -580,12 +408,12 @@ object Licenses : List<Map<String, Any>> by listOf(
                 "projectInfo" to "Copyright © 2020 The Android Open Source Project"
             ),
             mapOf(
-                "projectNameVersion" to "Preferences DataStore",
+                "projectNameVersion" to "Preferences DataStore Core",
                 "projectInfo" to "Copyright © 2020 The Android Open Source Project"
             ),
             mapOf(
-                "projectNameVersion" to "Preferences DataStore Core",
-                "projectInfo" to "Copyright © 2020 The Android Open Source Project"
+                "projectNameVersion" to "Roboto",
+                "projectInfo" to "Designed by Christian Robertson"
             ),
             mapOf(
                 "projectNameVersion" to "Room Kotlin Extensions",

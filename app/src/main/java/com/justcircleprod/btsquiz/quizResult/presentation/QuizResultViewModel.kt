@@ -1,5 +1,7 @@
 package com.justcircleprod.btsquiz.quizResult.presentation
 
+import androidx.annotation.ArrayRes
+import androidx.annotation.DrawableRes
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -39,6 +41,15 @@ class QuizResultViewModel @Inject constructor(
         MutableLiveData(state.get<Int>(QuizResultActivity.EARNED_COINS_ARGUMENT_NAME)!!)
 
     val areEarnedCoinsDoubled = MutableLiveData(false)
+
+    var isCongratulationViewsShown = false
+
+    @ArrayRes
+    var shownCongratulationTextArrayResId: Int? = null
+    var shownCongratulationTextArrayIndex: Int? = null
+
+    @DrawableRes
+    var shownCongratulationImageDrawableResId: Int? = null
 
     init {
         viewModelScope.launch {

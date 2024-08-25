@@ -20,7 +20,9 @@
 
     <color name="black_text_color">@color/black</color>
     <color name="gray_text_color">#707070</color>
+
     <color name="accent_text_color">#B681CE</color>
+    <color name="accent_text_color_ripple_color">#99B681CE</color>
 
     <color name="progress_indicator_color">#D4B0F6</color>
     <color name="progress_track_color">#EEE3FD</color>
