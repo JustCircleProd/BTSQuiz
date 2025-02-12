@@ -5,7 +5,8 @@ plugins {
     id 'dagger.hilt.android.plugin'
     id 'com.jaredsburrows.license' version '0.9.8'
     id 'org.jetbrains.kotlin.android'
-    id 'kotlin-kapt'
+    id 'com.google.devtools.ksp'
+    id 'androidx.room'
 }
 
 // create license list by ./gradlew license${Release/Debug}Report
@@ -25,19 +26,12 @@ android {
 
     defaultConfig {
         applicationId "com.justcircleprod.btsquiz"
-        compileSdk 34
+        compileSdk 35
         minSdkVersion 21
-        targetSdkVersion 34
-        versionCode 47
+        targetSdkVersion 35
+        versionCode 48
         versionName "2.1.4"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-
-        javaCompileOptions {
-            annotationProcessorOptions {
-                arguments += ["room.schemaLocation":
-                                      "$projectDir/schemas".toString()]
-            }
-        }
     }
 
     buildTypes {
@@ -60,39 +54,35 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.core:core-ktx:1.13.1'
+    implementation 'androidx.core:core-ktx:1.15.0'
     implementation 'androidx.appcompat:appcompat:1.7.0'
     implementation 'com.google.android.material:material:1.12.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.constraintlayout:constraintlayout:2.2.0'
 
-    implementation 'com.google.dagger:hilt-android:2.51.1'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.6'
-    kapt 'com.google.dagger:hilt-compiler:2.51.1'
+    implementation 'com.google.dagger:hilt-android:2.55'
+    ksp 'com.google.dagger:hilt-compiler:2.55'
 
-    implementation 'androidx.activity:activity-ktx:1.9.3'
-    implementation 'androidx.navigation:navigation-fragment-ktx:2.8.3'
+    implementation 'androidx.activity:activity-ktx:1.10.0'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.8.6'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
-    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.8.6'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.6'
-
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.8.7'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7'
 
     implementation 'androidx.room:room-runtime:2.6.1'
     implementation 'androidx.room:room-ktx:2.6.1'
-    kapt 'androidx.room:room-compiler:2.6.1'
+    ksp 'androidx.room:room-compiler:2.6.1'
 
-    implementation 'androidx.datastore:datastore-preferences:1.1.1'
+    implementation 'androidx.datastore:datastore-preferences:1.1.2'
 
     // ads
-    implementation 'com.yandex.android:mobileads:7.6.0'
+    implementation 'com.yandex.android:mobileads:7.10.0'
 
     implementation 'com.github.bumptech.glide:glide:4.16.0'
 
-    implementation 'com.airbnb.android:lottie:6.4.1'
+    implementation 'com.airbnb.android:lottie:6.6.2'
 
     implementation 'androidx.viewpager2:viewpager2:1.1.0'
-    implementation 'com.tbuonomo:dotsindicator:5.0'
+    implementation 'com.tbuonomo:dotsindicator:5.1.0'
 
     implementation 'com.google.android.play:review:2.0.2'
     implementation 'com.google.android.play:review-ktx:2.0.2'
@@ -100,4 +90,8 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.2.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
+}
+
+room {
+    schemaDirectory "$projectDir/schemas"
 }
